@@ -73,11 +73,11 @@ export default function ResourceGrid({
         : -1;
 
     return (
-        <div className="flex flex-col flex-1 overflow-hidden bg-[#101622]">
+        <div className="flex flex-col flex-1 overflow-hidden bg-background">
             {/* FIXED HEADER ROW - Camera names */}
-            <div className="flex shrink-0 border-b border-border-dark bg-[#111318]">
+            <div className="flex shrink-0 border-b border-border bg-surface shadow-sm z-30">
                 {/* Time column spacer */}
-                <div className="w-16 shrink-0 border-r border-border-dark" />
+                <div className="w-16 shrink-0 border-r border-border" />
 
                 {/* Camera Headers - NO overflow here */}
                 <div className="flex">
@@ -89,8 +89,8 @@ export default function ResourceGrid({
                             showLanes={showLanes}
                         />
                     ))}
-                    <div className="w-12 flex items-center justify-center border-r border-border-dark shrink-0">
-                        <span className="material-symbols-outlined text-slate-500">add</span>
+                    <div className="w-12 flex items-center justify-center border-r border-border shrink-0 hover:bg-background transition-colors cursor-pointer group">
+                        <span className="material-symbols-outlined text-text-secondary group-hover:text-primary">add</span>
                     </div>
                 </div>
             </div>
@@ -99,11 +99,11 @@ export default function ResourceGrid({
             <div className="flex-1 overflow-auto">
                 <div className="flex" style={{ minHeight: `${totalHeight}px` }}>
                     {/* Time Labels Column */}
-                    <div className="w-16 shrink-0 sticky left-0 z-20 bg-[#111318] border-r border-border-dark">
+                    <div className="w-16 shrink-0 sticky left-0 z-20 bg-surface border-r border-border shadow-sm">
                         {hours.map((hour) => (
                             <div
                                 key={hour}
-                                className="text-right pr-2 text-xs text-slate-500"
+                                className="text-right pr-3 text-[10px] font-bold text-text-secondary py-1"
                                 style={{ height: `${HOUR_HEIGHT}px` }}
                             >
                                 {`${hour.toString().padStart(2, '0')}:00`}
@@ -118,7 +118,7 @@ export default function ResourceGrid({
                             {hours.map((hour) => (
                                 <div
                                     key={hour}
-                                    className="border-b border-border-dark/30"
+                                    className="border-b border-border/40"
                                     style={{ height: `${HOUR_HEIGHT}px` }}
                                 />
                             ))}

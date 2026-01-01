@@ -43,7 +43,7 @@ export default function CustomersPage() {
       setLoading(true);
       const response = await fetch('/api/customers');
       const data = await response.json();
-      
+
       // Fetch bookings for each customer
       const customersWithBookings = await Promise.all(
         (data.data || []).map(async (customer: Customer) => {
@@ -57,7 +57,7 @@ export default function CustomersPage() {
           };
         })
       );
-      
+
       setCustomers(customersWithBookings);
     } catch (error) {
       console.error('Error fetching customers:', error);
@@ -85,12 +85,12 @@ export default function CustomersPage() {
   };
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-[#111318]">
+    <div className="flex h-full flex-col overflow-hidden bg-background">
       {/* Header */}
-      <header className="flex h-16 items-center justify-between border-b border-border-dark bg-[#111318] px-6 shrink-0">
+      <header className="flex h-16 items-center justify-between border-b border-border bg-surface px-6 shrink-0">
         <div>
-          <h1 className="text-xl font-bold text-white">Quản lý khách hàng</h1>
-          <p className="text-sm text-[#9da6b9] mt-1">Tìm kiếm và xem lịch sử booking của khách hàng</p>
+          <h1 className="text-xl font-bold text-text-main">Quản lý khách hàng</h1>
+          <p className="text-sm text-text-secondary mt-1">Tìm kiếm và xem lịch sử booking của khách hàng</p>
         </div>
       </header>
 
@@ -100,40 +100,40 @@ export default function CustomersPage() {
           <div className="mb-6">
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <span className="material-symbols-outlined text-[#9da6b9] text-[20px]">search</span>
+                <span className="material-symbols-outlined text-text-secondary text-[20px]">search</span>
               </div>
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Tìm kiếm theo tên, số điện thoại hoặc Booking ID..."
-                className="w-full pl-10 pr-3 py-2.5 border border-border-dark rounded-lg bg-[#111318] text-white placeholder-[#9da6b9] focus:ring-1 focus:ring-primary focus:border-primary"
+                className="w-full pl-10 pr-3 py-2.5 border border-border rounded-lg bg-surface text-text-main placeholder-text-secondary focus:ring-1 focus:ring-primary focus:border-primary outline-none"
               />
             </div>
           </div>
 
           {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div className="bg-[#1a1f29] rounded-xl border border-border-dark p-5">
+            <div className="bg-surface rounded-xl border border-border p-5">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-sm text-[#9da6b9] font-medium">Tổng khách hàng</p>
+                <p className="text-sm text-text-secondary font-medium">Tổng khách hàng</p>
                 <span className="material-symbols-outlined text-primary text-[24px]">people</span>
               </div>
-              <p className="text-3xl font-bold text-white">{customers.length}</p>
+              <p className="text-3xl font-bold text-text-main">{customers.length}</p>
             </div>
-            <div className="bg-[#1a1f29] rounded-xl border border-border-dark p-5">
+            <div className="bg-surface rounded-xl border border-border p-5">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-sm text-[#9da6b9] font-medium">Kết quả tìm kiếm</p>
-                <span className="material-symbols-outlined text-blue-400 text-[24px]">filter_list</span>
+                <p className="text-sm text-text-secondary font-medium">Kết quả tìm kiếm</p>
+                <span className="material-symbols-outlined text-blue-500 text-[24px]">filter_list</span>
               </div>
-              <p className="text-3xl font-bold text-white">{filteredCustomers.length}</p>
+              <p className="text-3xl font-bold text-text-main">{filteredCustomers.length}</p>
             </div>
-            <div className="bg-[#1a1f29] rounded-xl border border-border-dark p-5">
+            <div className="bg-surface rounded-xl border border-border p-5">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-sm text-[#9da6b9] font-medium">Tổng booking</p>
-                <span className="material-symbols-outlined text-emerald-400 text-[24px]">assignment</span>
+                <p className="text-sm text-text-secondary font-medium">Tổng booking</p>
+                <span className="material-symbols-outlined text-emerald-500 text-[24px]">assignment</span>
               </div>
-              <p className="text-3xl font-bold text-white">
+              <p className="text-3xl font-bold text-text-main">
                 {customers.reduce((sum, c) => sum + (c.bookings?.length || 0), 0)}
               </p>
             </div>
@@ -155,19 +155,19 @@ export default function CustomersPage() {
               {filteredCustomers.map((customer) => (
                 <div
                   key={customer.id}
-                  className="bg-[#1a1f29] rounded-xl border border-border-dark p-6 hover:border-[#3b4354] transition-colors"
+                  className="bg-surface rounded-xl border border-border p-6 hover:border-border/80 transition-colors shadow-sm"
                 >
                   <div className="flex items-start justify-between gap-4">
                     {/* Customer Info */}
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-3">
-                        <div className="size-12 rounded-full bg-primary/20 flex items-center justify-center">
+                        <div className="size-12 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20">
                           <span className="material-symbols-outlined text-primary text-[24px]">person</span>
                         </div>
                         <div>
-                          <h3 className="text-lg font-bold text-white">{customer.name}</h3>
+                          <h3 className="text-lg font-bold text-text-main">{customer.name}</h3>
                           <div className="flex items-center gap-2 mt-1">
-                            <span className="text-sm text-[#9da6b9]">{customer.phone}</span>
+                            <span className="text-sm text-text-secondary">{customer.phone}</span>
                             {customer.platforms?.map((p) => (
                               <span
                                 key={p}
@@ -185,20 +185,20 @@ export default function CustomersPage() {
 
                       {/* Booking History */}
                       {customer.bookings && customer.bookings.length > 0 ? (
-                        <div className="mt-4 pt-4 border-t border-border-dark">
-                          <p className="text-xs text-[#9da6b9] mb-2 font-semibold uppercase tracking-wide">
+                        <div className="mt-4 pt-4 border-t border-border">
+                          <p className="text-xs text-text-secondary mb-2 font-semibold uppercase tracking-wide">
                             Lịch sử booking gần đây ({customer.bookings.length})
                           </p>
                           <div className="space-y-2">
                             {customer.bookings.map((booking) => (
                               <div
                                 key={booking.id}
-                                className="flex items-center justify-between p-3 bg-[#111318] rounded-lg border border-border-dark hover:border-[#3b4354] transition-colors cursor-pointer"
+                                className="flex items-center justify-between p-3 bg-background rounded-lg border border-border hover:border-primary/50 transition-colors cursor-pointer"
                                 onClick={() => router.push(`/calendar?bookingId=${booking.id}`)}
                               >
                                 <div className="flex items-center gap-4">
                                   <div>
-                                    <p className="text-sm font-medium text-white">
+                                    <p className="text-sm font-medium text-text-main">
                                       {format(new Date(booking.pickup_time), 'dd/MM/yyyy HH:mm', { locale: vi })} -{' '}
                                       {format(new Date(booking.return_time), 'dd/MM/yyyy HH:mm', { locale: vi })}
                                     </p>
@@ -206,7 +206,7 @@ export default function CustomersPage() {
                                       {booking.booking_items?.map((item, idx) => (
                                         <span
                                           key={idx}
-                                          className="px-2 py-0.5 rounded bg-[#1a1f29] border border-border-dark text-white text-xs"
+                                          className="px-2 py-0.5 rounded bg-surface border border-border text-text-main text-xs"
                                         >
                                           {item.camera.name} × {item.quantity}
                                         </span>
@@ -221,17 +221,17 @@ export default function CustomersPage() {
                                       booking.payment_status === 'paid'
                                         ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400'
                                         : booking.payment_status === 'deposited'
-                                        ? 'bg-yellow-500/10 border border-yellow-500/20 text-yellow-400'
-                                        : 'bg-red-500/10 border border-red-500/20 text-red-400'
+                                          ? 'bg-yellow-500/10 border border-yellow-500/20 text-yellow-400'
+                                          : 'bg-red-500/10 border border-red-500/20 text-red-400'
                                     )}
                                   >
                                     {booking.payment_status === 'paid'
                                       ? 'Đã thanh toán'
                                       : booking.payment_status === 'deposited'
-                                      ? 'Đã cọc'
-                                      : 'Chưa cọc'}
+                                        ? 'Đã cọc'
+                                        : 'Chưa cọc'}
                                   </span>
-                                  <span className="text-sm font-bold text-white">
+                                  <span className="text-sm font-bold text-text-main">
                                     {formatCurrency(booking.final_fee)}
                                   </span>
                                 </div>
@@ -240,13 +240,13 @@ export default function CustomersPage() {
                           </div>
                         </div>
                       ) : (
-                        <div className="mt-4 pt-4 border-t border-border-dark">
-                          <p className="text-sm text-[#9da6b9]">Chưa có booking nào</p>
+                        <div className="mt-4 pt-4 border-t border-border">
+                          <p className="text-sm text-text-secondary">Chưa có booking nào</p>
                         </div>
                       )}
 
-                      <div className="mt-4 pt-4 border-t border-border-dark">
-                        <p className="text-xs text-[#9da6b9]">
+                      <div className="mt-4 pt-4 border-t border-border">
+                        <p className="text-xs text-text-secondary">
                           Tham gia từ: {format(new Date(customer.created_at), 'dd/MM/yyyy', { locale: vi })}
                         </p>
                       </div>
@@ -256,13 +256,13 @@ export default function CustomersPage() {
                     <div className="flex flex-col gap-2">
                       <button
                         onClick={() => router.push(`/bookings/new?customerId=${customer.id}`)}
-                        className="px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-blue-600 transition-colors"
+                        className="px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-blue-600 transition-all shadow-lg shadow-primary/20"
                       >
                         Tạo booking mới
                       </button>
                       <button
                         onClick={() => router.push(`/calendar?customerId=${customer.id}`)}
-                        className="px-4 py-2 rounded-lg border border-border-dark bg-[#111318] text-white text-sm hover:bg-[#282e39] transition-colors"
+                        className="px-4 py-2 rounded-lg border border-border bg-background text-text-main text-sm hover:bg-surface transition-colors"
                       >
                         Xem tất cả booking
                       </button>

@@ -149,11 +149,11 @@ export default function PickupTasksPage() {
   const overdueTasks = pendingTasks.filter((t) => isPast(new Date(t.due_at)));
 
   return (
-    <div className="flex h-full flex-col bg-[#0f172a]">
+    <div className="flex h-full flex-col bg-background">
       {/* Header */}
-      <header className="flex h-16 items-center justify-between border-b border-border-dark bg-surface-dark px-6 shrink-0">
+      <header className="flex h-16 items-center justify-between border-b border-border bg-surface px-6 shrink-0">
         <div className="flex items-center gap-3">
-          <h1 className="text-xl font-bold text-white">Danh sách tác vụ nhận máy</h1>
+          <h1 className="text-xl font-bold text-text-main">Danh sách tác vụ nhận máy</h1>
           <div className="flex items-center gap-2 px-2 py-1 rounded-md bg-primary/10 border border-primary/20">
             <span className="text-[11px] font-bold text-primary uppercase tracking-wider">
               {tasks.length} Task
@@ -162,10 +162,10 @@ export default function PickupTasksPage() {
         </div>
 
         {/* Date Selector */}
-        <div className="flex items-center gap-3 bg-input-dark p-1 rounded-lg border border-border-dark">
+        <div className="flex items-center gap-3 bg-background p-1 rounded-lg border border-border">
           <button
             onClick={() => handleDateChange(-1)}
-            className="p-1.5 hover:bg-surface-dark rounded-md text-text-secondary hover:text-white transition-all"
+            className="p-1.5 hover:bg-surface rounded-md text-text-secondary hover:text-text-main transition-all"
           >
             <span className="material-symbols-outlined text-[18px]">chevron_left</span>
           </button>
@@ -175,7 +175,7 @@ export default function PickupTasksPage() {
               type="date"
               value={format(selectedDate, 'yyyy-MM-dd')}
               onChange={(e) => setSelectedDate(new Date(e.target.value))}
-              className="bg-transparent border-none p-0 text-sm font-bold text-white focus:ring-0 [color-scheme:dark] w-[110px]"
+              className="bg-transparent border-none p-0 text-sm font-bold text-text-main focus:ring-0 w-[110px] outline-none"
             />
             <button
               onClick={() => setSelectedDate(new Date())}
@@ -183,7 +183,7 @@ export default function PickupTasksPage() {
                 'px-2 py-0.5 text-[10px] font-bold rounded uppercase transition-all',
                 isToday(selectedDate)
                   ? 'bg-primary text-white'
-                  : 'bg-surface-dark text-text-secondary hover:text-white'
+                  : 'bg-surface text-text-secondary hover:text-text-main'
               )}
             >
               Hôm nay
@@ -192,7 +192,7 @@ export default function PickupTasksPage() {
 
           <button
             onClick={() => handleDateChange(1)}
-            className="p-1.5 hover:bg-surface-dark rounded-md text-text-secondary hover:text-white transition-all"
+            className="p-1.5 hover:bg-surface rounded-md text-text-secondary hover:text-text-main transition-all"
           >
             <span className="material-symbols-outlined text-[18px]">chevron_right</span>
           </button>
@@ -203,21 +203,21 @@ export default function PickupTasksPage() {
         <div className="max-w-5xl mx-auto space-y-6">
           {/* Stats Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            <div className="bg-surface-dark rounded-xl border border-border-dark p-5 flex items-center justify-between shadow-lg">
+            <div className="bg-surface rounded-xl border border-border p-5 flex items-center justify-between shadow-lg">
               <div>
                 <p className="text-xs text-text-secondary font-bold uppercase tracking-wider mb-1">
                   Tổng tasks
                 </p>
-                <p className="text-2xl font-bold text-white">{tasks.length}</p>
+                <p className="text-2xl font-bold text-text-main">{tasks.length}</p>
               </div>
               <div className="size-10 rounded-lg bg-blue-500/10 flex items-center justify-center border border-blue-500/20">
                 <span className="material-symbols-outlined text-blue-500 text-[20px]">inventory_2</span>
               </div>
             </div>
 
-            <div className="bg-surface-dark rounded-xl border border-red-500/30 p-5 flex items-center justify-between shadow-lg ring-1 ring-red-500/5">
+            <div className="bg-surface rounded-xl border border-red-500/30 p-5 flex items-center justify-between shadow-lg ring-1 ring-red-500/5">
               <div>
-                <p className="text-xs text-red-400 font-bold uppercase tracking-wider mb-1">
+                <p className="text-xs text-red-500 font-bold uppercase tracking-wider mb-1">
                   Quá hạn
                 </p>
                 <p className="text-2xl font-bold text-red-500">{overdueTasks.length}</p>
@@ -227,9 +227,9 @@ export default function PickupTasksPage() {
               </div>
             </div>
 
-            <div className="bg-surface-dark rounded-xl border border-emerald-500/30 p-5 flex items-center justify-between shadow-lg">
+            <div className="bg-surface rounded-xl border border-emerald-500/30 p-5 flex items-center justify-between shadow-lg">
               <div>
-                <p className="text-xs text-emerald-400 font-bold uppercase tracking-wider mb-1">
+                <p className="text-xs text-emerald-500 font-bold uppercase tracking-wider mb-1">
                   Hoàn thành
                 </p>
                 <p className="text-2xl font-bold text-emerald-500">{completedTasks.length}</p>
@@ -246,11 +246,11 @@ export default function PickupTasksPage() {
               <p className="text-sm text-text-secondary">Đang tải tác vụ...</p>
             </div>
           ) : tasks.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-24 bg-surface-dark rounded-2xl border border-border-dark/50 border-dashed">
+            <div className="flex flex-col items-center justify-center py-24 bg-surface rounded-2xl border border-border/50 border-dashed">
               <span className="material-symbols-outlined text-[64px] text-text-secondary/20 mb-4">
                 auto_awesome_motion
               </span>
-              <p className="text-white font-bold">Không có tác vụ nhận máy</p>
+              <p className="text-text-main font-bold">Không có tác vụ nhận máy</p>
               <p className="text-xs text-text-secondary mt-1">Lịch trình ngày này đang trống.</p>
             </div>
           ) : (
@@ -351,10 +351,10 @@ function TaskCard({
   return (
     <div
       className={clsx(
-        'group bg-surface-dark rounded-xl border p-5 transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 shadow-sm',
+        'group bg-surface rounded-xl border p-5 transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 shadow-sm',
         isOverdue && 'border-red-500/30 hover:border-red-500/50 hover:bg-red-500/5',
-        isCompleted && 'opacity-60 grayscale-[0.2] border-border-dark',
-        !isCompleted && !isOverdue && 'border-border-dark hover:border-primary/50 hover:bg-primary/5'
+        isCompleted && 'opacity-60 grayscale-[0.2] border-border',
+        !isCompleted && !isOverdue && 'border-border hover:border-primary/50 hover:bg-primary/5'
       )}
     >
       <div className="flex-1 space-y-4 w-full">
@@ -365,7 +365,7 @@ function TaskCard({
               <span className="material-symbols-outlined text-primary text-[20px]">person_check</span>
             </div>
             <div>
-              <h3 className="text-sm font-bold text-white group-hover:text-primary transition-colors">
+              <h3 className="text-sm font-bold text-text-main group-hover:text-primary transition-colors">
                 {task.booking.customer.name}
               </h3>
               <p className="text-[11px] text-text-secondary mt-0.5">{task.booking.customer.phone}</p>
@@ -377,7 +377,7 @@ function TaskCard({
               <span
                 key={p}
                 title={p}
-                className="size-7 rounded bg-[#0f172a] border border-border-dark flex items-center justify-center text-text-secondary"
+                className="size-7 rounded bg-background border border-border flex items-center justify-center text-text-secondary"
               >
                 <span className="material-symbols-outlined text-[16px]">
                   {platformIcons[p] || 'link'}
@@ -392,9 +392,9 @@ function TaskCard({
           {task.booking.booking_items?.map((item, idx) => (
             <div
               key={idx}
-              className="px-2 py-1 rounded bg-input-dark border border-border-dark text-[10px] text-text-secondary flex items-center gap-1.5"
+              className="px-2 py-1 rounded bg-background border border-border text-[10px] text-text-secondary flex items-center gap-1.5"
             >
-              <span className="font-bold text-white tracking-widest">{item.quantity}x</span>
+              <span className="font-bold text-text-main tracking-widest">{item.quantity}x</span>
               {item.camera.name}
             </div>
           ))}
@@ -411,7 +411,7 @@ function TaskCard({
         <div className="flex flex-wrap items-center gap-y-3 gap-x-6 pt-1">
           <div className="flex items-center gap-2">
             <span className="material-symbols-outlined text-primary text-[18px]">schedule</span>
-            <span className="text-xs font-bold text-white">{formatTime(task.due_at)}</span>
+            <span className="text-xs font-bold text-text-main">{formatTime(task.due_at)}</span>
           </div>
 
           {task.location && (
@@ -478,7 +478,7 @@ function TaskCard({
 
         <button
           onClick={() => router.push(`/calendar?bookingId=${task.booking_id}`)}
-          className="px-6 py-2 rounded-lg border border-border-dark bg-input-dark text-[#9da6b9] text-[11px] font-bold uppercase hover:bg-surface-dark hover:text-white transition-all tracking-wider"
+          className="px-6 py-2 rounded-lg border border-border bg-background text-text-secondary text-[11px] font-bold uppercase hover:bg-surface hover:text-text-main transition-all tracking-wider"
         >
           Chi tiết đơn
         </button>

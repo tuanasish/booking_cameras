@@ -102,14 +102,14 @@ export default function KantraCalendar({
     };
 
     return (
-        <div className="flex flex-col h-full overflow-hidden bg-background-dark">
+        <div className="flex flex-col h-full overflow-hidden bg-background">
             {/* Header */}
-            <header className="flex items-center justify-between px-4 py-3 border-b border-border-dark bg-[#111318] shrink-0 z-20">
+            <header className="flex items-center justify-between px-4 py-3 border-b border-border bg-surface shrink-0 z-20 shadow-sm">
                 <div className="flex items-center gap-4">
                     {/* Sidebar Toggle */}
                     <button
                         onClick={() => setSidebarOpen(!sidebarOpen)}
-                        className="flex items-center justify-center size-9 rounded-lg bg-surface-dark border border-border-dark text-white hover:bg-border-dark transition-colors"
+                        className="flex items-center justify-center size-9 rounded-lg bg-background border border-border text-text-secondary hover:text-text-main transition-colors"
                         title={sidebarOpen ? 'Ẩn sidebar' : 'Hiện sidebar'}
                     >
                         <span className="material-symbols-outlined text-[20px]">
@@ -118,29 +118,29 @@ export default function KantraCalendar({
                     </button>
 
                     {/* Navigation */}
-                    <div className="flex items-center bg-surface-dark border border-border-dark rounded-lg p-0.5">
+                    <div className="flex items-center bg-background border border-border rounded-lg p-0.5">
                         <button
                             onClick={viewMode === 'day' ? handlePrevDay : handlePrevWeek}
-                            className="size-7 flex items-center justify-center rounded hover:bg-white/5 text-white/70"
+                            className="size-7 flex items-center justify-center rounded hover:bg-surface text-text-secondary hover:text-text-main transition-colors"
                         >
                             <span className="material-symbols-outlined text-sm">chevron_left</span>
                         </button>
                         <button
                             onClick={handleToday}
-                            className="px-3 text-sm font-medium text-white/90 hover:text-white transition-colors"
+                            className="px-3 text-sm font-medium text-text-secondary hover:text-text-main transition-colors"
                         >
                             Hôm nay
                         </button>
                         <button
                             onClick={viewMode === 'day' ? handleNextDay : handleNextWeek}
-                            className="size-7 flex items-center justify-center rounded hover:bg-white/5 text-white/70"
+                            className="size-7 flex items-center justify-center rounded hover:bg-surface text-text-secondary hover:text-text-main transition-colors"
                         >
                             <span className="material-symbols-outlined text-sm">chevron_right</span>
                         </button>
                     </div>
 
                     {/* Date Display */}
-                    <h2 className="text-xl font-medium text-white">
+                    <h2 className="text-xl font-medium text-text-main tracking-tight">
                         {viewMode === 'week'
                             ? `${format(weekDays[0], 'd MMM', { locale: vi })} - ${format(weekDays[6], 'd MMM, yyyy', { locale: vi })}`
                             : format(currentDate, 'd MMMM, yyyy', { locale: vi })
@@ -151,23 +151,23 @@ export default function KantraCalendar({
                 <div className="flex items-center gap-3">
                     {/* Search */}
                     <div className="hidden md:flex items-center relative">
-                        <span className="material-symbols-outlined absolute left-2 text-slate-500">search</span>
+                        <span className="material-symbols-outlined absolute left-2 text-text-secondary">search</span>
                         <input
                             type="text"
                             placeholder="Tìm kiếm"
-                            className="pl-9 pr-4 py-2 bg-surface-dark rounded-lg text-sm border-none focus:ring-1 focus:ring-primary placeholder-slate-500 w-48 transition-all"
+                            className="pl-9 pr-4 py-2 bg-background rounded-lg text-sm border border-border focus:ring-1 focus:ring-primary outline-none placeholder-text-secondary text-text-main w-48 transition-all"
                         />
                     </div>
 
                     {/* View Mode Toggle */}
-                    <div className="flex p-1 bg-surface-dark border border-border-dark rounded-lg">
+                    <div className="flex p-1 bg-background border border-border rounded-lg">
                         <button
                             onClick={() => setViewMode('week')}
                             className={clsx(
                                 'px-4 py-1.5 text-sm font-medium transition-colors flex items-center gap-1.5',
                                 viewMode === 'week'
                                     ? 'text-white bg-primary rounded shadow-sm font-bold'
-                                    : 'text-slate-400 hover:text-white'
+                                    : 'text-text-secondary hover:text-text-main'
                             )}
                         >
                             <span className="material-symbols-outlined text-[18px]">calendar_view_week</span>
@@ -179,7 +179,7 @@ export default function KantraCalendar({
                                 'px-4 py-1.5 text-sm font-medium transition-colors flex items-center gap-1.5',
                                 viewMode === 'day'
                                     ? 'text-white bg-primary rounded shadow-sm font-bold'
-                                    : 'text-slate-400 hover:text-white'
+                                    : 'text-text-secondary hover:text-text-main'
                             )}
                         >
                             <span className="material-symbols-outlined text-[18px]">view_column</span>
@@ -188,7 +188,7 @@ export default function KantraCalendar({
                     </div>
 
                     {/* Settings */}
-                    <button className="flex size-9 items-center justify-center rounded-lg bg-surface-dark border border-border-dark text-white hover:bg-border-dark transition-colors">
+                    <button className="flex size-9 items-center justify-center rounded-lg bg-background border border-border text-text-secondary hover:text-text-main transition-colors">
                         <span className="material-symbols-outlined text-[20px]">settings</span>
                     </button>
                 </div>
@@ -199,7 +199,7 @@ export default function KantraCalendar({
                 {/* Collapsible Sidebar */}
                 <div
                     className={clsx(
-                        'flex flex-col border-r border-border-dark bg-background-dark overflow-y-auto transition-all duration-300',
+                        'flex flex-col border-r border-border bg-background transition-all duration-300',
                         sidebarOpen ? 'w-64' : 'w-0 overflow-hidden'
                     )}
                 >

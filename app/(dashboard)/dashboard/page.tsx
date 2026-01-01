@@ -130,12 +130,12 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-[#111318]">
+    <div className="flex h-full flex-col overflow-hidden bg-background">
       {/* Header */}
-      <header className="flex h-16 items-center justify-between border-b border-border-dark bg-[#111318] px-6 shrink-0">
+      <header className="flex h-16 items-center justify-between border-b border-border bg-surface px-6 shrink-0">
         <div>
-          <h1 className="text-xl font-bold text-white">Dashboard Doanh thu</h1>
-          <p className="text-sm text-[#9da6b9] mt-1">Theo dõi dòng tiền và hiệu suất cho thuê thiết bị</p>
+          <h1 className="text-xl font-bold text-text-main">Dashboard Doanh thu</h1>
+          <p className="text-sm text-text-secondary mt-1">Theo dõi dòng tiền và hiệu suất cho thuê thiết bị</p>
         </div>
       </header>
 
@@ -144,17 +144,17 @@ export default function DashboardPage() {
           {/* Filters */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
             <div className="flex flex-col gap-1">
-              <h2 className="text-2xl font-bold text-white">Tổng quan hiệu quả</h2>
+              <h2 className="text-2xl font-bold text-text-main">Tổng quan hiệu quả</h2>
             </div>
             <div className="flex flex-wrap items-center gap-3">
-              <div className="flex bg-[#1a1f29] p-1 rounded-xl border border-border-dark">
+              <div className="flex bg-surface p-1 rounded-xl border border-border">
                 <button
                   onClick={() => setDateRange('today')}
                   className={clsx(
                     'px-3 py-1.5 rounded-lg text-sm font-medium transition-colors',
                     dateRange === 'today'
                       ? 'bg-primary text-white'
-                      : 'text-[#9da6b9] hover:text-white'
+                      : 'text-slate-500 dark:text-[#9da6b9] hover:text-slate-900 dark:hover:text-white'
                   )}
                 >
                   Hôm nay
@@ -165,7 +165,7 @@ export default function DashboardPage() {
                     'px-3 py-1.5 rounded-lg text-sm font-medium transition-colors',
                     dateRange === 'week'
                       ? 'bg-primary text-white'
-                      : 'text-[#9da6b9] hover:text-white'
+                      : 'text-slate-500 dark:text-[#9da6b9] hover:text-slate-900 dark:hover:text-white'
                   )}
                 >
                   Tuần này
@@ -176,7 +176,7 @@ export default function DashboardPage() {
                     'px-3 py-1.5 rounded-lg text-sm font-medium transition-colors',
                     dateRange === 'month'
                       ? 'bg-primary text-white'
-                      : 'text-[#9da6b9] hover:text-white'
+                      : 'text-slate-500 dark:text-[#9da6b9] hover:text-slate-900 dark:hover:text-white'
                   )}
                 >
                   Tháng này
@@ -187,7 +187,7 @@ export default function DashboardPage() {
                     'px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-1',
                     dateRange === 'custom'
                       ? 'bg-primary text-white'
-                      : 'text-[#9da6b9] hover:text-white'
+                      : 'text-slate-500 dark:text-[#9da6b9] hover:text-slate-900 dark:hover:text-white'
                   )}
                 >
                   <span className="material-symbols-outlined text-[16px]">calendar_month</span>
@@ -196,7 +196,7 @@ export default function DashboardPage() {
               </div>
               <button
                 onClick={handleExportCSV}
-                className="flex items-center gap-2 px-4 py-2 bg-[#1a1f29] border border-border-dark hover:bg-[#282e39] rounded-xl text-sm font-semibold text-white transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-surface border border-border hover:bg-surface-hover rounded-xl text-sm font-semibold text-text-main transition-colors"
               >
                 <span className="material-symbols-outlined text-[20px]">download</span>
                 Export CSV
@@ -206,19 +206,19 @@ export default function DashboardPage() {
 
           {/* Custom Date Range */}
           {dateRange === 'custom' && (
-            <div className="mb-6 flex items-center gap-3 bg-[#1a1f29] p-4 rounded-xl border border-border-dark">
+            <div className="mb-6 flex items-center gap-3 bg-surface p-4 rounded-xl border border-border">
               <input
                 type="date"
                 value={customStartDate}
                 onChange={(e) => setCustomStartDate(e.target.value)}
-                className="px-3 py-2 bg-[#111318] border border-border-dark rounded-lg text-white [color-scheme:dark] focus:ring-1 focus:ring-primary"
+                className="px-3 py-2 bg-background border border-border rounded-lg text-text-main focus:ring-1 focus:ring-primary outline-none"
               />
-              <span className="text-[#9da6b9]">đến</span>
+              <span className="text-text-secondary">đến</span>
               <input
                 type="date"
                 value={customEndDate}
                 onChange={(e) => setCustomEndDate(e.target.value)}
-                className="px-3 py-2 bg-[#111318] border border-border-dark rounded-lg text-white [color-scheme:dark] focus:ring-1 focus:ring-primary"
+                className="px-3 py-2 bg-background border border-border rounded-lg text-text-main focus:ring-1 focus:ring-primary outline-none"
               />
             </div>
           )}
@@ -239,75 +239,75 @@ export default function DashboardPage() {
                   <p className="text-3xl font-bold">{formatMoney(data.summary.total_revenue)}đ</p>
                 </div>
 
-                <div className="bg-[#1a1f29] rounded-xl border border-border-dark p-5">
+                <div className="bg-surface rounded-xl border border-border p-5 shadow-sm">
                   <div className="flex items-center justify-between mb-2">
-                    <p className="text-sm text-[#9da6b9]">Số lượt cho thuê</p>
+                    <p className="text-sm text-text-secondary">Số lượt cho thuê</p>
                     <span className="material-symbols-outlined text-[24px] text-primary">assignment</span>
                   </div>
-                  <p className="text-3xl font-bold text-white">{data.summary.total_bookings}</p>
+                  <p className="text-3xl font-bold text-text-main">{data.summary.total_bookings}</p>
                 </div>
 
-                <div className="bg-[#1a1f29] rounded-xl border border-border-dark p-5">
+                <div className="bg-surface rounded-xl border border-border p-5 shadow-sm">
                   <div className="flex items-center justify-between mb-2">
-                    <p className="text-sm text-[#9da6b9]">Trung bình/booking</p>
-                    <span className="material-symbols-outlined text-[24px] text-emerald-400">trending_up</span>
+                    <p className="text-sm text-text-secondary">Trung bình/booking</p>
+                    <span className="material-symbols-outlined text-[24px] text-emerald-500">trending_up</span>
                   </div>
-                  <p className="text-3xl font-bold text-white">
+                  <p className="text-3xl font-bold text-text-main">
                     {formatMoney(data.summary.avg_revenue_per_booking)}đ
                   </p>
                 </div>
 
-                <div className="bg-[#1a1f29] rounded-xl border border-border-dark p-5">
+                <div className="bg-surface rounded-xl border border-border p-5 shadow-sm">
                   <div className="flex items-center justify-between mb-2">
-                    <p className="text-sm text-[#9da6b9]">Số máy</p>
-                    <span className="material-symbols-outlined text-[24px] text-yellow-400">photo_camera</span>
+                    <p className="text-sm text-text-secondary">Số máy</p>
+                    <span className="material-symbols-outlined text-[24px] text-yellow-500">photo_camera</span>
                   </div>
-                  <p className="text-3xl font-bold text-white">{data.by_camera?.length || 0}</p>
+                  <p className="text-3xl font-bold text-text-main">{data.by_camera?.length || 0}</p>
                 </div>
               </div>
 
               {/* Revenue by Camera */}
               {data.by_camera && data.by_camera.length > 0 && (
-                <div className="bg-[#1a1f29] rounded-xl border border-border-dark p-6 mb-6">
-                  <h3 className="text-lg font-bold text-white mb-4">Doanh thu theo máy</h3>
+                <div className="bg-surface rounded-xl border border-border p-6 mb-6 shadow-sm">
+                  <h3 className="text-lg font-bold text-text-main mb-4">Doanh thu theo máy</h3>
                   <div className="overflow-x-auto">
                     <table className="w-full">
-                      <thead className="bg-[#111318] border-b border-border-dark">
+                      <thead className="bg-background border-b border-border">
                         <tr>
-                          <th className="px-4 py-3 text-left text-xs font-semibold text-[#9da6b9] uppercase">
+                          <th className="px-4 py-3 text-left text-xs font-semibold text-text-secondary uppercase">
                             Máy ảnh
                           </th>
-                          <th className="px-4 py-3 text-left text-xs font-semibold text-[#9da6b9] uppercase">
+                          <th className="px-4 py-3 text-left text-xs font-semibold text-text-secondary uppercase">
                             Dòng máy
                           </th>
-                          <th className="px-4 py-3 text-right text-xs font-semibold text-[#9da6b9] uppercase">
+                          <th className="px-4 py-3 text-right text-xs font-semibold text-text-secondary uppercase">
                             Doanh thu
                           </th>
-                          <th className="px-4 py-3 text-right text-xs font-semibold text-[#9da6b9] uppercase">
+                          <th className="px-4 py-3 text-right text-xs font-semibold text-text-secondary uppercase">
                             Số lượt
                           </th>
-                          <th className="px-4 py-3 text-right text-xs font-semibold text-[#9da6b9] uppercase">
+                          <th className="px-4 py-3 text-right text-xs font-semibold text-text-secondary uppercase">
                             SL thuê
                           </th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-border-dark">
                         {data.by_camera.map((item) => (
-                          <tr key={item.camera_id} className="hover:bg-[#111318] transition-colors">
+                          <tr key={item.camera_id} className="hover:bg-background transition-colors">
                             <td className="px-4 py-3">
-                              <p className="text-sm font-medium text-white">{item.camera_name}</p>
+                              <p className="text-sm font-medium text-text-main">{item.camera_name}</p>
                             </td>
                             <td className="px-4 py-3">
-                              <p className="text-sm text-[#9da6b9]">{item.model_line || '-'}</p>
+                              <p className="text-sm text-text-secondary">{item.model_line || '-'}</p>
                             </td>
                             <td className="px-4 py-3 text-right">
-                              <p className="text-sm font-bold text-white">{formatMoney(item.revenue)}đ</p>
+                              <p className="text-sm font-bold text-text-main">{formatMoney(item.revenue)}đ</p>
                             </td>
                             <td className="px-4 py-3 text-right">
-                              <p className="text-sm text-white">{item.bookings}</p>
+                              <p className="text-sm text-text-main">{item.bookings}</p>
                             </td>
                             <td className="px-4 py-3 text-right">
-                              <p className="text-sm text-white">{item.quantity}</p>
+                              <p className="text-sm text-text-main">{item.quantity}</p>
                             </td>
                           </tr>
                         ))}
@@ -319,40 +319,40 @@ export default function DashboardPage() {
 
               {/* Revenue by Model Line */}
               {data.by_model_line && data.by_model_line.length > 0 && (
-                <div className="bg-[#1a1f29] rounded-xl border border-border-dark p-6">
-                  <h3 className="text-lg font-bold text-white mb-4">Doanh thu theo dòng máy</h3>
+                <div className="bg-white dark:bg-[#1a1f29] rounded-xl border border-slate-200 dark:border-border-dark p-6">
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Doanh thu theo dòng máy</h3>
                   <div className="overflow-x-auto">
                     <table className="w-full">
-                      <thead className="bg-[#111318] border-b border-border-dark">
+                      <thead className="bg-background border-b border-border">
                         <tr>
-                          <th className="px-4 py-3 text-left text-xs font-semibold text-[#9da6b9] uppercase">
+                          <th className="px-4 py-3 text-left text-xs font-semibold text-text-secondary uppercase">
                             Dòng máy
                           </th>
-                          <th className="px-4 py-3 text-right text-xs font-semibold text-[#9da6b9] uppercase">
+                          <th className="px-4 py-3 text-right text-xs font-semibold text-text-secondary uppercase">
                             Doanh thu
                           </th>
-                          <th className="px-4 py-3 text-right text-xs font-semibold text-[#9da6b9] uppercase">
+                          <th className="px-4 py-3 text-right text-xs font-semibold text-text-secondary uppercase">
                             Số lượt
                           </th>
-                          <th className="px-4 py-3 text-right text-xs font-semibold text-[#9da6b9] uppercase">
+                          <th className="px-4 py-3 text-right text-xs font-semibold text-text-secondary uppercase">
                             SL thuê
                           </th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-border-dark">
                         {data.by_model_line.map((item, idx) => (
-                          <tr key={idx} className="hover:bg-[#111318] transition-colors">
+                          <tr key={idx} className="hover:bg-slate-50 dark:hover:bg-[#111318] transition-colors">
                             <td className="px-4 py-3">
-                              <p className="text-sm font-medium text-white">{item.model_line}</p>
+                              <p className="text-sm font-medium text-slate-900 dark:text-white">{item.model_line}</p>
                             </td>
                             <td className="px-4 py-3 text-right">
-                              <p className="text-sm font-bold text-white">{formatMoney(item.revenue)}đ</p>
+                              <p className="text-sm font-bold text-slate-900 dark:text-white">{formatMoney(item.revenue)}đ</p>
                             </td>
                             <td className="px-4 py-3 text-right">
-                              <p className="text-sm text-white">{item.bookings}</p>
+                              <p className="text-sm text-slate-900 dark:text-white">{item.bookings}</p>
                             </td>
                             <td className="px-4 py-3 text-right">
-                              <p className="text-sm text-white">{item.quantity}</p>
+                              <p className="text-sm text-slate-900 dark:text-white">{item.quantity}</p>
                             </td>
                           </tr>
                         ))}

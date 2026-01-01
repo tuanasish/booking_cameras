@@ -6,6 +6,7 @@ import { useAuth } from '@/lib/auth/context';
 import { useRouter } from 'next/navigation';
 import { useSidebar } from '@/lib/context/SidebarContext';
 import clsx from 'clsx';
+import ThemeToggle from './ThemeToggle';
 
 interface NavItem {
   href: string;
@@ -48,20 +49,20 @@ export default function Sidebar() {
   return (
     <aside
       className={clsx(
-        'hidden flex-col border-r border-slate-200 dark:border-surface-border bg-white dark:bg-[#151e2e] md:flex z-20 transition-all duration-300',
+        'hidden flex-col border-r border-border bg-surface md:flex z-20 transition-all duration-300',
         isCollapsed ? 'w-16' : 'w-64'
       )}
     >
       {/* Logo & Toggle */}
-      <div className="flex h-16 items-center justify-between px-4 border-b border-slate-200 dark:border-surface-border">
+      <div className="flex h-16 items-center justify-between px-4 border-b border-border">
         {!isCollapsed && (
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center size-8 rounded-lg bg-primary/20 text-primary">
               <span className="material-symbols-outlined text-2xl">photo_camera</span>
             </div>
-            <div className="flex flex-col">
+            <div className="flex flex-col text-text-main">
               <h1 className="text-base font-bold leading-none tracking-tight">Kantra</h1>
-              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">
+              <span className="text-xs text-text-secondary font-medium mt-1">
                 Operations
               </span>
             </div>
@@ -72,12 +73,12 @@ export default function Sidebar() {
         <button
           onClick={toggleSidebar}
           className={clsx(
-            'flex items-center justify-center size-8 rounded-lg hover:bg-slate-100 dark:hover:bg-surface-dark transition-colors',
+            'flex items-center justify-center size-8 rounded-lg hover:bg-surface-hover transition-colors',
             isCollapsed && 'mx-auto'
           )}
           title={isCollapsed ? 'Mở rộng menu' : 'Thu gọn menu'}
         >
-          <span className="material-symbols-outlined text-[20px] text-slate-500">
+          <span className="material-symbols-outlined text-[20px] text-text-secondary">
             {isCollapsed ? 'menu' : 'menu_open'}
           </span>
         </button>
@@ -95,8 +96,8 @@ export default function Sidebar() {
                 className={clsx(
                   'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
                   isActive
-                    ? 'bg-primary/10 text-primary dark:bg-primary/20'
-                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-surface-dark dark:hover:text-slate-100',
+                    ? 'bg-primary/10 text-primary'
+                    : 'text-text-secondary hover:bg-surface-hover hover:text-text-main',
                   isCollapsed && 'justify-center px-2'
                 )}
                 title={isCollapsed ? item.label : undefined}
@@ -117,7 +118,7 @@ export default function Sidebar() {
         {userRole === 'admin' && (
           <div className="mt-8">
             {!isCollapsed && (
-              <h3 className="px-3 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-500 mb-2">
+              <h3 className="px-3 text-xs font-semibold uppercase tracking-wider text-text-secondary mb-2">
                 Quản trị
               </h3>
             )}
@@ -131,8 +132,8 @@ export default function Sidebar() {
                     className={clsx(
                       'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
                       isActive
-                        ? 'bg-primary/10 text-primary dark:bg-primary/20'
-                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-surface-dark dark:hover:text-slate-100',
+                        ? 'bg-primary/10 text-primary'
+                        : 'text-text-secondary hover:bg-surface-hover hover:text-text-main',
                       isCollapsed && 'justify-center px-2'
                     )}
                     title={isCollapsed ? item.label : undefined}
@@ -147,8 +148,12 @@ export default function Sidebar() {
         )}
       </div>
 
+      <div className="px-2 pb-2 border-t border-border pt-2">
+        <ThemeToggle showLabel={!isCollapsed} />
+      </div>
+
       {/* User Section */}
-      <div className="border-t border-slate-200 dark:border-surface-border p-2">
+      <div className="border-t border-border p-2">
         <div className={clsx(
           'flex items-center gap-3 px-2 py-2.5',
           isCollapsed && 'justify-center'
@@ -159,16 +164,16 @@ export default function Sidebar() {
           {!isCollapsed && (
             <>
               <div className="flex flex-col items-start flex-1 min-w-0">
-                <span className="text-sm font-medium text-slate-900 dark:text-slate-200 truncate w-full">
+                <span className="text-sm font-medium text-text-main truncate w-full">
                   {userName || 'User'}
                 </span>
-                <span className="text-xs text-slate-500 dark:text-slate-400">
+                <span className="text-xs text-text-secondary">
                   {userRole === 'admin' ? 'Admin' : 'Employee'}
                 </span>
               </div>
               <button
                 onClick={handleSignOut}
-                className="p-2 text-slate-500 hover:text-red-500 dark:text-slate-400 dark:hover:text-red-400 transition-colors"
+                className="p-2 text-text-secondary hover:text-rose-500 transition-colors"
                 title="Đăng xuất"
               >
                 <span className="material-symbols-outlined text-[20px]">logout</span>

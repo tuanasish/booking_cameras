@@ -90,38 +90,38 @@ export default function WeekMatrixGrid({
     };
 
     return (
-        <div className="flex flex-col flex-1 overflow-hidden bg-background-dark">
+        <div className="flex flex-col flex-1 overflow-hidden bg-background">
             {/* Header Row - Days */}
-            <div className="flex border-b border-border-dark bg-[#111318] shrink-0">
+            <div className="flex border-b border-border bg-surface shrink-0">
                 {/* Camera column header */}
-                <div className="w-48 shrink-0 p-3 border-r border-border-dark font-semibold text-sm text-slate-400">
+                <div className="w-48 shrink-0 p-4 border-r border-border font-bold text-sm text-text-secondary uppercase tracking-wider">
                     Thiết bị
                 </div>
 
                 {/* Day headers */}
-                <div className="flex-1 grid grid-cols-7 divide-x divide-border-dark">
+                <div className="flex-1 grid grid-cols-7 divide-x divide-border">
                     {weekDays.map((day) => {
                         const isTodayDate = isToday(day);
                         return (
                             <div
                                 key={day.toISOString()}
                                 className={clsx(
-                                    'flex flex-col items-center justify-center py-2',
-                                    isTodayDate && 'bg-primary/10'
+                                    'flex flex-col items-center justify-center py-2 transition-colors',
+                                    isTodayDate && 'bg-primary/5'
                                 )}
                             >
                                 <span
                                     className={clsx(
-                                        'text-xs font-medium uppercase',
-                                        isTodayDate ? 'text-primary' : 'text-slate-500'
+                                        'text-[10px] font-bold uppercase tracking-widest',
+                                        isTodayDate ? 'text-primary' : 'text-text-secondary'
                                     )}
                                 >
                                     {format(day, 'EEE', { locale: vi })}
                                 </span>
                                 <span
                                     className={clsx(
-                                        'text-lg font-semibold mt-0.5',
-                                        isTodayDate ? 'text-primary' : 'text-white'
+                                        'text-xl font-bold mt-0.5',
+                                        isTodayDate ? 'text-primary' : 'text-text-main'
                                     )}
                                 >
                                     {format(day, 'd')}
@@ -133,17 +133,17 @@ export default function WeekMatrixGrid({
             </div>
 
             {/* Scrollable Body - Camera Rows */}
-            <div className="flex-1 overflow-y-auto">
+            <div className="flex-1 overflow-y-auto custom-scrollbar">
                 {cameras.map((camera) => (
-                    <div key={camera.id} className="flex border-b border-border-dark hover:bg-surface-dark/30 transition-colors">
+                    <div key={camera.id} className="flex border-b border-border hover:bg-surface/50 transition-colors group">
                         {/* Camera Name Column */}
-                        <div className="w-48 shrink-0 p-3 border-r border-border-dark">
-                            <div className="font-medium text-sm text-white truncate">{camera.name}</div>
-                            <div className="text-xs text-slate-500">SL: {camera.quantity}</div>
+                        <div className="w-48 shrink-0 p-4 border-r border-border bg-surface/30">
+                            <div className="font-semibold text-sm text-text-main truncate group-hover:text-primary transition-colors">{camera.name}</div>
+                            <div className="text-xs text-text-secondary mt-1">SL: {camera.quantity}</div>
                         </div>
 
                         {/* Day Cells */}
-                        <div className="flex-1 grid grid-cols-7 divide-x divide-border-dark">
+                        <div className="flex-1 grid grid-cols-7 divide-x divide-border">
                             {weekDays.map((day) => {
                                 const dayBookings = getBookingsForCameraDay(camera.id, day);
                                 const isTodayDate = isToday(day);
@@ -152,8 +152,8 @@ export default function WeekMatrixGrid({
                                     <div
                                         key={day.toISOString()}
                                         className={clsx(
-                                            'relative min-h-[60px] p-1 cursor-pointer hover:bg-surface-dark/50 transition-colors',
-                                            isTodayDate && 'bg-primary/5'
+                                            'relative min-h-[70px] p-1.5 cursor-pointer hover:bg-primary/[0.02] transition-colors',
+                                            isTodayDate && 'bg-primary/[0.03]'
                                         )}
                                         onClick={() => {
                                             if (dayBookings.length === 0) {
@@ -195,8 +195,10 @@ export default function WeekMatrixGrid({
 
                                         {/* Empty state indicator */}
                                         {dayBookings.length === 0 && (
-                                            <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-                                                <span className="material-symbols-outlined text-slate-600 text-lg">add</span>
+                                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <div className="size-8 rounded-full bg-primary/10 flex items-center justify-center">
+                                                    <span className="material-symbols-outlined text-primary text-lg">add</span>
+                                                </div>
                                             </div>
                                         )}
                                     </div>
@@ -215,16 +217,16 @@ export default function WeekMatrixGrid({
             </div>
 
             {/* Legend Footer */}
-            <div className="flex items-center gap-4 px-4 py-2 border-t border-border-dark bg-[#111318] text-xs text-slate-500">
-                <span className="font-medium">Chú thích:</span>
-                <span className="flex items-center gap-1.5">
-                    <span className="size-3 rounded bg-emerald-500"></span> Đã thanh toán
+            <div className="flex items-center gap-6 px-6 py-3 border-t border-border bg-surface text-xs font-medium text-text-secondary shadow-sm">
+                <span className="text-text-main font-bold uppercase tracking-wider text-[10px]">Chú thích:</span>
+                <span className="flex items-center gap-2">
+                    <span className="size-2.5 rounded-full bg-teal-500 shadow-sm shadow-teal-500/30"></span> Đã thanh toán
                 </span>
-                <span className="flex items-center gap-1.5">
-                    <span className="size-3 rounded bg-amber-500"></span> Đã cọc
+                <span className="flex items-center gap-2">
+                    <span className="size-2.5 rounded-full bg-amber-500 shadow-sm shadow-amber-500/30"></span> Đã cọc
                 </span>
-                <span className="flex items-center gap-1.5">
-                    <span className="size-3 rounded bg-red-500"></span> Chưa cọc
+                <span className="flex items-center gap-2">
+                    <span className="size-2.5 rounded-full bg-red-500 shadow-sm shadow-red-500/30"></span> Chưa cọc
                 </span>
             </div>
         </div>

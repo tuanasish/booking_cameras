@@ -40,27 +40,27 @@ export default function CalendarSidebar({
     const weekDays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
     return (
-        <aside className="w-64 flex flex-col flex-shrink-0 border-r border-border-dark bg-background-dark overflow-y-auto pt-4 pb-10 hidden lg:flex">
+        <aside className="w-64 flex flex-col flex-shrink-0 border-r border-border bg-surface overflow-y-auto pt-4 pb-10 hidden lg:flex">
             {/* Create Button */}
             <div className="px-4 mb-6">
                 <button
                     onClick={onCreateBooking}
-                    className="flex items-center gap-3 bg-surface-dark shadow-none border border-border-dark hover:border-primary/50 rounded-full px-4 py-3 min-w-[140px] transition-all group"
+                    className="flex items-center gap-3 bg-background shadow-sm border border-border hover:border-primary/50 rounded-full px-4 py-3 min-w-[140px] transition-all group"
                 >
                     <span className="material-symbols-outlined text-4xl text-primary">add</span>
-                    <span className="font-medium text-sm group-hover:text-primary transition-colors">Tạo mới</span>
+                    <span className="font-medium text-sm text-text-main group-hover:text-primary transition-colors">Tạo mới</span>
                 </button>
             </div>
 
             {/* Mini Calendar */}
             <div className="px-4 mb-4">
                 <div className="flex items-center justify-between mb-2 pl-2 pr-1">
-                    <span className="font-medium text-sm">{format(currentDate, 'MMMM yyyy', { locale: vi })}</span>
+                    <span className="font-medium text-sm text-text-main">{format(currentDate, 'MMMM yyyy', { locale: vi })}</span>
                     <div className="flex gap-1">
-                        <button className="size-7 flex items-center justify-center rounded-full hover:bg-surface-dark">
+                        <button className="size-7 flex items-center justify-center rounded-full hover:bg-background text-text-secondary hover:text-text-main transition-colors">
                             <span className="material-symbols-outlined text-sm">chevron_left</span>
                         </button>
-                        <button className="size-7 flex items-center justify-center rounded-full hover:bg-surface-dark">
+                        <button className="size-7 flex items-center justify-center rounded-full hover:bg-background text-text-secondary hover:text-text-main transition-colors">
                             <span className="material-symbols-outlined text-sm">chevron_right</span>
                         </button>
                     </div>
@@ -69,7 +69,7 @@ export default function CalendarSidebar({
                 {/* Week day headers */}
                 <div className="grid grid-cols-7 text-center text-xs mb-1">
                     {weekDays.map((d, i) => (
-                        <span key={i} className="text-slate-500 font-medium py-1">{d}</span>
+                        <span key={i} className="text-text-secondary font-medium py-1">{d}</span>
                     ))}
                 </div>
 
@@ -86,9 +86,9 @@ export default function CalendarSidebar({
                                 onClick={() => onDateSelect(d)}
                                 className={clsx(
                                     'size-7 rounded-full flex items-center justify-center transition-colors',
-                                    !isCurrentMonth && 'text-slate-600',
-                                    isCurrentMonth && !isSelected && 'hover:bg-surface-dark',
-                                    isSelected && 'bg-primary text-white',
+                                    !isCurrentMonth && 'text-text-secondary/40',
+                                    isCurrentMonth && !isSelected && 'hover:bg-background text-text-secondary hover:text-text-main',
+                                    isSelected && 'bg-primary text-white font-bold',
                                     isTodayDate && !isSelected && 'ring-1 ring-primary text-primary'
                                 )}
                             >
@@ -102,13 +102,13 @@ export default function CalendarSidebar({
             {/* Search */}
             <div className="px-4 mb-4">
                 <div className="relative">
-                    <span className="material-symbols-outlined absolute left-3 top-2.5 text-slate-500 text-[20px]">
+                    <span className="material-symbols-outlined absolute left-3 top-2.5 text-text-secondary text-[20px]">
                         person_search
                     </span>
                     <input
                         type="text"
                         placeholder="Tìm khách hàng / Booking ID"
-                        className="pl-10 pr-3 py-2 w-full bg-surface-dark rounded border border-transparent focus:border-primary focus:ring-0 text-xs transition-colors"
+                        className="pl-10 pr-3 py-2 w-full bg-background rounded border border-border focus:border-primary focus:ring-0 text-xs transition-colors placeholder-text-secondary text-text-main outline-none"
                     />
                 </div>
             </div>
@@ -116,7 +116,7 @@ export default function CalendarSidebar({
             {/* Cameras Section */}
             <div className="flex flex-col gap-1">
                 <details className="group px-2" open>
-                    <summary className="flex cursor-pointer items-center justify-between px-3 py-2 rounded hover:bg-surface-dark transition-colors">
+                    <summary className="flex cursor-pointer items-center justify-between px-3 py-2 rounded hover:bg-background transition-colors text-text-main">
                         <span className="text-sm font-medium">Cameras</span>
                         <span className="material-symbols-outlined text-lg transition-transform group-open:rotate-180">
                             expand_more
@@ -135,12 +135,12 @@ export default function CalendarSidebar({
                                     className={clsx(
                                         'text-sm truncate flex-1 transition-colors',
                                         selectedCameraIds.includes(camera.id)
-                                            ? 'text-white group-hover/item:text-white'
-                                            : 'text-slate-500 group-hover/item:text-white'
+                                            ? 'text-text-main group-hover/item:text-text-main'
+                                            : 'text-text-secondary group-hover/item:text-text-main'
                                     )}
                                 >
                                     {camera.name}
-                                    <span className="text-xs text-slate-500 ml-1">(SL: {camera.quantity})</span>
+                                    <span className="text-xs text-text-secondary ml-1">(SL: {camera.quantity})</span>
                                 </span>
                             </label>
                         ))}
@@ -149,7 +149,7 @@ export default function CalendarSidebar({
 
                 {/* Accessories Section */}
                 <details className="group px-2">
-                    <summary className="flex cursor-pointer items-center justify-between px-3 py-2 rounded hover:bg-surface-dark transition-colors">
+                    <summary className="flex cursor-pointer items-center justify-between px-3 py-2 rounded hover:bg-background transition-colors text-text-main">
                         <span className="text-sm font-medium">Phụ kiện</span>
                         <span className="material-symbols-outlined text-lg transition-transform group-open:rotate-180">
                             expand_more
@@ -159,18 +159,18 @@ export default function CalendarSidebar({
                         <label className="flex items-center gap-3 cursor-pointer group/item">
                             <input
                                 type="checkbox"
-                                className="rounded border-gray-500 bg-transparent text-primary focus:ring-0 focus:ring-offset-0 size-4"
+                                className="rounded border-border bg-transparent text-primary focus:ring-0 focus:ring-offset-0 size-4"
                             />
-                            <span className="text-sm truncate flex-1 text-slate-500 group-hover/item:text-white transition-colors">
+                            <span className="text-sm truncate flex-1 text-text-secondary group-hover/item:text-text-main transition-colors">
                                 Tripods
                             </span>
                         </label>
                         <label className="flex items-center gap-3 cursor-pointer group/item">
                             <input
                                 type="checkbox"
-                                className="rounded border-gray-500 bg-transparent text-primary focus:ring-0 focus:ring-offset-0 size-4"
+                                className="rounded border-border bg-transparent text-primary focus:ring-0 focus:ring-offset-0 size-4"
                             />
-                            <span className="text-sm truncate flex-1 text-slate-500 group-hover/item:text-white transition-colors">
+                            <span className="text-sm truncate flex-1 text-text-secondary group-hover/item:text-text-main transition-colors">
                                 Lighting
                             </span>
                         </label>
@@ -180,18 +180,18 @@ export default function CalendarSidebar({
 
             {/* Legend */}
             <div className="mt-auto px-4 pt-4">
-                <div className="bg-surface-dark/50 rounded-lg p-3 text-xs text-slate-500 border border-border-dark">
-                    <p className="font-medium text-white mb-1">Chú thích</p>
+                <div className="bg-background/50 rounded-lg p-3 text-xs text-text-secondary border border-border">
+                    <p className="font-medium text-text-main mb-1">Chú thích</p>
                     <div className="flex items-center gap-2 mb-1">
-                        <div className="size-2 rounded-full bg-red-400"></div>
+                        <div className="size-2 rounded-full bg-red-400 shadow-sm shadow-red-400/20"></div>
                         <span>Chưa cọc</span>
                     </div>
                     <div className="flex items-center gap-2 mb-1">
-                        <div className="size-2 rounded-full bg-yellow-400"></div>
+                        <div className="size-2 rounded-full bg-yellow-400 shadow-sm shadow-yellow-400/20"></div>
                         <span>Đã cọc</span>
                     </div>
                     <div className="flex items-center gap-2">
-                        <div className="size-2 rounded-full bg-teal-400"></div>
+                        <div className="size-2 rounded-full bg-teal-500 shadow-sm shadow-teal-500/20"></div>
                         <span>Đã thanh toán</span>
                     </div>
                 </div>

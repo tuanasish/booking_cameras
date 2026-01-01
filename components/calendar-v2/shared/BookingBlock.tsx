@@ -39,11 +39,11 @@ export default function BookingBlock({
     const getStatusStyles = () => {
         if (isOverdue) {
             return {
-                bg: 'bg-red-900/10 border border-red-500/50',
+                bg: 'bg-red-500/10 dark:bg-red-900/20 border border-red-500/30',
                 border: 'border-l-4 border-l-red-500',
                 badgeClass: 'bg-red-500 text-white',
                 badgeText: 'QUÁ HẠN',
-                textColor: 'text-red-400',
+                textColor: 'text-red-600 dark:text-red-400',
                 icon: 'warning',
             };
         }
@@ -51,30 +51,30 @@ export default function BookingBlock({
         switch (booking.payment_status) {
             case 'paid':
                 return {
-                    bg: 'bg-emerald-900/40',
+                    bg: 'bg-emerald-500/10 dark:bg-emerald-900/20 border border-emerald-500/30',
                     border: 'border-l-4 border-l-emerald-500',
-                    badgeClass: 'text-emerald-400',
+                    badgeClass: 'text-emerald-600 dark:text-emerald-400',
                     badgeText: 'Đã TT',
-                    textColor: 'text-emerald-400',
+                    textColor: 'text-emerald-600 dark:text-emerald-400',
                     icon: isCompleted ? 'done_all' : 'check_circle',
                 };
             case 'deposited':
                 return {
-                    bg: 'bg-amber-900/40',
+                    bg: 'bg-amber-500/10 dark:bg-amber-900/20 border border-amber-500/30',
                     border: 'border-l-4 border-l-amber-500',
-                    badgeClass: 'text-amber-400',
+                    badgeClass: 'text-amber-600 dark:text-amber-400',
                     badgeText: 'Đã cọc',
-                    textColor: 'text-amber-400',
+                    textColor: 'text-amber-600 dark:text-amber-400',
                     icon: 'pending',
                 };
             case 'pending':
             default:
                 return {
-                    bg: 'bg-red-900/40',
+                    bg: 'bg-red-500/10 dark:bg-red-900/20 border border-red-500/30',
                     border: 'border-l-4 border-l-red-500',
-                    badgeClass: 'text-red-400',
+                    badgeClass: 'text-red-600 dark:text-red-400',
                     badgeText: 'Chưa cọc',
-                    textColor: 'text-red-400',
+                    textColor: 'text-red-600 dark:text-red-400',
                     icon: 'warning',
                 };
         }
@@ -103,10 +103,10 @@ export default function BookingBlock({
             {isCompact ? (
                 // Compact view for short bookings
                 <div className="flex items-center justify-between h-full gap-2">
-                    <span className={clsx('text-[10px] font-semibold', styles.textColor)}>
-                        {pickupTime} - {returnTimeStr}
+                    <span className={clsx('text-[10px] font-bold', styles.textColor)}>
+                        {pickupTime}
                     </span>
-                    <span className="text-xs font-bold text-white truncate flex-1">
+                    <span className="text-[11px] font-bold text-text-main truncate flex-1">
                         {(booking as any).customer?.name || 'Khách hàng'}
                     </span>
                     <span className={clsx('material-symbols-outlined text-[14px]', styles.textColor)}>
@@ -130,10 +130,10 @@ export default function BookingBlock({
                             {styles.icon}
                         </span>
                     </div>
-                    <p className="text-white text-xs font-bold truncate">
+                    <p className="text-text-main text-xs font-bold truncate">
                         {(booking as any).customer?.name || 'Khách hàng'}
                     </p>
-                    <p className="text-slate-400 text-xs truncate">
+                    <p className="text-text-secondary text-[11px] font-medium truncate">
                         {pickupTime} - {returnTimeStr}
                     </p>
 
@@ -141,17 +141,17 @@ export default function BookingBlock({
                     {height >= 100 && (
                         <div className="absolute bottom-2 right-2 flex gap-1">
                             {isPickupDone && (
-                                <span className="bg-[#111318] text-white text-[9px] px-1 rounded border border-emerald-500/30">
+                                <span className="bg-surface text-text-main text-[9px] font-bold px-1.5 py-0.5 rounded border border-emerald-500/30">
                                     N ✓
                                 </span>
                             )}
                             {isReturnDone && (
-                                <span className="bg-[#111318] text-white text-[9px] px-1 rounded border border-emerald-500/30">
+                                <span className="bg-surface text-text-main text-[9px] font-bold px-1.5 py-0.5 rounded border border-emerald-500/30">
                                     T ✓
                                 </span>
                             )}
                             {!isPickupDone && (
-                                <span className="bg-[#111318] text-white text-[9px] px-1 rounded border border-slate-500/30">
+                                <span className="bg-surface text-text-secondary text-[9px] font-bold px-1.5 py-0.5 rounded border border-border">
                                     N
                                 </span>
                             )}

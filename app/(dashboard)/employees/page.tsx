@@ -122,12 +122,12 @@ export default function EmployeesPage() {
   };
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-[#111318]">
+    <div className="flex h-full flex-col overflow-hidden bg-background">
       {/* Header */}
-      <header className="flex h-16 items-center justify-between border-b border-border-dark bg-[#111318] px-6 shrink-0">
+      <header className="flex h-16 items-center justify-between border-b border-border bg-surface px-6 shrink-0">
         <div>
-          <h1 className="text-xl font-bold text-white">Quản lý nhân viên</h1>
-          <p className="text-sm text-[#9da6b9] mt-1">Thêm, sửa và quản lý quyền truy cập nhân viên</p>
+          <h1 className="text-xl font-bold text-text-main">Quản lý nhân viên</h1>
+          <p className="text-sm text-text-secondary mt-1">Thêm, sửa và quản lý quyền truy cập nhân viên</p>
         </div>
         <button
           onClick={() => setShowAddModal(true)}
@@ -146,56 +146,56 @@ export default function EmployeesPage() {
             </div>
           ) : employees.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-[#9da6b9] mb-4">Chưa có nhân viên nào</p>
+              <p className="text-text-secondary mb-4">Chưa có nhân viên nào</p>
               <button
                 onClick={() => setShowAddModal(true)}
-                className="px-4 py-2 rounded-lg bg-primary text-white font-medium hover:bg-blue-600 transition-colors"
+                className="px-4 py-2 rounded-lg bg-primary text-white font-medium hover:bg-blue-600 transition-colors shadow-lg shadow-primary/20"
               >
                 Thêm nhân viên đầu tiên
               </button>
             </div>
           ) : (
-            <div className="bg-[#1a1f29] rounded-xl border border-border-dark overflow-hidden">
+            <div className="bg-surface rounded-xl border border-border overflow-hidden shadow-sm">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-[#111318] border-b border-border-dark">
+                  <thead className="bg-background border-b border-border">
                     <tr>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-[#9da6b9] uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-text-secondary uppercase tracking-wider">
                         Nhân viên
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-[#9da6b9] uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-text-secondary uppercase tracking-wider">
                         Email
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-[#9da6b9] uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-text-secondary uppercase tracking-wider">
                         Ngày tạo
                       </th>
-                      <th className="px-6 py-4 text-center text-xs font-semibold text-[#9da6b9] uppercase tracking-wider">
+                      <th className="px-6 py-4 text-center text-xs font-semibold text-text-secondary uppercase tracking-wider">
                         Trạng thái
                       </th>
-                      <th className="px-6 py-4 text-right text-xs font-semibold text-[#9da6b9] uppercase tracking-wider">
+                      <th className="px-6 py-4 text-right text-xs font-semibold text-text-secondary uppercase tracking-wider">
                         Thao tác
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-border-dark">
+                  <tbody className="divide-y divide-border">
                     {employees.map((employee) => (
-                      <tr key={employee.id} className="hover:bg-[#111318] transition-colors">
+                      <tr key={employee.id} className="hover:bg-background transition-colors">
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
-                            <div className="size-10 rounded-full bg-primary/20 flex items-center justify-center">
+                            <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20">
                               <span className="material-symbols-outlined text-primary text-[20px]">person</span>
                             </div>
                             <div>
-                              <p className="text-sm font-medium text-white">{employee.name}</p>
-                              <p className="text-xs text-[#9da6b9]">ID: {employee.id.slice(0, 8)}</p>
+                              <p className="text-sm font-medium text-text-main">{employee.name}</p>
+                              <p className="text-xs text-text-secondary">ID: {employee.id.slice(0, 8)}</p>
                             </div>
                           </div>
                         </td>
                         <td className="px-6 py-4">
-                          <p className="text-sm text-white">{employee.email}</p>
+                          <p className="text-sm text-text-main">{employee.email}</p>
                         </td>
                         <td className="px-6 py-4">
-                          <p className="text-sm text-[#9da6b9]">
+                          <p className="text-sm text-text-secondary">
                             {format(new Date(employee.created_at), 'dd/MM/yyyy', { locale: vi })}
                           </p>
                         </td>
@@ -208,7 +208,7 @@ export default function EmployeesPage() {
                                 onChange={() => handleToggleActive(employee.id, employee.is_active)}
                                 className="sr-only peer"
                               />
-                              <div className="w-11 h-6 bg-[#282e39] peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                              <div className="w-11 h-6 bg-border peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                             </label>
                           </div>
                         </td>
@@ -241,12 +241,12 @@ export default function EmployeesPage() {
             onClick={() => setShowAddModal(false)}
           />
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div className="bg-[#111318] rounded-xl border border-border-dark shadow-2xl w-full max-w-md">
-              <div className="flex items-center justify-between p-6 border-b border-border-dark">
-                <h2 className="text-xl font-bold text-white">Thêm nhân viên mới</h2>
+            <div className="bg-surface rounded-xl border border-border shadow-2xl w-full max-w-md overflow-hidden">
+              <div className="flex items-center justify-between p-6 border-b border-border bg-background">
+                <h2 className="text-xl font-bold text-text-main">Thêm nhân viên mới</h2>
                 <button
                   onClick={() => setShowAddModal(false)}
-                  className="p-2 hover:bg-[#282e39] rounded text-[#9da6b9] hover:text-white transition-colors"
+                  className="p-2 hover:bg-surface rounded text-text-secondary hover:text-text-main transition-colors"
                 >
                   <span className="material-symbols-outlined">close</span>
                 </button>
@@ -285,10 +285,10 @@ export default function EmployeesPage() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-3 p-6 border-t border-border-dark">
+              <div className="flex items-center justify-end gap-3 p-6 border-t border-border bg-background">
                 <button
                   onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 rounded-lg border border-border-dark bg-[#1a1f29] text-white hover:bg-[#282e39] transition-colors"
+                  className="px-4 py-2 rounded-lg border border-border bg-surface text-text-main hover:bg-border/50 transition-colors"
                 >
                   Hủy
                 </button>

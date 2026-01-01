@@ -204,26 +204,26 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-[#111318]">
+    <div className="flex h-full flex-col overflow-hidden bg-background">
       {/* Header */}
-      <header className="flex h-16 items-center justify-between border-b border-border-dark bg-[#111318] px-6 shrink-0">
+      <header className="flex h-16 items-center justify-between border-b border-border bg-surface px-6 shrink-0">
         <div>
-          <h1 className="text-xl font-bold text-white">Cài đặt hệ thống</h1>
-          <p className="text-sm text-[#9da6b9] mt-1">Quản lý giá, quy tắc thuê và kho thiết bị</p>
+          <h1 className="text-xl font-bold text-text-main">Cài đặt hệ thống</h1>
+          <p className="text-sm text-text-secondary mt-1">Quản lý giá, quy tắc thuê và kho thiết bị</p>
         </div>
       </header>
 
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-7xl mx-auto p-6">
           {/* Tabs */}
-          <div className="flex gap-2 mb-6 border-b border-border-dark">
+          <div className="flex gap-2 mb-6 border-b border-border">
             <button
               onClick={() => setActiveTab('settings')}
               className={clsx(
                 'px-4 py-2 text-sm font-medium transition-colors border-b-2',
                 activeTab === 'settings'
                   ? 'border-primary text-primary'
-                  : 'border-transparent text-[#9da6b9] hover:text-white'
+                  : 'border-transparent text-text-secondary hover:text-text-main'
               )}
             >
               Cấu hình hệ thống
@@ -234,7 +234,7 @@ export default function SettingsPage() {
                 'px-4 py-2 text-sm font-medium transition-colors border-b-2',
                 activeTab === 'cameras'
                   ? 'border-primary text-primary'
-                  : 'border-transparent text-[#9da6b9] hover:text-white'
+                  : 'border-transparent text-text-secondary hover:text-text-main'
               )}
             >
               Quản lý máy ảnh
@@ -249,17 +249,17 @@ export default function SettingsPage() {
             <>
               {/* Settings Tab */}
               {activeTab === 'settings' && settings && (
-                <div className="bg-[#1a1f29] rounded-xl border border-border-dark p-6">
-                  <div className="flex items-center gap-2 mb-6 pb-4 border-b border-border-dark">
-                    <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary">
+                <div className="bg-surface rounded-xl border border-border p-6 shadow-sm">
+                  <div className="flex items-center gap-2 mb-6 pb-4 border-b border-border">
+                    <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
                       <span className="material-symbols-outlined text-[20px]">payments</span>
                     </div>
-                    <h2 className="text-lg font-bold text-white">Giá & Quy tắc</h2>
+                    <h2 className="text-lg font-bold text-text-main">Giá & Quy tắc</h2>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                     <div className="flex flex-col gap-2">
-                      <label className="text-sm font-medium text-[#9da6b9]">Phí giao máy (VNĐ/km)</label>
+                      <label className="text-sm font-medium text-text-secondary">Phí giao máy (VNĐ/km)</label>
                       <div className="relative">
                         <input
                           type="number"
@@ -270,14 +270,14 @@ export default function SettingsPage() {
                               delivery_fee_per_km: parseInt(e.target.value) || 0,
                             })
                           }
-                          className="w-full bg-[#111318] border border-border-dark rounded-lg px-4 py-3 text-white focus:ring-1 focus:ring-primary focus:border-primary"
+                          className="w-full bg-background border border-border rounded-lg px-4 py-3 text-text-main focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all"
                         />
-                        <span className="absolute right-4 top-3 text-[#9da6b9] text-sm">đ</span>
+                        <span className="absolute right-4 top-3 text-text-secondary text-sm">đ</span>
                       </div>
                     </div>
 
                     <div className="flex flex-col gap-2">
-                      <label className="text-sm font-medium text-[#9da6b9]">Cọc mặc định (VNĐ)</label>
+                      <label className="text-sm font-medium text-text-secondary">Cọc mặc định (VNĐ)</label>
                       <div className="relative">
                         <input
                           type="number"
@@ -288,14 +288,14 @@ export default function SettingsPage() {
                               default_deposit: parseInt(e.target.value) || 0,
                             })
                           }
-                          className="w-full bg-[#111318] border border-border-dark rounded-lg px-4 py-3 text-white focus:ring-1 focus:ring-primary focus:border-primary"
+                          className="w-full bg-background border border-border rounded-lg px-4 py-3 text-text-main focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all"
                         />
-                        <span className="absolute right-4 top-3 text-[#9da6b9] text-sm">đ</span>
+                        <span className="absolute right-4 top-3 text-text-secondary text-sm">đ</span>
                       </div>
                     </div>
 
                     <div className="flex flex-col gap-2">
-                      <label className="text-sm font-medium text-[#9da6b9]">Hệ số phí trả trễ</label>
+                      <label className="text-sm font-medium text-text-secondary">Hệ số phí trả trễ</label>
                       <div className="relative">
                         <input
                           type="number"
@@ -306,9 +306,9 @@ export default function SettingsPage() {
                               late_fee_divisor: parseInt(e.target.value) || 5,
                             })
                           }
-                          className="w-full bg-[#111318] border border-border-dark rounded-lg px-4 py-3 text-white focus:ring-1 focus:ring-primary focus:border-primary"
+                          className="w-full bg-background border border-border rounded-lg px-4 py-3 text-text-main focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all"
                         />
-                        <span className="absolute right-4 top-3 text-[#9da6b9] text-sm">
+                        <span className="absolute right-4 top-3 text-text-secondary text-sm">
                           (Giá 6h ÷ {settings.late_fee_divisor})
                         </span>
                       </div>
@@ -334,79 +334,79 @@ export default function SettingsPage() {
               {activeTab === 'cameras' && (
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
-                    <h2 className="text-lg font-bold text-white">Danh sách máy ảnh</h2>
+                    <h2 className="text-lg font-bold text-text-main">Danh sách máy ảnh</h2>
                     <button
                       onClick={() => handleOpenCameraModal()}
-                      className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white font-bold hover:bg-blue-600 transition-colors"
+                      className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white font-bold hover:bg-blue-600 transition-colors shadow-lg shadow-primary/20"
                     >
                       <span className="material-symbols-outlined text-[20px]">add</span>
                       Thêm máy mới
                     </button>
                   </div>
 
-                  <div className="bg-[#1a1f29] rounded-xl border border-border-dark overflow-hidden">
+                  <div className="bg-surface rounded-xl border border-border overflow-hidden shadow-sm">
                     <div className="overflow-x-auto">
                       <table className="w-full">
-                        <thead className="bg-[#111318] border-b border-border-dark">
+                        <thead className="bg-background border-b border-border">
                           <tr>
-                            <th className="px-6 py-4 text-left text-xs font-semibold text-[#9da6b9] uppercase">
+                            <th className="px-6 py-4 text-left text-xs font-semibold text-text-secondary uppercase">
                               Tên máy
                             </th>
-                            <th className="px-6 py-4 text-left text-xs font-semibold text-[#9da6b9] uppercase">
+                            <th className="px-6 py-4 text-left text-xs font-semibold text-text-secondary uppercase">
                               Dòng máy
                             </th>
-                            <th className="px-6 py-4 text-right text-xs font-semibold text-[#9da6b9] uppercase">
+                            <th className="px-6 py-4 text-right text-xs font-semibold text-text-secondary uppercase">
                               Giá 6h
                             </th>
-                            <th className="px-6 py-4 text-right text-xs font-semibold text-[#9da6b9] uppercase">
+                            <th className="px-6 py-4 text-right text-xs font-semibold text-text-secondary uppercase">
                               Giá 12h
                             </th>
-                            <th className="px-6 py-4 text-right text-xs font-semibold text-[#9da6b9] uppercase">
+                            <th className="px-6 py-4 text-right text-xs font-semibold text-text-secondary uppercase">
                               Giá 24h
                             </th>
-                            <th className="px-6 py-4 text-center text-xs font-semibold text-[#9da6b9] uppercase">
+                            <th className="px-6 py-4 text-center text-xs font-semibold text-text-secondary uppercase">
                               SL
                             </th>
-                            <th className="px-6 py-4 text-center text-xs font-semibold text-[#9da6b9] uppercase">
+                            <th className="px-6 py-4 text-center text-xs font-semibold text-text-secondary uppercase">
                               Trạng thái
                             </th>
-                            <th className="px-6 py-4 text-right text-xs font-semibold text-[#9da6b9] uppercase">
+                            <th className="px-6 py-4 text-right text-xs font-semibold text-text-secondary uppercase">
                               Thao tác
                             </th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-border-dark">
+                        <tbody className="divide-y divide-border">
                           {cameras.map((camera) => (
                             <tr
                               key={camera.id}
                               className={clsx(
-                                'hover:bg-[#111318] transition-colors',
+                                'hover:bg-background transition-colors',
                                 !camera.is_active && 'opacity-50'
                               )}
                             >
                               <td className="px-6 py-4">
-                                <p className="text-sm font-medium text-white">{camera.name}</p>
+                                <p className="text-sm font-medium text-text-main">{camera.name}</p>
                               </td>
                               <td className="px-6 py-4">
-                                <p className="text-sm text-[#9da6b9]">{camera.model_line || '-'}</p>
+                                <p className="text-sm text-text-secondary">{camera.model_line || '-'}</p>
                               </td>
                               <td className="px-6 py-4 text-right">
-                                <p className="text-sm text-white">{formatMoney(camera.price_6h)}đ</p>
+                                <p className="text-sm text-text-main">{formatMoney(camera.price_6h)}đ</p>
                               </td>
                               <td className="px-6 py-4 text-right">
-                                <p className="text-sm text-white">
+                                <p className="text-sm text-text-main">
                                   {camera.price_24h ? formatMoney(camera.price_24h) + 'đ' : '-'}
                                 </p>
                               </td>
                               <td className="px-6 py-4 text-right">
-                                <p className="text-sm text-white">
+                                <p className="text-sm text-text-main">
                                   {camera.price_additional_day
                                     ? formatMoney(camera.price_additional_day) + 'đ'
                                     : '-'}
                                 </p>
                               </td>
                               <td className="px-6 py-4 text-center">
-                                <p className="text-sm text-white">{camera.quantity}</p>
+                                <p className="text-sm text-text-main">{camera.quantity}</p>
                               </td>
                               <td className="px-6 py-4">
                                 <div className="flex items-center justify-center">
@@ -419,7 +419,7 @@ export default function SettingsPage() {
                                       }
                                       className="sr-only peer"
                                     />
-                                    <div className="w-11 h-6 bg-[#282e39] peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                                    <div className="w-11 h-6 bg-border peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                                   </label>
                                 </div>
                               </td>
@@ -462,14 +462,14 @@ export default function SettingsPage() {
             onClick={() => setShowCameraModal(false)}
           />
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div className="bg-[#111318] rounded-xl border border-border-dark shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-              <div className="flex items-center justify-between p-6 border-b border-border-dark sticky top-0 bg-[#111318]">
-                <h2 className="text-xl font-bold text-white">
+            <div className="bg-surface rounded-xl border border-border shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+              <div className="flex items-center justify-between p-6 border-b border-border sticky top-0 bg-background z-10">
+                <h2 className="text-xl font-bold text-text-main">
                   {editingCamera ? 'Sửa máy ảnh' : 'Thêm máy ảnh mới'}
                 </h2>
                 <button
                   onClick={() => setShowCameraModal(false)}
-                  className="p-2 hover:bg-[#282e39] rounded text-[#9da6b9] hover:text-white transition-colors"
+                  className="p-2 hover:bg-surface rounded text-text-secondary hover:text-text-main transition-colors"
                 >
                   <span className="material-symbols-outlined">close</span>
                 </button>
@@ -496,60 +496,60 @@ export default function SettingsPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <label className="text-sm font-medium text-[#9da6b9] mb-2 block">
+                    <label className="text-sm font-medium text-text-secondary mb-2 block">
                       Giá 6h (VNĐ) *
                     </label>
                     <input
                       type="number"
                       value={cameraForm.price_6h}
                       onChange={(e) => setCameraForm({ ...cameraForm, price_6h: e.target.value })}
-                      className="w-full bg-input-dark border border-border-dark rounded-lg px-4 py-2 text-white focus:ring-1 focus:ring-primary focus:border-primary"
+                      className="w-full bg-background border border-border rounded-lg px-4 py-2 text-text-main focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all"
                       placeholder="500000"
                     />
                   </div>
 
                   <div>
-                    <label className="text-sm font-medium text-[#9da6b9] mb-2 block">Giá 24h (VNĐ)</label>
+                    <label className="text-sm font-medium text-text-secondary mb-2 block">Giá 24h (VNĐ)</label>
                     <input
                       type="number"
                       value={cameraForm.price_24h}
                       onChange={(e) => setCameraForm({ ...cameraForm, price_24h: e.target.value })}
-                      className="w-full bg-input-dark border border-border-dark rounded-lg px-4 py-2 text-white focus:ring-1 focus:ring-primary focus:border-primary"
+                      className="w-full bg-background border border-border rounded-lg px-4 py-2 text-text-main focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all"
                       placeholder="800000"
                     />
                   </div>
 
                   <div>
-                    <label className="text-sm font-medium text-[#9da6b9] mb-2 block">Giá +ngày (VNĐ)</label>
+                    <label className="text-sm font-medium text-text-secondary mb-2 block">Giá +ngày (VNĐ)</label>
                     <input
                       type="number"
                       value={cameraForm.price_additional_day}
                       onChange={(e) =>
                         setCameraForm({ ...cameraForm, price_additional_day: e.target.value })
                       }
-                      className="w-full bg-input-dark border border-border-dark rounded-lg px-4 py-2 text-white focus:ring-1 focus:ring-primary focus:border-primary"
+                      className="w-full bg-background border border-border rounded-lg px-4 py-2 text-text-main focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all"
                       placeholder="150000"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-[#9da6b9] mb-2 block">Số lượng</label>
+                  <label className="text-sm font-medium text-text-secondary mb-2 block">Số lượng</label>
                   <input
                     type="number"
                     min="1"
                     value={cameraForm.quantity}
                     onChange={(e) => setCameraForm({ ...cameraForm, quantity: e.target.value })}
-                    className="w-full bg-input-dark border border-border-dark rounded-lg px-4 py-2 text-white focus:ring-1 focus:ring-primary focus:border-primary"
+                    className="w-full bg-background border border-border rounded-lg px-4 py-2 text-text-main focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all"
                     placeholder="1"
                   />
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-3 p-6 border-t border-border-dark">
+              <div className="flex items-center justify-end gap-3 p-6 border-t border-border bg-background">
                 <button
                   onClick={() => setShowCameraModal(false)}
-                  className="px-4 py-2 rounded-lg border border-border-dark bg-[#1a1f29] text-white hover:bg-[#282e39] transition-colors"
+                  className="px-4 py-2 rounded-lg border border-border bg-surface text-text-main hover:bg-border/50 transition-colors"
                 >
                   Hủy
                 </button>
@@ -566,7 +566,7 @@ export default function SettingsPage() {
                   {saving ? 'Đang lưu...' : editingCamera ? 'Cập nhật' : 'Thêm máy'}
                 </button>
               </div>
-      </div>
+            </div>
           </div>
         </>
       )}

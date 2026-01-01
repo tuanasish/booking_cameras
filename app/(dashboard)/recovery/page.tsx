@@ -148,12 +148,12 @@ export default function RecoveryPage() {
   });
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-[#111318]">
+    <div className="flex h-full flex-col overflow-hidden bg-background">
       {/* Header */}
-      <header className="flex h-16 items-center justify-between border-b border-border-dark bg-[#111318] px-6 shrink-0">
+      <header className="flex h-16 items-center justify-between border-b border-border bg-surface px-6 shrink-0">
         <div>
-          <h1 className="text-xl font-bold text-white">Quản lý Recovery & Upload</h1>
-          <p className="text-sm text-[#9da6b9] mt-1">
+          <h1 className="text-xl font-bold text-text-main">Quản lý Recovery & Upload</h1>
+          <p className="text-sm text-text-secondary mt-1">
             Theo dõi và xử lý dữ liệu khách hàng sau khi trả máy
           </p>
         </div>
@@ -163,43 +163,43 @@ export default function RecoveryPage() {
         <div className="max-w-7xl mx-auto p-6">
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div className="bg-[#1a1f29] rounded-xl border border-border-dark p-5">
+            <div className="bg-surface rounded-xl border border-border p-5">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-sm text-[#9da6b9] font-medium">Tổng Task Đang Xử Lý</p>
+                <p className="text-sm text-text-secondary font-medium">Tổng Task Đang Xử Lý</p>
                 <span className="material-symbols-outlined text-primary text-[24px]">pending_actions</span>
               </div>
-              <p className="text-3xl font-bold text-white">{pendingTasks.length}</p>
+              <p className="text-3xl font-bold text-text-main">{pendingTasks.length}</p>
             </div>
-            <div className="bg-[#1a1f29] rounded-xl border border-border-dark p-5">
+            <div className="bg-surface rounded-xl border border-border p-5">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-sm text-[#9da6b9] font-medium">Đến Hạn Hôm Nay</p>
-                <span className="material-symbols-outlined text-blue-400 text-[24px]">today</span>
+                <p className="text-sm text-text-secondary font-medium">Đến Hạn Hôm Nay</p>
+                <span className="material-symbols-outlined text-blue-500 text-[24px]">today</span>
               </div>
-              <p className="text-3xl font-bold text-white">{pendingTasks.length}</p>
+              <p className="text-3xl font-bold text-text-main">{pendingTasks.length}</p>
             </div>
-            <div className="bg-[#1a1f29] rounded-xl border border-red-500/30 p-5">
+            <div className="bg-surface rounded-xl border border-red-500/30 p-5">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-sm text-[#9da6b9] font-medium">Cảnh Báo Quá Hạn</p>
+                <p className="text-sm text-red-500 font-medium">Cảnh Báo Quá Hạn</p>
                 <span className="material-symbols-outlined text-red-500 text-[24px]">warning</span>
               </div>
-              <p className="text-3xl font-bold text-red-400">{overdueTasks.length}</p>
+              <p className="text-3xl font-bold text-red-500">{overdueTasks.length}</p>
             </div>
           </div>
 
           {/* Filters & Search */}
-          <div className="bg-[#1a1f29] rounded-xl border border-border-dark p-4 mb-6">
+          <div className="bg-surface rounded-xl border border-border p-4 mb-6">
             <div className="flex flex-col md:flex-row gap-4">
               {/* Search */}
               <div className="flex-1 relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <span className="material-symbols-outlined text-[#9da6b9] text-[20px]">search</span>
+                  <span className="material-symbols-outlined text-text-secondary text-[20px]">search</span>
                 </div>
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Tìm kiếm Booking ID, Tên, SĐT, Mã thẻ nhớ..."
-                  className="w-full pl-10 pr-3 py-2.5 border border-border-dark rounded-lg bg-[#111318] text-white placeholder-[#9da6b9] focus:ring-1 focus:ring-primary focus:border-primary"
+                  className="w-full pl-10 pr-3 py-2.5 border border-border rounded-lg bg-background text-text-main placeholder-text-secondary focus:ring-1 focus:ring-primary focus:border-primary outline-none"
                 />
               </div>
 
@@ -211,7 +211,7 @@ export default function RecoveryPage() {
                     'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
                     filterStatus === 'all'
                       ? 'bg-primary text-white'
-                      : 'bg-[#111318] border border-border-dark text-[#9da6b9] hover:text-white'
+                      : 'bg-background border border-border text-text-secondary hover:text-text-main'
                   )}
                 >
                   Tất cả
@@ -222,7 +222,7 @@ export default function RecoveryPage() {
                     'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
                     filterStatus === 'pending'
                       ? 'bg-primary text-white'
-                      : 'bg-[#111318] border border-border-dark text-[#9da6b9] hover:text-white'
+                      : 'bg-background border border-border text-text-secondary hover:text-text-main'
                   )}
                 >
                   Đang xử lý
@@ -233,7 +233,7 @@ export default function RecoveryPage() {
                     'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
                     filterStatus === 'completed'
                       ? 'bg-primary text-white'
-                      : 'bg-[#111318] border border-border-dark text-[#9da6b9] hover:text-white'
+                      : 'bg-background border border-border text-text-secondary hover:text-text-main'
                   )}
                 >
                   Hoàn thành
@@ -252,51 +252,51 @@ export default function RecoveryPage() {
               <p className="text-[#9da6b9]">Không có recovery task nào</p>
             </div>
           ) : (
-            <div className="bg-[#1a1f29] rounded-xl border border-border-dark overflow-hidden">
+            <div className="bg-surface rounded-xl border border-border overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-[#111318] border-b border-border-dark">
+                  <thead className="bg-background border-b border-border">
                     <tr>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-[#9da6b9] uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-text-secondary uppercase tracking-wider">
                         Booking ID
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-[#9da6b9] uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-text-secondary uppercase tracking-wider">
                         Khách hàng
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-[#9da6b9] uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-text-secondary uppercase tracking-wider">
                         Mã thẻ nhớ
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-[#9da6b9] uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-text-secondary uppercase tracking-wider">
                         Checklist
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-[#9da6b9] uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-text-secondary uppercase tracking-wider">
                         Ngày tạo
                       </th>
-                      <th className="px-4 py-3 text-right text-xs font-semibold text-[#9da6b9] uppercase tracking-wider">
+                      <th className="px-4 py-3 text-right text-xs font-semibold text-text-secondary uppercase tracking-wider">
                         Thao tác
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-border-dark">
+                  <tbody className="divide-y divide-border">
                     {filteredTasks.map((task) => {
                       const completed = isTaskCompleted(task);
                       return (
                         <tr
                           key={task.id}
                           className={clsx(
-                            'hover:bg-[#111318] transition-colors',
+                            'hover:bg-background transition-colors',
                             completed && 'opacity-70'
                           )}
                         >
                           <td className="px-4 py-4">
-                            <span className="text-sm font-mono text-white">
+                            <span className="text-sm font-mono text-text-main">
                               {task.booking_id.slice(0, 8).toUpperCase()}
                             </span>
                           </td>
                           <td className="px-4 py-4">
                             <div>
-                              <p className="text-sm font-medium text-white">{task.booking.customer.name}</p>
-                              <p className="text-xs text-[#9da6b9]">{task.booking.customer.phone}</p>
+                              <p className="text-sm font-medium text-text-main">{task.booking.customer.name}</p>
+                              <p className="text-xs text-text-secondary">{task.booking.customer.phone}</p>
                             </div>
                           </td>
                           <td className="px-4 py-4">
@@ -305,7 +305,7 @@ export default function RecoveryPage() {
                               value={task.memory_card_code || ''}
                               onChange={(e) => handleMemoryCardCodeChange(task.id, e.target.value)}
                               placeholder="Nhập mã thẻ nhớ"
-                              className="w-32 px-2 py-1 text-sm bg-[#111318] border border-border-dark rounded text-white placeholder-[#9da6b9] focus:ring-1 focus:ring-primary focus:border-primary"
+                              className="w-32 px-2 py-1 text-sm bg-background border border-border rounded text-text-main placeholder-text-secondary focus:ring-1 focus:ring-primary focus:border-primary outline-none"
                             />
                           </td>
                           <td className="px-4 py-4">
@@ -320,7 +320,7 @@ export default function RecoveryPage() {
                                     }
                                     className="rounded border-[#3b4354] bg-[#1e232e] text-primary focus:ring-0"
                                   />
-                                  <span className="text-xs text-white group-hover:text-primary transition-colors">
+                                  <span className="text-xs text-text-main group-hover:text-primary transition-colors">
                                     Đã khôi phục
                                   </span>
                                 </label>
@@ -333,9 +333,9 @@ export default function RecoveryPage() {
                                     onChange={(e) =>
                                       handleCheckboxChange(task.id, 'is_uploaded', e.target.checked)
                                     }
-                                    className="rounded border-[#3b4354] bg-[#1e232e] text-primary focus:ring-0"
+                                    className="rounded border-border bg-background text-primary focus:ring-0"
                                   />
-                                  <span className="text-xs text-white group-hover:text-primary transition-colors">
+                                  <span className="text-xs text-text-main group-hover:text-primary transition-colors">
                                     Đã tải ảnh lên Drive
                                   </span>
                                 </label>
@@ -347,9 +347,9 @@ export default function RecoveryPage() {
                                   onChange={(e) =>
                                     handleCheckboxChange(task.id, 'is_link_sent', e.target.checked)
                                   }
-                                  className="rounded border-[#3b4354] bg-[#1e232e] text-primary focus:ring-0"
+                                  className="rounded border-border bg-background text-primary focus:ring-0"
                                 />
-                                <span className="text-xs text-white group-hover:text-primary transition-colors">
+                                <span className="text-xs text-text-main group-hover:text-primary transition-colors">
                                   Đã gửi link cho khách
                                 </span>
                               </label>
@@ -360,16 +360,16 @@ export default function RecoveryPage() {
                                   onChange={(e) =>
                                     handleCheckboxChange(task.id, 'no_error_24h', e.target.checked)
                                   }
-                                  className="rounded border-[#3b4354] bg-[#1e232e] text-primary focus:ring-0"
+                                  className="rounded border-border bg-background text-primary focus:ring-0"
                                 />
-                                <span className="text-xs text-white group-hover:text-primary transition-colors">
+                                <span className="text-xs text-text-main group-hover:text-primary transition-colors">
                                   Khách không báo lỗi sau 24h
                                 </span>
                               </label>
                             </div>
                           </td>
                           <td className="px-4 py-4">
-                            <p className="text-xs text-[#9da6b9]">
+                            <p className="text-xs text-text-secondary">
                               {format(new Date(task.created_at), 'dd/MM/yyyy HH:mm', { locale: vi })}
                             </p>
                           </td>

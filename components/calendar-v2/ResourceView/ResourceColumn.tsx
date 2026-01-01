@@ -116,14 +116,14 @@ export default function ResourceColumn({
     return (
         <div
             className={clsx(
-                'border-r border-border-dark/50 relative h-full group/column cursor-crosshair'
+                'border-r border-border/50 relative h-full group/column cursor-crosshair'
             )}
             style={{ width: `${columnWidth}px` }}
             onClick={handleEmptyClick}
         >
             {/* Lane Dividers */}
             {laneCount > 1 && (
-                <div className="absolute inset-0 flex divide-x divide-dashed divide-border-dark/30 pointer-events-none">
+                <div className="absolute inset-0 flex divide-x divide-dashed divide-border/30 pointer-events-none">
                     {Array.from({ length: laneCount }, (_, i) => (
                         <div key={i} className="flex-1" />
                     ))}
@@ -131,7 +131,7 @@ export default function ResourceColumn({
             )}
 
             {/* Hover hint on empty */}
-            <div className="absolute inset-0 opacity-0 group-hover/column:opacity-100 pointer-events-none bg-white/[0.02] transition-opacity" />
+            <div className="absolute inset-0 opacity-0 group-hover/column:opacity-100 pointer-events-none bg-primary/[0.02] transition-opacity" />
 
             {/* Booking Blocks */}
             {laneAssignments.map(({ booking, lane }) => {

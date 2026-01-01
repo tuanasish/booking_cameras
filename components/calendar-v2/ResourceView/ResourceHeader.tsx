@@ -17,7 +17,7 @@ export default function ResourceHeader({
     const getProgressColor = () => {
         if (usagePercent >= 80) return 'bg-red-500';
         if (usagePercent >= 50) return 'bg-amber-500';
-        return 'bg-emerald-500';
+        return 'bg-teal-500';
     };
 
     const isMultiUnit = camera.quantity > 1;
@@ -28,21 +28,21 @@ export default function ResourceHeader({
     return (
         <div
             className={clsx(
-                'border-r border-border-dark flex flex-col relative group',
+                'border-r border-border flex flex-col relative group',
                 isMultiUnit && showLanes ? 'w-80' : 'w-64'
             )}
         >
             {/* Main Header */}
-            <div className="p-3 pb-2 bg-[#111318] z-10">
-                <div className="flex items-center justify-between mb-1">
-                    <span className="text-white text-sm font-bold">{camera.name}</span>
-                    <span className="bg-surface-dark border border-border-dark text-slate-400 text-[10px] px-1.5 py-0.5 rounded">
+            <div className="p-4 bg-surface z-10 transition-colors group-hover:bg-background/20">
+                <div className="flex items-center justify-between mb-2">
+                    <span className="text-text-main text-sm font-bold tracking-tight">{camera.name}</span>
+                    <span className="bg-background border border-border text-text-secondary text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
                         {camera.quantity} máy
                     </span>
                 </div>
-                <div className="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
+                <div className="h-1.5 w-full bg-border/30 rounded-full overflow-hidden">
                     <div
-                        className={clsx('h-full transition-all', getProgressColor())}
+                        className={clsx('h-full transition-all shadow-sm', getProgressColor())}
                         style={{ width: `${usagePercent}%` }}
                     />
                 </div>
@@ -50,13 +50,13 @@ export default function ResourceHeader({
 
             {/* Sub-lanes Header (for multi-unit cameras) */}
             {lanes.length > 0 && (
-                <div className="flex flex-1 text-[10px] uppercase font-semibold text-slate-500 bg-[#151921] border-t border-border-dark/50">
+                <div className="flex flex-1 text-[10px] uppercase font-bold tracking-widest text-text-secondary bg-surface border-t border-border">
                     {lanes.map((lane, i) => (
                         <div
                             key={lane}
                             className={clsx(
-                                'flex-1 text-center py-1',
-                                i < lanes.length - 1 && 'border-r border-dashed border-border-dark/50'
+                                'flex-1 text-center py-1.5',
+                                i < lanes.length - 1 && 'border-r border-dashed border-border'
                             )}
                         >
                             Lane {lane}
@@ -66,15 +66,15 @@ export default function ResourceHeader({
             )}
 
             {/* Hover Tooltip */}
-            <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-48 bg-gray-900 border border-gray-700 text-white text-xs rounded shadow-xl p-2 hidden group-hover:block z-50">
-                <p className="font-semibold mb-1">Thông tin</p>
-                <div className="flex justify-between text-gray-400">
-                    <span>Tổng số:</span>
-                    <span className="text-white">{camera.quantity} máy</span>
+            <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-52 bg-surface border border-border text-text-main text-xs rounded-xl shadow-2xl p-3 hidden group-hover:block z-50 animate-in fade-in zoom-in duration-200">
+                <p className="font-bold mb-2 uppercase tracking-wider text-[10px] text-text-secondary">Thông tin thiết bị</p>
+                <div className="flex justify-between items-center mb-1">
+                    <span className="text-text-secondary font-medium">Tổng số:</span>
+                    <span className="text-text-main font-bold">{camera.quantity} máy</span>
                 </div>
-                <div className="flex justify-between text-gray-400">
-                    <span>Sử dụng:</span>
-                    <span className={usagePercent >= 80 ? 'text-red-400' : 'text-green-400'}>
+                <div className="flex justify-between items-center">
+                    <span className="text-text-secondary font-medium">Sử dụng:</span>
+                    <span className={clsx('font-bold', usagePercent >= 80 ? 'text-red-500' : 'text-teal-500')}>
                         {Math.round(usagePercent)}%
                     </span>
                 </div>
