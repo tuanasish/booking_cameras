@@ -17,13 +17,12 @@ export function calculateRentalPrice(
     return camera.price_6h;
   }
 
-  // Thuê theo ngày: sử dụng price_24h cho ngày đầu
-  // và price_additional_day cho các ngày tiếp theo
+  // Thuê trên 6h tính là theo ngày
+  // Ngày 1: giá price_24h
+  // Từ ngày 2 trở đi: giảm 50.000 so với ngày đầu
   const days = Math.max(1, Math.ceil(hours / 24));
-  const firstDayPrice = camera.price_24h ?? camera.price_6h;
-  const additionalDayPrice =
-    // @ts-ignore - field được khai báo trong Database types
-    (camera as any).price_additional_day ?? firstDayPrice;
+  const firstDayPrice = camera.price_24h ?? (camera.price_6h * 1.5); // Fallback if no 24h price
+  const additionalDayPrice = firstDayPrice - 50000;
 
   if (days === 1) {
     return firstDayPrice;
