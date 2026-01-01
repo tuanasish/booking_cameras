@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Kantra Calendar</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for better look in dark mode */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #111318; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #282e39; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3b4354; 
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-[#111318] text-slate-900 dark:text-white font-display overflow-hidden flex flex-col h-screen w-full">
+<!-- Top Navigation -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#282e39] bg-[#111318] px-6 py-3 shrink-0 z-20">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-white">
+<div class="size-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-[20px]">photo_camera</span>
+</div>
+<h2 class="text-white text-xl font-bold leading-tight tracking-[-0.015em]">Kantra</h2>
+</div>
+<label class="hidden md:flex flex-col min-w-40 !h-10 max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+<div class="text-[#9da6b9] flex border-none bg-[#282e39] items-center justify-center pl-4 rounded-l-lg border-r-0">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-0 border-none bg-[#282e39] focus:border-none h-full placeholder:text-[#9da6b9] px-4 rounded-l-none border-l-0 pl-2 text-sm font-normal leading-normal" placeholder="Search bookings..." value=""/>
+</div>
+</label>
+</div>
+<div class="flex items-center gap-6">
+<button class="hidden sm:flex items-center justify-center rounded-full size-10 hover:bg-[#282e39] transition-colors text-[#9da6b9]">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="hidden sm:flex items-center justify-center rounded-full size-10 hover:bg-[#282e39] transition-colors text-[#9da6b9]">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="h-8 w-[1px] bg-[#282e39]"></div>
+<div class="flex items-center gap-3">
+<div class="bg-center bg-no-repeat bg-cover rounded-full size-9 border-2 border-[#282e39]" data-alt="User profile picture showing a smiling man" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD5XYQSy5MC_MxFodFV8t4cSXP_uVyIo0PrVAlmJWnGBnGIk9Jyb0iJN6qAJ8_7rg_4MenHz4ctudBqs_VxR63x0Vc4fMHpqlUSzEB1lGfUjQsteFa15axAk-D0_Ijd7IzpPVRYYfZK_jSzZb2N-z9LC_eD0lehNGGtOkiKBAumX-qu3RBaUTJDDwZ3ikNmtEb_dc9JuSzUkRNiPRLRZkbXjo7DINxz07ZBreZvLAJOYbdHDfTcAE2ptl32028RheX5zHjrwF9RtKc");'></div>
+<div class="hidden lg:flex flex-col">
+<p class="text-sm font-medium text-white leading-none mb-1">Alex Morgan</p>
+<p class="text-xs text-[#9da6b9] leading-none">Admin</p>
+</div>
+</div>
+</div>
+</header>
+<!-- Toolbar & Controls -->
+<div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 border-b border-[#282e39] bg-[#111318] px-6 py-4 shrink-0 z-10">
+<!-- Left: Date & Navigation -->
+<div class="flex items-center gap-4">
+<div class="flex items-center rounded-lg bg-[#282e39] p-1 h-9">
+<button class="flex items-center justify-center w-8 h-full rounded text-[#9da6b9] hover:bg-[#3b4354] hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[20px]">chevron_left</span>
+</button>
+<button class="flex items-center justify-center w-8 h-full rounded text-[#9da6b9] hover:bg-[#3b4354] hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</div>
+<button class="h-9 px-4 rounded-lg bg-[#282e39] text-white text-sm font-medium hover:bg-[#3b4354] transition-colors">
+                Today
+            </button>
+<div class="flex flex-col">
+<h1 class="text-white text-lg font-bold leading-tight">October 23 - 29, 2023</h1>
+<span class="text-[#9da6b9] text-xs">Week 43</span>
+</div>
+</div>
+<!-- Center: View Modes -->
+<div class="flex items-center gap-4 flex-wrap">
+<!-- Mode Toggle -->
+<div class="bg-[#282e39] p-1 rounded-lg flex h-10">
+<label class="cursor-pointer flex items-center px-3 rounded-md transition-all has-[:checked]:bg-[#111318] has-[:checked]:text-white has-[:checked]:shadow-sm text-[#9da6b9]">
+<input class="hidden" name="view_mode" type="radio" value="google"/>
+<span class="material-symbols-outlined text-[18px] mr-2">calendar_view_month</span>
+<span class="text-sm font-medium">Google Mode</span>
+</label>
+<label class="cursor-pointer flex items-center px-3 rounded-md transition-all has-[:checked]:bg-[#111318] has-[:checked]:text-white has-[:checked]:shadow-sm text-[#9da6b9]">
+<input checked="" class="hidden" name="view_mode" type="radio" value="split"/>
+<span class="material-symbols-outlined text-[18px] mr-2">view_column</span>
+<span class="text-sm font-medium">Split by Camera</span>
+</label>
+</div>
+<!-- Camera Select (Visible in Split Mode) -->
+<div class="relative min-w-[200px] h-10">
+<select class="appearance-none w-full h-full bg-[#1c1f27] border border-[#3b4354] text-white text-sm rounded-lg px-3 pr-10 focus:outline-none focus:border-[#135bec] transition-colors">
+<option>Sony A7S III (3 Units)</option>
+<option>Canon R5 (2 Units)</option>
+<option>Blackmagic 6K (1 Unit)</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-[#9da6b9]">
+<span class="material-symbols-outlined text-[20px]">expand_more</span>
+</div>
+</div>
+<!-- Show Lanes Toggle -->
+<label class="flex items-center gap-2 cursor-pointer group">
+<div class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-9 h-5 bg-[#282e39] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#135bec]"></div>
+</div>
+<span class="text-sm font-medium text-[#9da6b9] group-hover:text-white transition-colors">Show lanes</span>
+</label>
+</div>
+</div>
+<!-- Calendar Grid Container -->
+<div class="flex flex-col flex-1 overflow-hidden relative w-full">
+<!-- Sticky Header Row -->
+<div class="flex w-full border-b border-[#282e39] bg-[#111318] pr-[8px]"> <!-- pr-8px compensates scrollbar width roughly -->
+<!-- Time Axis Spacer -->
+<div class="w-16 shrink-0 border-r border-[#282e39] bg-[#111318] z-30 sticky left-0"></div>
+<!-- Day Headers Grid -->
+<div class="grid grid-cols-7 flex-1 divide-x divide-[#282e39]">
+<!-- Day Header Item -->
+<div class="flex flex-col items-center justify-center py-3 relative group hover:bg-[#1c1f27] transition-colors">
+<span class="text-[#9da6b9] text-xs font-medium uppercase mb-1">Mon</span>
+<div class="flex items-center justify-center size-8 rounded-full text-white font-bold text-lg group-hover:bg-[#282e39]">23</div>
+<!-- Busy Indicator -->
+<div class="w-full px-4 mt-2">
+<div class="h-1 w-full bg-[#282e39] rounded-full overflow-hidden">
+<div class="h-full bg-emerald-500 w-[20%]"></div>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-center justify-center py-3 relative group hover:bg-[#1c1f27] transition-colors">
+<span class="text-[#9da6b9] text-xs font-medium uppercase mb-1">Tue</span>
+<div class="flex items-center justify-center size-8 rounded-full text-white font-bold text-lg group-hover:bg-[#282e39]">24</div>
+<div class="w-full px-4 mt-2">
+<div class="h-1 w-full bg-[#282e39] rounded-full overflow-hidden">
+<div class="h-full bg-yellow-500 w-[60%]"></div>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-center justify-center py-3 relative group hover:bg-[#1c1f27] transition-colors bg-[#1c1f27]/50">
+<span class="text-[#135bec] text-xs font-bold uppercase mb-1">Wed</span>
+<div class="flex items-center justify-center size-8 rounded-full bg-[#135bec] text-white font-bold text-lg shadow-[0_0_10px_rgba(19,91,236,0.4)]">25</div>
+<div class="w-full px-4 mt-2">
+<div class="h-1 w-full bg-[#282e39] rounded-full overflow-hidden">
+<div class="h-full bg-red-500 w-[90%]"></div>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-center justify-center py-3 relative group hover:bg-[#1c1f27] transition-colors">
+<span class="text-[#9da6b9] text-xs font-medium uppercase mb-1">Thu</span>
+<div class="flex items-center justify-center size-8 rounded-full text-white font-bold text-lg group-hover:bg-[#282e39]">26</div>
+<div class="w-full px-4 mt-2">
+<div class="h-1 w-full bg-[#282e39] rounded-full overflow-hidden">
+<div class="h-full bg-emerald-500 w-[40%]"></div>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-center justify-center py-3 relative group hover:bg-[#1c1f27] transition-colors">
+<span class="text-[#9da6b9] text-xs font-medium uppercase mb-1">Fri</span>
+<div class="flex items-center justify-center size-8 rounded-full text-white font-bold text-lg group-hover:bg-[#282e39]">27</div>
+<div class="w-full px-4 mt-2">
+<div class="h-1 w-full bg-[#282e39] rounded-full overflow-hidden">
+<div class="h-full bg-emerald-500 w-[10%]"></div>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-center justify-center py-3 relative group hover:bg-[#1c1f27] transition-colors">
+<span class="text-[#9da6b9] text-xs font-medium uppercase mb-1">Sat</span>
+<div class="flex items-center justify-center size-8 rounded-full text-white font-bold text-lg group-hover:bg-[#282e39]">28</div>
+<div class="w-full px-4 mt-2">
+<div class="h-1 w-full bg-[#282e39] rounded-full overflow-hidden">
+<div class="h-full bg-emerald-500 w-[0%]"></div>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-center justify-center py-3 relative group hover:bg-[#1c1f27] transition-colors">
+<span class="text-[#9da6b9] text-xs font-medium uppercase mb-1">Sun</span>
+<div class="flex items-center justify-center size-8 rounded-full text-white font-bold text-lg group-hover:bg-[#282e39]">29</div>
+<div class="w-full px-4 mt-2">
+<div class="h-1 w-full bg-[#282e39] rounded-full overflow-hidden">
+<div class="h-full bg-emerald-500 w-[0%]"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Scrollable Grid Body -->
+<div class="flex-1 overflow-y-auto relative bg-[#111318]">
+<div class="flex min-h-[1020px] relative"> <!-- 17 hours * 60px -->
+<!-- Time Labels (Sticky Left) -->
+<div class="w-16 shrink-0 flex flex-col items-end pr-3 pt-[10px] border-r border-[#282e39] bg-[#111318] z-20 sticky left-0 text-xs font-medium text-[#9da6b9]">
+<div class="h-[60px]">06:00</div>
+<div class="h-[60px]">07:00</div>
+<div class="h-[60px]">08:00</div>
+<div class="h-[60px]">09:00</div>
+<div class="h-[60px]">10:00</div>
+<div class="h-[60px]">11:00</div>
+<div class="h-[60px]">12:00</div>
+<div class="h-[60px]">13:00</div>
+<div class="h-[60px]">14:00</div>
+<div class="h-[60px]">15:00</div>
+<div class="h-[60px]">16:00</div>
+<div class="h-[60px]">17:00</div>
+<div class="h-[60px]">18:00</div>
+<div class="h-[60px]">19:00</div>
+<div class="h-[60px]">20:00</div>
+<div class="h-[60px]">21:00</div>
+<div class="h-[60px]">22:00</div>
+</div>
+<!-- Grid Background Lines (Absolute) -->
+<div class="absolute inset-0 pointer-events-none flex flex-col pt-[20px] ml-16 w-[calc(100%-4rem)] z-0">
+<!-- Create lines for each hour -->
+<!-- We use inline styles for repetition simplicity here, but could be loop in framework -->
+<!-- Offset 20px is rough centering for text vs line -->
+<div class="h-[60px] border-t border-[#282e39]/50 w-full"></div>
+<div class="h-[60px] border-t border-[#282e39]/50 w-full"></div>
+<div class="h-[60px] border-t border-[#282e39]/50 w-full"></div>
+<div class="h-[60px] border-t border-[#282e39]/50 w-full"></div>
+<div class="h-[60px] border-t border-[#282e39]/50 w-full"></div>
+<div class="h-[60px] border-t border-[#282e39]/50 w-full"></div>
+<div class="h-[60px] border-t border-[#282e39]/50 w-full"></div>
+<div class="h-[60px] border-t border-[#282e39]/50 w-full"></div>
+<div class="h-[60px] border-t border-[#282e39]/50 w-full"></div>
+<div class="h-[60px] border-t border-[#282e39]/50 w-full"></div>
+<div class="h-[60px] border-t border-[#282e39]/50 w-full"></div>
+<div class="h-[60px] border-t border-[#282e39]/50 w-full"></div>
+<div class="h-[60px] border-t border-[#282e39]/50 w-full"></div>
+<div class="h-[60px] border-t border-[#282e39]/50 w-full"></div>
+<div class="h-[60px] border-t border-[#282e39]/50 w-full"></div>
+<div class="h-[60px] border-t border-[#282e39]/50 w-full"></div>
+<div class="h-[60px] border-t border-[#282e39]/50 w-full"></div>
+</div>
+<!-- Active Grid Content -->
+<div class="grid grid-cols-7 flex-1 divide-x divide-[#282e39] relative z-10">
+<!-- MON -->
+<div class="relative group/day h-full">
+<!-- Hover Ghost -->
+<div class="absolute inset-0 opacity-0 group-hover/day:opacity-100 pointer-events-none bg-white/[0.02] transition-opacity"></div>
+<!-- Event: Paid -->
+<div class="absolute top-[130px] left-1 right-1 h-[110px] rounded bg-emerald-900/40 border-l-4 border-emerald-500 p-2 cursor-pointer hover:brightness-110 transition-all shadow-sm">
+<div class="flex justify-between items-start">
+<span class="text-xs font-semibold text-emerald-100">08:00 - 10:00</span>
+<span class="material-symbols-outlined text-[14px] text-emerald-400">check_circle</span>
+</div>
+<p class="text-sm font-bold text-white mt-1">Studio Rent</p>
+<p class="text-xs text-emerald-200/70">John Doe</p>
+</div>
+</div>
+<!-- TUE -->
+<div class="relative group/day h-full">
+<!-- Event: Deposited -->
+<div class="absolute top-[260px] left-1 right-1 h-[230px] rounded bg-amber-900/40 border-l-4 border-amber-500 p-2 cursor-pointer hover:brightness-110 transition-all shadow-sm flex flex-col">
+<div class="flex justify-between items-start">
+<span class="text-xs font-semibold text-amber-100">10:15 - 14:00</span>
+<span class="material-symbols-outlined text-[14px] text-amber-400">pending</span>
+</div>
+<p class="text-sm font-bold text-white mt-1">Outdoor Shoot</p>
+<p class="text-xs text-amber-200/70">Sarah Smith</p>
+<div class="mt-auto flex items-center gap-1 text-[10px] text-amber-200/50 uppercase tracking-wider">
+<span class="material-symbols-outlined text-[12px]">badge</span> ID Verified
+                            </div>
+</div>
+</div>
+<!-- WED (Active Day) -->
+<div class="relative group/day h-full bg-[#1c1f27]/30">
+<!-- Now Line -->
+<div class="absolute top-[390px] w-full z-50 flex items-center pointer-events-none">
+<div class="size-2 rounded-full bg-[#135bec] -ml-1"></div>
+<div class="h-[2px] flex-1 bg-[#135bec]"></div>
+</div>
+<!-- Sub-lanes visual for Split Mode demonstration -->
+<div class="absolute inset-0 flex divide-x divide-[#282e39] divide-dashed opacity-30 pointer-events-none">
+<div class="flex-1"></div>
+<div class="flex-1"></div>
+<div class="flex-1"></div>
+</div>
+<!-- Sub-lane Header Overlays (Only visible because lanes on) -->
+<div class="absolute top-0 w-full flex text-[10px] text-[#9da6b9] font-mono opacity-50 px-1 pt-1 justify-between pointer-events-none">
+<span>U1</span><span>U2</span><span>U3</span>
+</div>
+<!-- Event: Pending (Lane 1) -->
+<div class="absolute top-[380px] left-[2px] w-[32%] h-[120px] rounded bg-red-900/40 border-l-4 border-red-500 p-1.5 cursor-pointer hover:brightness-110 transition-all shadow-sm z-20">
+<div class="flex flex-wrap justify-between items-start gap-1">
+<span class="text-[10px] font-semibold text-red-100 leading-tight">12:30 - 14:30</span>
+<span class="material-symbols-outlined text-[12px] text-red-400">warning</span>
+</div>
+<p class="text-xs font-bold text-white mt-1 truncate">Overdue Return</p>
+<p class="text-[10px] text-red-200/70 truncate">Mike Ross</p>
+</div>
+<!-- Event: Paid (Lane 3) -->
+<div class="absolute top-[450px] right-[2px] w-[32%] h-[180px] rounded bg-emerald-900/40 border-l-4 border-emerald-500 p-1.5 cursor-pointer hover:brightness-110 transition-all shadow-sm z-20">
+<div class="flex justify-between items-start">
+<span class="text-[10px] font-semibold text-emerald-100">13:30 - 16:30</span>
+</div>
+<p class="text-xs font-bold text-white mt-1 leading-tight">Product Launch</p>
+<p class="text-[10px] text-emerald-200/70">TechCorp</p>
+</div>
+</div>
+<!-- THU -->
+<div class="relative group/day h-full">
+<!-- Event: Deposited -->
+<div class="absolute top-[560px] left-1 right-1 h-[90px] rounded bg-amber-900/40 border-l-4 border-amber-500 p-2 cursor-pointer hover:brightness-110 transition-all shadow-sm">
+<div class="flex justify-between items-start">
+<span class="text-xs font-semibold text-amber-100">15:20 - 16:50</span>
+</div>
+<p class="text-sm font-bold text-white mt-1">Fashion Editorial</p>
+<p class="text-xs text-amber-200/70">Vogue L.</p>
+</div>
+</div>
+<!-- FRI -->
+<div class="relative group/day h-full">
+<!-- Multi-day visual hint (start) -->
+<div class="absolute top-[620px] left-1 right-0 h-[60px] rounded-l bg-slate-700/60 border-l-4 border-slate-400 p-2 cursor-pointer hover:brightness-110 transition-all shadow-sm">
+<div class="flex justify-between items-start">
+<span class="text-xs font-semibold text-slate-200">16:20 - ...</span>
+<span class="material-symbols-outlined text-[14px] text-slate-300">calendar_month</span>
+</div>
+<p class="text-sm font-bold text-white mt-1">Weekend Rental</p>
+</div>
+</div>
+<!-- SAT -->
+<div class="relative group/day h-full">
+<!-- Multi-day visual hint (middle) -->
+<div class="absolute top-[620px] left-0 right-0 h-[60px] bg-slate-700/60 p-2 cursor-pointer hover:brightness-110 transition-all">
+<!-- Connecting line visual -->
+<div class="w-full h-full flex items-center justify-center">
+<div class="h-[2px] w-full bg-slate-500/30"></div>
+</div>
+</div>
+</div>
+<!-- SUN -->
+<div class="relative group/day h-full">
+<!-- Multi-day visual hint (end) -->
+<div class="absolute top-[620px] left-0 right-1 h-[60px] rounded-r bg-slate-700/60 border-r-4 border-slate-400 p-2 cursor-pointer hover:brightness-110 transition-all">
+<div class="flex justify-end items-start h-full flex-col">
+<span class="text-xs font-semibold text-slate-200">... - 17:20</span>
+<p class="text-xs text-slate-300">End of Rental</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Tooltip / Interaction Hint (Positioned absolute for demo) -->
+<div class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-[#1c1f27] border border-[#3b4354] text-white px-4 py-2 rounded-full shadow-lg flex items-center gap-3 z-50 animate-bounce">
+<span class="material-symbols-outlined text-[#135bec]">touch_app</span>
+<span class="text-sm font-medium">Click and drag on empty space to create a booking</span>
+</div>
+</body></html>

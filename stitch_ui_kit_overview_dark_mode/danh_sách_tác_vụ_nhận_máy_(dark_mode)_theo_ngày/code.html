@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Danh sách Tác vụ Nhận máy - Kantra Camera Booking</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                        "surface-dark": "#1c2333", // Slightly lighter than bg-dark for cards
+                        "border-dark": "#2d3648",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for dark mode tables */
+        .dark ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: #101622; 
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #2d3648; 
+            border-radius: 4px;
+        }
+        .dark ::-webkit-scrollbar-thumb:hover {
+            background: #3b465c; 
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white antialiased min-h-screen flex flex-col">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 bg-white/80 dark:bg-[#111318]/90 backdrop-blur-md border-b border-gray-200 dark:border-[#282e39]">
+<div class="px-4 sm:px-6 lg:px-8 max-w-[1440px] mx-auto">
+<div class="flex items-center justify-between h-16">
+<!-- Logo & Brand -->
+<div class="flex items-center gap-4">
+<div class="size-8 text-primary">
+<svg fill="currentColor" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M39.475 21.6262C40.358 21.4363 40.6863 21.5589 40.7581 21.5934C40.7876 21.655 40.8547 21.857 40.8082 22.3336C40.7408 23.0255 40.4502 24.0046 39.8572 25.2301C38.6799 27.6631 36.5085 30.6631 33.5858 33.5858C30.6631 36.5085 27.6632 38.6799 25.2301 39.8572C24.0046 40.4502 23.0255 40.7407 22.3336 40.8082C21.8571 40.8547 21.6551 40.7875 21.5934 40.7581C21.5589 40.6863 21.4363 40.358 21.6262 39.475C21.8562 38.4054 22.4689 36.9657 23.5038 35.2817C24.7575 33.2417 26.5497 30.9744 28.7621 28.762C30.9744 26.5497 33.2417 24.7574 35.2817 23.5037C36.9657 22.4689 38.4054 21.8562 39.475 21.6262ZM4.41189 29.2403L18.7597 43.5881C19.8813 44.7097 21.4027 44.9179 22.7217 44.7893C24.0585 44.659 25.5148 44.1631 26.9723 43.4579C29.9052 42.0387 33.2618 39.5667 36.4142 36.4142C39.5667 33.2618 42.0387 29.9052 43.4579 26.9723C44.1631 25.5148 44.659 24.0585 44.7893 22.7217C44.9179 21.4027 44.7097 19.8813 43.5881 18.7597L29.2403 4.41187C27.8527 3.02428 25.8765 3.02573 24.2861 3.36776C22.6081 3.72863 20.7334 4.58419 18.8396 5.74801C16.4978 7.18716 13.9881 9.18353 11.5858 11.5858C9.18354 13.988 7.18717 16.4978 5.74802 18.8396C4.58421 20.7334 3.72865 22.6081 3.36778 24.2861C3.02574 25.8765 3.02429 27.8527 4.41189 29.2403Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<h2 class="text-slate-900 dark:text-white text-lg font-bold tracking-tight hidden sm:block">Kantra Camera</h2>
+</div>
+<!-- Navigation Links -->
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white text-sm font-medium transition-colors" href="#">Dashboard</a>
+<a class="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white text-sm font-medium transition-colors" href="#">Giao máy</a>
+<a class="text-primary dark:text-white text-sm font-bold bg-primary/10 px-3 py-1.5 rounded-full" href="#">Nhận máy</a>
+<a class="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white text-sm font-medium transition-colors" href="#">Kho thiết bị</a>
+</nav>
+<!-- User Profile & Actions -->
+<div class="flex items-center gap-4">
+<button class="hidden sm:flex text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-white">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="h-8 w-[1px] bg-gray-200 dark:bg-gray-700 hidden sm:block"></div>
+<div class="flex items-center gap-3">
+<div class="bg-center bg-no-repeat bg-cover rounded-full size-9 border-2 border-white dark:border-gray-700 shadow-sm" data-alt="User avatar profile picture" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDAigZn0SwgbCoLqTfij4J7aqQNVwsTTyDq6rmSTEnT-0Oo18PKWRwBp88YNBeoSihQE0cTas8u8aDgJ7T7pcSLuW8VcmGTOprHBLvH0H-DyDLwG9ZdVW13TmOqw_it49XZBuH8R9-NCEhjdIjo-_U7M5BWR7EQcQlXo9_NDMcC8G6WafWSYvMCT_3fqLcCtZw7lyu3NO0Jxv2eu7o7wSAUIo7FUZuAqBsh7_Z2uVJhMQTkhpSGI-OqScpQrJ5FVAgspmsHWYcxMzE");'></div>
+<div class="hidden lg:block text-xs">
+<p class="font-bold dark:text-white">Minh Quang</p>
+<p class="text-slate-500 dark:text-slate-400">Operator</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-1 w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Header: Title, Date, Stats -->
+<div class="flex flex-col lg:flex-row gap-8 mb-8">
+<!-- Left: Title and Date Navigation -->
+<div class="flex-1 flex flex-col gap-6">
+<div>
+<h1 class="text-3xl font-black text-slate-900 dark:text-white tracking-tight mb-2">Danh sách Tác vụ Nhận máy</h1>
+<p class="text-slate-500 dark:text-slate-400">Quản lý và theo dõi lịch trình nhận thiết bị từ khách hàng.</p>
+</div>
+<div class="flex items-center gap-4 bg-white dark:bg-surface-dark p-2 rounded-xl border border-gray-200 dark:border-border-dark w-fit shadow-sm">
+<button class="size-10 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-slate-600 dark:text-slate-300 transition-colors">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<div class="flex items-center gap-2 px-2 cursor-pointer hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-primary">calendar_today</span>
+<span class="text-lg font-bold text-slate-900 dark:text-white min-w-[140px] text-center">24 Th10, 2023</span>
+</div>
+<button class="size-10 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-slate-600 dark:text-slate-300 transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Right: Stats Cards -->
+<div class="grid grid-cols-2 md:grid-cols-3 gap-4 lg:w-[600px]">
+<div class="bg-white dark:bg-surface-dark border border-gray-200 dark:border-border-dark rounded-xl p-5 flex flex-col justify-between shadow-sm hover:border-primary/50 transition-colors">
+<div class="flex items-start justify-between">
+<span class="text-slate-500 dark:text-slate-400 text-sm font-medium">Tổng tasks</span>
+<span class="material-symbols-outlined text-slate-400 text-[20px]">list_alt</span>
+</div>
+<div class="mt-2">
+<span class="text-3xl font-bold text-slate-900 dark:text-white">24</span>
+<span class="text-xs text-green-500 ml-1 font-medium">+4 hôm nay</span>
+</div>
+</div>
+<div class="bg-white dark:bg-surface-dark border border-gray-200 dark:border-border-dark rounded-xl p-5 flex flex-col justify-between shadow-sm hover:border-red-500/50 transition-colors group">
+<div class="flex items-start justify-between">
+<span class="text-slate-500 dark:text-slate-400 text-sm font-medium group-hover:text-red-400 transition-colors">Quá hạn (Overdue)</span>
+<span class="material-symbols-outlined text-red-500/80 text-[20px]">warning</span>
+</div>
+<div class="mt-2">
+<span class="text-3xl font-bold text-red-600 dark:text-red-500">2</span>
+<span class="text-xs text-red-400 ml-1 font-medium">Cần xử lý gấp</span>
+</div>
+</div>
+<div class="bg-white dark:bg-surface-dark border border-gray-200 dark:border-border-dark rounded-xl p-5 flex flex-col justify-between shadow-sm hover:border-green-500/50 transition-colors col-span-2 md:col-span-1">
+<div class="flex items-start justify-between">
+<span class="text-slate-500 dark:text-slate-400 text-sm font-medium">Đã hoàn thành</span>
+<span class="material-symbols-outlined text-green-500/80 text-[20px]">check_circle</span>
+</div>
+<div class="mt-2">
+<span class="text-3xl font-bold text-green-600 dark:text-green-500">15</span>
+<span class="text-xs text-slate-500 dark:text-slate-500 ml-1 font-medium">62% tiến độ</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Controls: Filters & Search -->
+<div class="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-4 bg-white dark:bg-surface-dark p-4 rounded-xl border border-gray-200 dark:border-border-dark shadow-sm mb-6">
+<!-- Search -->
+<div class="relative w-full xl:w-96 group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">search</span>
+<input class="w-full h-12 pl-12 pr-4 bg-gray-50 dark:bg-[#101622] border border-gray-200 dark:border-gray-700 rounded-lg text-slate-900 dark:text-white placeholder:text-slate-400 focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all" placeholder="Tìm kiếm tên, SĐT, Booking ID..." type="text"/>
+</div>
+<!-- Filters -->
+<div class="flex flex-wrap items-center gap-3 w-full xl:w-auto">
+<!-- Status Filter -->
+<div class="relative min-w-[140px] flex-1 sm:flex-none">
+<select class="w-full h-12 pl-4 pr-10 appearance-none bg-gray-50 dark:bg-[#101622] border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-primary/50 outline-none cursor-pointer">
+<option>Tất cả trạng thái</option>
+<option>Chờ nhận máy</option>
+<option>Quá hạn</option>
+<option>Đã hoàn thành</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-sm">expand_more</span>
+</div>
+<!-- Platform Filter -->
+<div class="relative min-w-[140px] flex-1 sm:flex-none">
+<select class="w-full h-12 pl-4 pr-10 appearance-none bg-gray-50 dark:bg-[#101622] border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-primary/50 outline-none cursor-pointer">
+<option>Nền tảng (All)</option>
+<option>Website</option>
+<option>Facebook</option>
+<option>Hotline</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-sm">expand_more</span>
+</div>
+<!-- Staff Filter -->
+<div class="relative min-w-[140px] flex-1 sm:flex-none">
+<select class="w-full h-12 pl-4 pr-10 appearance-none bg-gray-50 dark:bg-[#101622] border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-primary/50 outline-none cursor-pointer">
+<option>Nhân viên (All)</option>
+<option>Minh Quang</option>
+<option>Thanh Hà</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-sm">expand_more</span>
+</div>
+<!-- Create/Add Button -->
+<button class="h-12 px-6 ml-auto xl:ml-2 bg-primary hover:bg-blue-600 text-white font-bold rounded-lg flex items-center gap-2 transition-colors shadow-lg shadow-primary/20 whitespace-nowrap">
+<span class="material-symbols-outlined">add</span>
+<span class="hidden sm:inline">Tạo đơn mới</span>
+</button>
+</div>
+</div>
+<!-- Task List Table -->
+<div class="bg-white dark:bg-surface-dark border border-gray-200 dark:border-border-dark rounded-xl shadow-sm overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-gray-50/50 dark:bg-[#161c28] border-b border-gray-200 dark:border-border-dark">
+<th class="p-4 font-semibold text-slate-500 dark:text-slate-400 text-sm w-24">Thời gian</th>
+<th class="p-4 font-semibold text-slate-500 dark:text-slate-400 text-sm">Khách hàng</th>
+<th class="p-4 font-semibold text-slate-500 dark:text-slate-400 text-sm">Thiết bị &amp; Số lượng</th>
+<th class="p-4 font-semibold text-slate-500 dark:text-slate-400 text-sm">Địa điểm</th>
+<th class="p-4 font-semibold text-slate-500 dark:text-slate-400 text-sm text-center">Thanh toán</th>
+<th class="p-4 font-semibold text-slate-500 dark:text-slate-400 text-sm text-center">Trạng thái</th>
+<th class="p-4 font-semibold text-slate-500 dark:text-slate-400 text-sm text-right">Hành động</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-gray-200 dark:divide-border-dark">
+<!-- Row 1: Overdue -->
+<tr class="group hover:bg-gray-50 dark:hover:bg-[#1a202e] transition-colors">
+<td class="p-4 align-top">
+<span class="text-red-500 font-bold bg-red-50 dark:bg-red-500/10 px-2 py-1 rounded text-sm">08:30</span>
+</td>
+<td class="p-4 align-top">
+<div class="flex flex-col">
+<span class="font-bold text-slate-900 dark:text-white">Nguyễn Văn An</span>
+<a class="text-sm text-slate-500 dark:text-slate-400 hover:text-primary flex items-center gap-1 mt-1" href="tel:0909123456">
+<span class="material-symbols-outlined text-[14px]">call</span> 0909 123 456
+                                    </a>
+</div>
+</td>
+<td class="p-4 align-top">
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between text-sm text-slate-700 dark:text-slate-200 bg-gray-100 dark:bg-[#252b36] px-2 py-1 rounded">
+<span>Sony A7S III</span>
+<span class="font-bold text-xs bg-gray-200 dark:bg-gray-600 px-1.5 rounded text-slate-800 dark:text-white">x2</span>
+</div>
+<div class="flex items-center justify-between text-sm text-slate-700 dark:text-slate-200 bg-gray-100 dark:bg-[#252b36] px-2 py-1 rounded">
+<span>Lens 24-70mm GM</span>
+<span class="font-bold text-xs bg-gray-200 dark:bg-gray-600 px-1.5 rounded text-slate-800 dark:text-white">x1</span>
+</div>
+</div>
+</td>
+<td class="p-4 align-top">
+<a class="group/map flex items-start gap-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-red-500 text-[18px] mt-0.5">location_on</span>
+<span class="group-hover/map:underline">123 Lê Lợi, Quận 1, TP.HCM</span>
+</a>
+</td>
+<td class="p-4 align-top text-center">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-500/10 dark:text-yellow-500 border border-yellow-200 dark:border-yellow-500/20">
+                                    Cọc 50%
+                                </span>
+</td>
+<td class="p-4 align-top text-center">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-500/10 dark:text-red-400 border border-red-200 dark:border-red-500/20">
+                                    Overdue
+                                </span>
+</td>
+<td class="p-4 align-top text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="p-2 text-slate-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors" title="Xem chi tiết">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</button>
+<button class="p-2 text-slate-400 hover:text-green-500 hover:bg-green-500/10 rounded-lg transition-colors" title="Đánh dấu đã giao">
+<span class="material-symbols-outlined text-[20px]">check_circle</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2: Standard -->
+<tr class="group hover:bg-gray-50 dark:hover:bg-[#1a202e] transition-colors">
+<td class="p-4 align-top">
+<span class="text-slate-700 dark:text-white font-bold bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded text-sm">09:15</span>
+</td>
+<td class="p-4 align-top">
+<div class="flex flex-col">
+<span class="font-bold text-slate-900 dark:text-white">Trần Thị Bích</span>
+<a class="text-sm text-slate-500 dark:text-slate-400 hover:text-primary flex items-center gap-1 mt-1" href="tel:0918888999">
+<span class="material-symbols-outlined text-[14px]">call</span> 0918 888 999
+                                    </a>
+</div>
+</td>
+<td class="p-4 align-top">
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between text-sm text-slate-700 dark:text-slate-200 bg-gray-100 dark:bg-[#252b36] px-2 py-1 rounded">
+<span>Canon R5 Body</span>
+<span class="font-bold text-xs bg-gray-200 dark:bg-gray-600 px-1.5 rounded text-slate-800 dark:text-white">x1</span>
+</div>
+</div>
+</td>
+<td class="p-4 align-top">
+<a class="group/map flex items-start gap-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-primary text-[18px] mt-0.5">store</span>
+<span class="group-hover/map:underline">Nhận tại cửa hàng (Store A)</span>
+</a>
+</td>
+<td class="p-4 align-top text-center">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-500/10 dark:text-green-500 border border-green-200 dark:border-green-500/20">
+                                    Full
+                                </span>
+</td>
+<td class="p-4 align-top text-center">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-600">
+                                    Pending
+                                </span>
+</td>
+<td class="p-4 align-top text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="p-2 text-slate-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors" title="Xem chi tiết">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</button>
+<button class="p-2 text-slate-400 hover:text-green-500 hover:bg-green-500/10 rounded-lg transition-colors" title="Đánh dấu đã giao">
+<span class="material-symbols-outlined text-[20px]">check_circle</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3: Standard -->
+<tr class="group hover:bg-gray-50 dark:hover:bg-[#1a202e] transition-colors">
+<td class="p-4 align-top">
+<span class="text-slate-700 dark:text-white font-bold bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded text-sm">10:30</span>
+</td>
+<td class="p-4 align-top">
+<div class="flex flex-col">
+<span class="font-bold text-slate-900 dark:text-white">Lê Hoàng Nam</span>
+<a class="text-sm text-slate-500 dark:text-slate-400 hover:text-primary flex items-center gap-1 mt-1" href="tel:0933777666">
+<span class="material-symbols-outlined text-[14px]">call</span> 0933 777 666
+                                    </a>
+</div>
+</td>
+<td class="p-4 align-top">
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between text-sm text-slate-700 dark:text-slate-200 bg-gray-100 dark:bg-[#252b36] px-2 py-1 rounded">
+<span>DJI Mavic 3 Cine</span>
+<span class="font-bold text-xs bg-gray-200 dark:bg-gray-600 px-1.5 rounded text-slate-800 dark:text-white">x1</span>
+</div>
+<div class="flex items-center justify-between text-sm text-slate-700 dark:text-slate-200 bg-gray-100 dark:bg-[#252b36] px-2 py-1 rounded">
+<span>Pin dự phòng</span>
+<span class="font-bold text-xs bg-gray-200 dark:bg-gray-600 px-1.5 rounded text-slate-800 dark:text-white">x3</span>
+</div>
+</div>
+</td>
+<td class="p-4 align-top">
+<a class="group/map flex items-start gap-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-red-500 text-[18px] mt-0.5">location_on</span>
+<span class="group-hover/map:underline">45 Thảo Điền, Quận 2, TP.HCM</span>
+</a>
+</td>
+<td class="p-4 align-top text-center">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-500/10 dark:text-red-400 border border-red-200 dark:border-red-500/20">
+                                    Unpaid
+                                </span>
+</td>
+<td class="p-4 align-top text-center">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-600">
+                                    Pending
+                                </span>
+</td>
+<td class="p-4 align-top text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="p-2 text-slate-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors" title="Xem chi tiết">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</button>
+<button class="p-2 text-slate-400 hover:text-green-500 hover:bg-green-500/10 rounded-lg transition-colors" title="Đánh dấu đã giao">
+<span class="material-symbols-outlined text-[20px]">check_circle</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4: Done -->
+<tr class="group hover:bg-gray-50 dark:hover:bg-[#1a202e] transition-colors bg-gray-50/30 dark:bg-[#151a24]">
+<td class="p-4 align-top">
+<span class="text-slate-400 font-bold bg-transparent px-2 py-1 rounded text-sm line-through">08:00</span>
+</td>
+<td class="p-4 align-top opacity-60">
+<div class="flex flex-col">
+<span class="font-bold text-slate-900 dark:text-white">Phạm Minh Tuấn</span>
+<a class="text-sm text-slate-500 dark:text-slate-400 hover:text-primary flex items-center gap-1 mt-1" href="tel:0999888777">
+<span class="material-symbols-outlined text-[14px]">call</span> 0999 888 777
+                                    </a>
+</div>
+</td>
+<td class="p-4 align-top opacity-60">
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between text-sm text-slate-700 dark:text-slate-200 bg-gray-100 dark:bg-[#252b36] px-2 py-1 rounded">
+<span>Gopro Hero 11</span>
+<span class="font-bold text-xs bg-gray-200 dark:bg-gray-600 px-1.5 rounded text-slate-800 dark:text-white">x2</span>
+</div>
+</div>
+</td>
+<td class="p-4 align-top opacity-60">
+<a class="group/map flex items-start gap-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-primary text-[18px] mt-0.5">store</span>
+<span class="group-hover/map:underline">Store A</span>
+</a>
+</td>
+<td class="p-4 align-top text-center opacity-60">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-500/10 dark:text-green-500 border border-green-200 dark:border-green-500/20">
+                                    Full
+                                </span>
+</td>
+<td class="p-4 align-top text-center">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-500/10 dark:text-green-400 border border-green-200 dark:border-green-500/20">
+<span class="material-symbols-outlined text-[14px] mr-1">check</span> Done
+                                </span>
+</td>
+<td class="p-4 align-top text-right opacity-60">
+<div class="flex items-center justify-end gap-2">
+<button class="p-2 text-slate-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination Footer -->
+<div class="px-4 py-3 border-t border-gray-200 dark:border-border-dark flex items-center justify-between bg-gray-50 dark:bg-surface-dark">
+<div class="text-sm text-slate-500 dark:text-slate-400">
+                    Hiển thị <span class="font-medium">1-4</span> trong <span class="font-medium">24</span> tasks
+                </div>
+<div class="flex items-center gap-2">
+<button class="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-transparent text-slate-500 dark:text-slate-400 opacity-50 cursor-not-allowed">Trước</button>
+<button class="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-transparent text-slate-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-gray-800">Sau</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Simple Footer -->
+<footer class="border-t border-gray-200 dark:border-[#282e39] py-6 bg-white dark:bg-[#111318]">
+<div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+<p class="text-sm text-slate-500 dark:text-slate-500">© 2023 Kantra Camera Booking. All rights reserved.</p>
+<div class="flex items-center gap-4">
+<a class="text-sm text-slate-500 hover:text-primary dark:text-slate-500 dark:hover:text-white" href="#">Điều khoản</a>
+<a class="text-sm text-slate-500 hover:text-primary dark:text-slate-500 dark:hover:text-white" href="#">Bảo mật</a>
+<a class="text-sm text-slate-500 hover:text-primary dark:text-slate-500 dark:hover:text-white" href="#">Hỗ trợ</a>
+</div>
+</div>
+</footer>
+</body></html>

@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Kantra Camera Booking - Revenue Dashboard</title>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for better look in dashboard */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #334155;
+        }
+        .dark ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+        
+        /* Chart specific placeholder styles */
+        .chart-grid-line {
+            stroke: #e2e8f0;
+            stroke-dasharray: 4;
+        }
+        .dark .chart-grid-line {
+            stroke: #334155;
+        }
+        
+        .chart-path {
+            stroke: #135bec;
+            fill: none;
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            filter: drop-shadow(0 4px 6px rgba(19, 91, 236, 0.2));
+        }
+    </style>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark text-slate-900 dark:text-white antialiased transition-colors duration-200">
+<div class="flex h-screen w-full overflow-hidden">
+<!-- Sidebar -->
+<aside class="w-64 flex-shrink-0 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-[#151b2b] flex flex-col justify-between transition-colors duration-200">
+<div class="p-6 flex flex-col gap-8 h-full">
+<!-- Brand -->
+<div class="flex items-center gap-3 px-2">
+<div class="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-white shadow-lg shadow-primary/30">
+<span class="material-symbols-outlined text-[24px]">camera_enhance</span>
+</div>
+<h1 class="text-lg font-bold tracking-tight text-slate-900 dark:text-white">Kantra Admin</h1>
+</div>
+<!-- Navigation -->
+<nav class="flex flex-col gap-1 flex-1">
+<p class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Menu</p>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 text-primary dark:bg-primary/20 dark:text-blue-400 group transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">calendar_month</span>
+<span class="text-sm font-medium">Bookings</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">inventory_2</span>
+<span class="text-sm font-medium">Inventory</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">group</span>
+<span class="text-sm font-medium">Customers</span>
+</a>
+<div class="mt-8">
+<p class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">System</p>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="text-sm font-medium">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">logout</span>
+<span class="text-sm font-medium">Log out</span>
+</a>
+</div>
+</nav>
+<!-- User Profile Snippet -->
+<div class="flex items-center gap-3 px-3 py-3 border-t border-slate-100 dark:border-slate-800 mt-auto">
+<div class="h-9 w-9 rounded-full bg-cover bg-center" data-alt="User profile picture of admin" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC5LoF74ZLHQO4h7cMoJ6YqyrxyL0Q3J_iebfAyO1t-1pTKgVQkxnTwZuNZHBXxG-MsDkxnTZo8pbA4mwRt3Odou48RhBWs0fcFyrw_75D5ZxHhqZffiYSwiOCLe1igatWsVZ659ce6iBG-vbjBQEz5-rDcPMJnghxIYDf2yxmZGN7ZhwDyXS-p2HZ4BpV2ji0btq-CfkLCgXw_zHfGNQzqPZHbqEgcZQZN5-JHZKmSDJ7PaXtMpERqbG3wV6LOBKAcpMcqqqbWSZ8');"></div>
+<div class="flex flex-col">
+<p class="text-sm font-semibold text-slate-900 dark:text-white">Admin User</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">admin@kantra.com</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 h-full overflow-y-auto overflow-x-hidden bg-background-light dark:bg-background-dark">
+<div class="container mx-auto max-w-7xl px-6 py-8">
+<!-- Header Section -->
+<header class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+<div class="flex flex-col gap-1">
+<h1 class="text-3xl font-black tracking-tight text-slate-900 dark:text-white">Dashboard Doanh thu</h1>
+<p class="text-slate-500 dark:text-slate-400 font-medium">Tổng quan hiệu suất kinh doanh &amp; báo cáo tài chính</p>
+</div>
+<div class="flex flex-wrap items-center gap-3">
+<!-- Date Filter -->
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-slate-400 text-[20px]">calendar_today</span>
+</div>
+<select class="pl-10 pr-10 py-2.5 bg-white dark:bg-[#151b2b] border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20 hover:border-slate-300 dark:hover:border-slate-600 appearance-none cursor-pointer min-w-[160px]">
+<option value="this_month">Tháng này (T10)</option>
+<option value="last_month">Tháng trước (T9)</option>
+<option value="this_year">Năm nay (2023)</option>
+<option value="custom">Tùy chỉnh...</option>
+</select>
+<div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-slate-400 text-[20px]">expand_more</span>
+</div>
+</div>
+<!-- Export Button -->
+<button class="flex items-center justify-center gap-2 px-4 py-2.5 bg-white dark:bg-[#151b2b] border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-primary dark:hover:text-blue-400 transition-all shadow-sm">
+<span class="material-symbols-outlined text-[20px]">download</span>
+<span>Export CSV</span>
+</button>
+</div>
+</header>
+<!-- KPI Cards Grid -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-8">
+<!-- Card 1: Revenue -->
+<div class="p-5 rounded-xl bg-white dark:bg-[#151b2b] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col gap-3 relative overflow-hidden group">
+<div class="flex justify-between items-start">
+<p class="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider">Tổng doanh thu</p>
+<div class="bg-blue-50 dark:bg-blue-900/30 p-1.5 rounded-md text-primary dark:text-blue-400">
+<span class="material-symbols-outlined text-[18px]">payments</span>
+</div>
+</div>
+<div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-white tracking-tight">150.0M ₫</h3>
+<div class="flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-emerald-500 text-[16px]">trending_up</span>
+<span class="text-xs font-bold text-emerald-600 dark:text-emerald-400">+12%</span>
+<span class="text-xs text-slate-400 ml-1">vs tháng trước</span>
+</div>
+</div>
+</div>
+<!-- Card 2: Base Fee (S) -->
+<div class="p-5 rounded-xl bg-white dark:bg-[#151b2b] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col gap-3">
+<div class="flex justify-between items-start">
+<p class="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider">Phí gốc (S)</p>
+<div class="bg-slate-100 dark:bg-slate-800 p-1.5 rounded-md text-slate-600 dark:text-slate-400">
+<span class="material-symbols-outlined text-[18px]">monetization_on</span>
+</div>
+</div>
+<div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-white tracking-tight">120.0M ₫</h3>
+<div class="flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-emerald-500 text-[16px]">trending_up</span>
+<span class="text-xs font-bold text-emerald-600 dark:text-emerald-400">+8%</span>
+</div>
+</div>
+</div>
+<!-- Card 3: Net (P) -->
+<div class="p-5 rounded-xl bg-white dark:bg-[#151b2b] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col gap-3">
+<div class="flex justify-between items-start">
+<p class="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider">Sau CK (P)</p>
+<div class="bg-indigo-50 dark:bg-indigo-900/30 p-1.5 rounded-md text-indigo-600 dark:text-indigo-400">
+<span class="material-symbols-outlined text-[18px]">account_balance_wallet</span>
+</div>
+</div>
+<div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-white tracking-tight">110.0M ₫</h3>
+<div class="flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-emerald-500 text-[16px]">trending_up</span>
+<span class="text-xs font-bold text-emerald-600 dark:text-emerald-400">+10%</span>
+</div>
+</div>
+</div>
+<!-- Card 4: Shipping -->
+<div class="p-5 rounded-xl bg-white dark:bg-[#151b2b] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col gap-3">
+<div class="flex justify-between items-start">
+<p class="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider">Phí giao hàng</p>
+<div class="bg-orange-50 dark:bg-orange-900/30 p-1.5 rounded-md text-orange-600 dark:text-orange-400">
+<span class="material-symbols-outlined text-[18px]">local_shipping</span>
+</div>
+</div>
+<div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-white tracking-tight">5.0M ₫</h3>
+<div class="flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-rose-500 text-[16px]">trending_down</span>
+<span class="text-xs font-bold text-rose-600 dark:text-rose-400">-2%</span>
+</div>
+</div>
+</div>
+<!-- Card 5: Late Fees -->
+<div class="p-5 rounded-xl bg-white dark:bg-[#151b2b] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col gap-3">
+<div class="flex justify-between items-start">
+<p class="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider">Phí trễ hạn</p>
+<div class="bg-rose-50 dark:bg-rose-900/30 p-1.5 rounded-md text-rose-600 dark:text-rose-400">
+<span class="material-symbols-outlined text-[18px]">schedule</span>
+</div>
+</div>
+<div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-white tracking-tight">2.0M ₫</h3>
+<div class="flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-emerald-500 text-[16px]">trending_up</span>
+<span class="text-xs font-bold text-emerald-600 dark:text-emerald-400">+5%</span>
+</div>
+</div>
+</div>
+<!-- Card 6: Bookings -->
+<div class="p-5 rounded-xl bg-white dark:bg-[#151b2b] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col gap-3">
+<div class="flex justify-between items-start">
+<p class="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider">Lượt thuê</p>
+<div class="bg-purple-50 dark:bg-purple-900/30 p-1.5 rounded-md text-purple-600 dark:text-purple-400">
+<span class="material-symbols-outlined text-[18px]">shopping_bag</span>
+</div>
+</div>
+<div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-white tracking-tight">142</h3>
+<div class="flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-emerald-500 text-[16px]">trending_up</span>
+<span class="text-xs font-bold text-emerald-600 dark:text-emerald-400">+15%</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Charts Section -->
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+<!-- Main Chart: Revenue Line Chart -->
+<div class="lg:col-span-2 bg-white dark:bg-[#151b2b] rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm flex flex-col h-[400px]">
+<div class="flex justify-between items-center mb-6">
+<h2 class="text-lg font-bold text-slate-900 dark:text-white">Biểu đồ Doanh thu (theo ngày)</h2>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</div>
+<!-- SVG Chart Placeholder -->
+<div class="flex-1 w-full h-full relative" data-alt="Line chart showing daily revenue trends with a peak in the middle of the month">
+<svg class="w-full h-full overflow-visible preserve-3d" viewbox="0 0 800 300">
+<!-- Grid Lines -->
+<line class="chart-grid-line" x1="0" x2="800" y1="250" y2="250"></line>
+<line class="chart-grid-line" x1="0" x2="800" y1="190" y2="190"></line>
+<line class="chart-grid-line" x1="0" x2="800" y1="130" y2="130"></line>
+<line class="chart-grid-line" x1="0" x2="800" y1="70" y2="70"></line>
+<!-- Chart Line -->
+<path class="chart-path" d="M0,220 C50,220 80,180 120,190 C160,200 200,100 240,120 C280,140 320,80 360,60 C400,40 440,160 480,140 C520,120 560,90 600,110 C640,130 700,50 800,80" fill="none" stroke-width="3"></path>
+<!-- Data Points -->
+<circle class="fill-white dark:fill-[#151b2b] stroke-primary stroke-[3px]" cx="360" cy="60" r="6"></circle>
+<rect class="fill-slate-800 dark:fill-white" height="25" rx="4" width="60" x="330" y="20"></rect>
+<text class="fill-white dark:fill-slate-900 text-xs font-bold font-sans" text-anchor="middle" x="360" y="37">12.5M</text>
+</svg>
+<!-- X Axis Labels -->
+<div class="flex justify-between mt-2 text-xs text-slate-400 font-medium">
+<span>01/10</span>
+<span>05/10</span>
+<span>10/10</span>
+<span>15/10</span>
+<span>20/10</span>
+<span>25/10</span>
+<span>30/10</span>
+</div>
+</div>
+</div>
+<!-- Secondary Charts Stack -->
+<div class="flex flex-col gap-6 h-[400px]">
+<!-- Bar Chart: Top Cameras -->
+<div class="bg-white dark:bg-[#151b2b] rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm flex-1 flex flex-col justify-between">
+<h2 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Top Thiết bị</h2>
+<div class="flex flex-col gap-3 flex-1 justify-center">
+<!-- Item 1 -->
+<div class="flex flex-col gap-1">
+<div class="flex justify-between text-xs font-medium text-slate-600 dark:text-slate-300">
+<span>Sony A7S III</span>
+<span>45M ₫</span>
+</div>
+<div class="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-2">
+<div class="bg-primary h-2 rounded-full" style="width: 85%"></div>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="flex flex-col gap-1">
+<div class="flex justify-between text-xs font-medium text-slate-600 dark:text-slate-300">
+<span>Canon R5</span>
+<span>32M ₫</span>
+</div>
+<div class="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-2">
+<div class="bg-primary h-2 rounded-full opacity-80" style="width: 65%"></div>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="flex flex-col gap-1">
+<div class="flex justify-between text-xs font-medium text-slate-600 dark:text-slate-300">
+<span>Fujifilm X-T4</span>
+<span>18M ₫</span>
+</div>
+<div class="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-2">
+<div class="bg-primary h-2 rounded-full opacity-60" style="width: 40%"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Donut Chart: Model Share -->
+<div class="bg-white dark:bg-[#151b2b] rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm flex-1 flex flex-row items-center gap-4">
+<div class="relative size-24 shrink-0">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36">
+<path class="text-slate-100 dark:text-slate-700" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="8"></path>
+<path class="text-primary" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="70, 100" stroke-width="8"></path>
+<path class="text-sky-400" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="20, 100" stroke-dashoffset="-70" stroke-width="8"></path>
+</svg>
+<div class="absolute inset-0 flex items-center justify-center flex-col">
+<span class="text-xs font-bold text-slate-900 dark:text-white">Type</span>
+</div>
+</div>
+<div class="flex flex-col gap-2 flex-1">
+<h2 class="text-sm font-bold text-slate-900 dark:text-white mb-1">Thị phần Dòng máy</h2>
+<div class="flex items-center gap-2 text-xs">
+<span class="size-2 rounded-full bg-primary"></span>
+<span class="text-slate-600 dark:text-slate-300">Mirrorless (70%)</span>
+</div>
+<div class="flex items-center gap-2 text-xs">
+<span class="size-2 rounded-full bg-sky-400"></span>
+<span class="text-slate-600 dark:text-slate-300">DSLR (20%)</span>
+</div>
+<div class="flex items-center gap-2 text-xs">
+<span class="size-2 rounded-full bg-slate-200 dark:bg-slate-600"></span>
+<span class="text-slate-600 dark:text-slate-300">Khác (10%)</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Data Table Section -->
+<section class="bg-white dark:bg-[#151b2b] rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+<div class="px-6 py-5 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<h2 class="text-lg font-bold text-slate-900 dark:text-white">Chi tiết Booking gần đây</h2>
+<div class="flex gap-2">
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-slate-400 text-[18px]">search</span>
+</span>
+<input class="pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20 w-64" placeholder="Tìm kiếm booking..." type="text"/>
+</div>
+<button class="px-3 py-2 bg-white dark:bg-[#151b2b] border border-slate-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+<span class="material-symbols-outlined text-[20px]">filter_list</span>
+</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left text-sm">
+<thead class="bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 font-semibold border-b border-slate-100 dark:border-slate-800">
+<tr>
+<th class="px-6 py-4 cursor-pointer hover:text-primary">
+<div class="flex items-center gap-1">Booking ID <span class="material-symbols-outlined text-[14px]">unfold_more</span></div>
+</th>
+<th class="px-6 py-4">Khách hàng</th>
+<th class="px-6 py-4">Thiết bị</th>
+<th class="px-6 py-4">Thời gian thuê</th>
+<th class="px-6 py-4">Trạng thái</th>
+<th class="px-6 py-4 text-right cursor-pointer hover:text-primary">
+<div class="flex items-center justify-end gap-1">Tổng tiền <span class="material-symbols-outlined text-[14px]">unfold_more</span></div>
+</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+<!-- Row 1 -->
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+<td class="px-6 py-4 font-medium text-slate-900 dark:text-white">#BK-2938</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="h-8 w-8 rounded-full bg-cover bg-center" data-alt="Customer avatar" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCUE3qSmMiMrtaqG1JKQjhUvBOJXD8C572Vt24_1hb1oHLz_A-33-Um3MuCl9_7j5wqig8RDEGCFjV8VL90Y7t31nE-2qJBmemrsR6Owj5VdYLKJWxKXd4NXklHQM1zA2lMudzv1QuZi7of5rP0IhPrmQkPXRs2B2F3iIV2TlJK0MoXKbbBK3t1v4Z7iAzeJzxY3q6DiEo2W0OBRUbYeSkkg6u6md4cYqvacTRhw2KAnxroHJAWfSiR2HvZbK0qG8DXWrW0C18zzgs');"></div>
+<span class="text-slate-700 dark:text-slate-200">Nguyễn Văn A</span>
+</div>
+</td>
+<td class="px-6 py-4 text-slate-600 dark:text-slate-300">Sony A7S III + Lens 24-70</td>
+<td class="px-6 py-4 text-slate-500 dark:text-slate-400">12/10 - 15/10 (3 ngày)</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400">
+                                            Hoàn thành
+                                        </span>
+</td>
+<td class="px-6 py-4 text-right font-bold text-slate-900 dark:text-white">3.500.000 ₫</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+<td class="px-6 py-4 font-medium text-slate-900 dark:text-white">#BK-2939</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="h-8 w-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs">LM</div>
+<span class="text-slate-700 dark:text-slate-200">Lê Thị Mai</span>
+</div>
+</td>
+<td class="px-6 py-4 text-slate-600 dark:text-slate-300">Fujifilm X-T4 Body</td>
+<td class="px-6 py-4 text-slate-500 dark:text-slate-400">14/10 - 14/10 (1 ngày)</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
+                                            Đang thuê
+                                        </span>
+</td>
+<td class="px-6 py-4 text-right font-bold text-slate-900 dark:text-white">850.000 ₫</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+<td class="px-6 py-4 font-medium text-slate-900 dark:text-white">#BK-2940</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="h-8 w-8 rounded-full bg-cover bg-center" data-alt="Customer avatar" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCGQP-fIGboZiT6BOI5xpVlurx0yx6hdWALfx_-q7kL8nexXA6jcaGpbR0gxpIa7JQng7jkvdl95SuSjVs4rb896EYa1D2HotwNxKHbJyY7Ohqq_MY7gQJT85N2atfAR9QnVxZh6fKvuO-JmsYiR1wnIfKyuraiXwphJGhEx1WdXe2ayYTHXZwLx9pDSKPSlq1_fcQRl6kLhsuJhoVh-yuwAMfZQgNGC7H-nV-OuPllMaQK8oNYWE0sBFFJ-kPyi5HJIuU-tPA4c0s');"></div>
+<span class="text-slate-700 dark:text-slate-200">Trần Quốc Bảo</span>
+</div>
+</td>
+<td class="px-6 py-4 text-slate-600 dark:text-slate-300">Canon R5 + Lens 50mm</td>
+<td class="px-6 py-4 text-slate-500 dark:text-slate-400">10/10 - 12/10 (2 ngày)</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-400">
+                                            Quá hạn
+                                        </span>
+</td>
+<td class="px-6 py-4 text-right font-bold text-slate-900 dark:text-white">2.200.000 ₫</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+<td class="px-6 py-4 font-medium text-slate-900 dark:text-white">#BK-2941</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="h-8 w-8 rounded-full bg-cover bg-center" data-alt="Customer avatar" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAF4jTVgF1eiV_-g9dO4lvNx9pVvdunqmqTLnWBE1-dXdRHtdZWKW5Tqq_xnStWS-zQIVKxyyLAMCyLPCcVTqBX-ZcWIn2nKbw35N1tP9fl90ZFHj_giKm9FNwLqVqqww0Gn9_D4jcrPLXItGUdojiyo6F-WTtRKjgMIfnXSfjf26K11c4hSam2lOB2jDnsUn8Shd2lNeV2j7Zoq9vXY4nHBerKpOFALIw--rbVFfTM8DP-wk9006mW-NVYDon5wwUqqmaPK0wXBFg');"></div>
+<span class="text-slate-700 dark:text-slate-200">Phạm Hương</span>
+</div>
+</td>
+<td class="px-6 py-4 text-slate-600 dark:text-slate-300">GoPro Hero 11</td>
+<td class="px-6 py-4 text-slate-500 dark:text-slate-400">15/10 - 18/10 (3 ngày)</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400">
+                                            Chờ duyệt
+                                        </span>
+</td>
+<td class="px-6 py-4 text-right font-bold text-slate-900 dark:text-white">450.000 ₫</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-6 py-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+<p class="text-sm text-slate-500 dark:text-slate-400">Hiển thị <span class="font-medium">1-4</span> trong <span class="font-medium">142</span> kết quả</p>
+<div class="flex gap-2">
+<button class="px-3 py-1 rounded border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50" disabled="">Trước</button>
+<button class="px-3 py-1 rounded border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800">Sau</button>
+</div>
+</div>
+</section>
+<div class="h-10"></div> <!-- Bottom Spacer -->
+</div>
+</main>
+</div>
+<!-- Script to simulate theme switching based on OS or can be expanded -->
+<script>
+        // Simple logic to ensure the correct class is on html tag based on system preference if needed, 
+        // but user requested Light Mode context primarily, while keeping the structure ready for dark mode.
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            // document.documentElement.classList.add('dark');
+        }
+    </script>
+</body></html>

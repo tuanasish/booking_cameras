@@ -1,0 +1,4 @@
+app/(dashboard)/tasks/return/page.tsx(287,11): error TS2322: Type 'ReturnTask' is not assignable to type '{ id: string; booking_id: string; due_at: string; location: string | null; booking: { id: string; customer: { name: string; phone: string; }; booking_items: { camera: { name: string; price_6h: number; }; quantity: number; }[]; ... 9 more ...; total_delivery_fee: number; }; }'.
+  The types of 'booking.booking_accessories' are incompatible between these types.
+    Type '{ accessory_type: string; name: string | null; }[]' is not assignable to type '{ accessory_type: string; name: string | null; quantity: number; }[]'.
+      Property 'quantity' is missing in type '{ accessory_type: string; name: string | null; }' but required in type '{ accessory_type: string; name: string | null; quantity: number; }'.

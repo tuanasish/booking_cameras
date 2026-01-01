@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Kantra Camera - Login</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=Noto+Sans:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "primary-hover": "#114dc8",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "body": ["Noto Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar for cleaner look if needed */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-[#111318] dark:text-white transition-colors duration-200">
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+<!-- Header Section -->
+<header class="flex flex-col items-center justify-center pt-10 pb-6 px-4 text-center">
+<div class="flex items-center gap-3 mb-2">
+<div class="flex items-center justify-center w-12 h-12 rounded-xl bg-primary text-white">
+<span class="material-symbols-outlined text-3xl">photo_camera</span>
+</div>
+<h1 class="text-[#111318] dark:text-white text-3xl font-black tracking-tight">Kantra Camera</h1>
+</div>
+<p class="text-[#616f89] dark:text-gray-400 text-base font-normal">Hệ thống quản lý booking cho thuê máy ảnh</p>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col justify-center px-4 sm:px-6 lg:px-8 pb-12">
+<div class="mx-auto max-w-5xl w-full">
+<!-- Dual Card Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-start">
+<!-- Card 1: Admin Login -->
+<div class="bg-white dark:bg-[#1A202C] rounded-2xl shadow-sm border border-[#e5e7eb] dark:border-gray-700 p-8 flex flex-col h-full relative overflow-hidden group">
+<!-- Decorative top accent -->
+<div class="absolute top-0 left-0 w-full h-1.5 bg-primary"></div>
+<div class="flex items-center gap-3 mb-6">
+<div class="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-primary">
+<span class="material-symbols-outlined">admin_panel_settings</span>
+</div>
+<div>
+<h2 class="text-xl font-bold text-[#111318] dark:text-white leading-tight">Admin Portal</h2>
+<p class="text-sm text-[#616f89] dark:text-gray-400">Đăng nhập dành cho quản trị viên</p>
+</div>
+</div>
+<form class="flex flex-col gap-5 flex-1" onsubmit="event.preventDefault();">
+<!-- Username Input -->
+<div class="flex flex-col gap-2">
+<label class="text-[#111318] dark:text-gray-200 text-sm font-medium" for="admin-email">Email hoặc Tên đăng nhập</label>
+<div class="relative">
+<input class="w-full h-12 rounded-lg border border-[#dbdfe6] dark:border-gray-600 bg-white dark:bg-[#2D3748] px-4 pl-11 text-[#111318] dark:text-white placeholder:text-[#9ca3af] focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" id="admin-email" placeholder="admin@kantra.com" type="text"/>
+<div class="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9ca3af]">
+<span class="material-symbols-outlined text-[20px]">mail</span>
+</div>
+</div>
+</div>
+<!-- Password Input -->
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-center">
+<label class="text-[#111318] dark:text-gray-200 text-sm font-medium" for="admin-password">Mật khẩu</label>
+<a class="text-sm font-medium text-primary hover:text-primary-hover hover:underline" href="#">Quên mật khẩu?</a>
+</div>
+<div class="relative">
+<input class="w-full h-12 rounded-lg border border-[#dbdfe6] dark:border-gray-600 bg-white dark:bg-[#2D3748] px-4 pl-11 pr-11 text-[#111318] dark:text-white placeholder:text-[#9ca3af] focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" id="admin-password" placeholder="Nhập mật khẩu" type="password"/>
+<div class="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9ca3af]">
+<span class="material-symbols-outlined text-[20px]">lock</span>
+</div>
+<button class="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#9ca3af] hover:text-[#616f89] cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[20px]">visibility_off</span>
+</button>
+</div>
+<!-- Error Message Example (Hidden by default) -->
+<p class="hidden text-red-500 text-xs mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">error</span>
+                                    Mật khẩu không chính xác.
+                                </p>
+</div>
+<div class="mt-auto pt-4">
+<button class="w-full h-12 bg-primary hover:bg-primary-hover text-white font-medium rounded-lg shadow-md shadow-blue-500/20 transition-all flex items-center justify-center gap-2 group-hover:shadow-blue-500/30" type="submit">
+<span>Đăng nhập</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</form>
+</div>
+<!-- Card 2: Employee Login -->
+<div class="bg-white dark:bg-[#1A202C] rounded-2xl shadow-sm border border-[#e5e7eb] dark:border-gray-700 p-8 flex flex-col h-full relative overflow-hidden">
+<!-- Decorative top accent -->
+<div class="absolute top-0 left-0 w-full h-1.5 bg-gray-400 dark:bg-gray-600"></div>
+<div class="flex items-center gap-3 mb-6">
+<div class="p-2 bg-gray-100 dark:bg-gray-700 rounded-lg text-gray-600 dark:text-gray-300">
+<span class="material-symbols-outlined">badge</span>
+</div>
+<div>
+<h2 class="text-xl font-bold text-[#111318] dark:text-white leading-tight">Employee Access</h2>
+<p class="text-sm text-[#616f89] dark:text-gray-400">Dành cho nhân viên vận hành</p>
+</div>
+</div>
+<form class="flex flex-col gap-5 flex-1" onsubmit="event.preventDefault();">
+<div class="bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/30 rounded-lg p-4 flex gap-3 items-start">
+<span class="material-symbols-outlined text-primary text-[20px] mt-0.5">info</span>
+<p class="text-sm text-[#3d4b61] dark:text-gray-300 leading-relaxed">
+                                    Hệ thống sử dụng xác thực qua email công ty. Vui lòng nhập email @kantra.com của bạn để nhận liên kết đăng nhập.
+                                </p>
+</div>
+<!-- Email Input -->
+<div class="flex flex-col gap-2">
+<label class="text-[#111318] dark:text-gray-200 text-sm font-medium" for="employee-email">Email công ty</label>
+<div class="relative">
+<input class="w-full h-12 rounded-lg border border-[#dbdfe6] dark:border-gray-600 bg-white dark:bg-[#2D3748] px-4 pl-11 text-[#111318] dark:text-white placeholder:text-[#9ca3af] focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" id="employee-email" placeholder="nhanvien@kantra.com" type="email"/>
+<div class="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9ca3af]">
+<span class="material-symbols-outlined text-[20px]">alternate_email</span>
+</div>
+</div>
+<p class="text-xs text-[#616f89] dark:text-gray-500 mt-1 pl-1">
+                                    * Chỉ email nội bộ mới có quyền truy cập.
+                                </p>
+</div>
+<div class="mt-auto pt-4 flex flex-col gap-3">
+<button class="w-full h-12 bg-white dark:bg-transparent border border-[#dbdfe6] dark:border-gray-500 text-[#111318] dark:text-white font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-all flex items-center justify-center gap-2" type="submit">
+<span class="material-symbols-outlined text-[20px]">send</span>
+<span>Gửi link đăng nhập</span>
+</button>
+</div>
+</form>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="py-6 text-center text-sm text-[#9ca3af] dark:text-gray-500">
+<p>© 2024 Kantra Camera Booking System. v2.1.0</p>
+</footer>
+<!-- Optional Decorative Background Elements -->
+<div class="fixed top-0 left-0 w-full h-full -z-10 pointer-events-none overflow-hidden">
+<!-- Top Right Gradient Blob -->
+<div class="absolute -top-[10%] -right-[5%] w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl opacity-60"></div>
+<!-- Bottom Left Gradient Blob -->
+<div class="absolute -bottom-[10%] -left-[5%] w-[400px] h-[400px] bg-blue-300/10 dark:bg-blue-600/10 rounded-full blur-3xl opacity-60"></div>
+</div>
+</div>
+</body></html>

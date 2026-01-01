@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Cài đặt Admin - Kantra Camera Booking</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                        "surface-dark": "#1c1f27",
+                        "border-dark": "#282e39",
+                        "text-secondary": "#9da6b9",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for dark mode */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #111318;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3b4354;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4b5563;
+        }
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #135bec;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #135bec;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-white font-display h-screen flex overflow-hidden">
+<!-- Side Navigation -->
+<aside class="w-64 bg-[#111318] flex flex-col border-r border-border-dark flex-shrink-0 z-20">
+<div class="p-6 pb-2">
+<h1 class="text-white text-xl font-bold leading-normal tracking-tight">Kantra Admin</h1>
+<p class="text-text-secondary text-xs font-normal mt-1">Vận hành &amp; Quản lý</p>
+</div>
+<nav class="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-2">
+<a class="flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-surface-dark transition-colors group" href="#">
+<span class="material-symbols-outlined text-text-secondary group-hover:text-white">dashboard</span>
+<p class="text-text-secondary group-hover:text-white text-sm font-medium">Dashboard</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-surface-dark transition-colors group" href="#">
+<span class="material-symbols-outlined text-text-secondary group-hover:text-white">calendar_month</span>
+<p class="text-text-secondary group-hover:text-white text-sm font-medium">Lịch đặt</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-surface-dark transition-colors group" href="#">
+<span class="material-symbols-outlined text-text-secondary group-hover:text-white">inventory_2</span>
+<p class="text-text-secondary group-hover:text-white text-sm font-medium">Kho hàng</p>
+</a>
+<div class="h-px bg-border-dark my-2 mx-3"></div>
+<a class="flex items-center gap-3 px-3 py-3 rounded-lg bg-primary/20 text-primary" href="#">
+<span class="material-symbols-outlined fill-1">settings</span>
+<p class="text-primary text-sm font-bold">Cài đặt</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-surface-dark transition-colors group" href="#">
+<span class="material-symbols-outlined text-text-secondary group-hover:text-white">manage_accounts</span>
+<p class="text-text-secondary group-hover:text-white text-sm font-medium">Tài khoản</p>
+</a>
+</nav>
+<div class="p-4 border-t border-border-dark">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-cover bg-center border border-border-dark" data-alt="Avatar user placeholder" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAWA2Yy0bFXpALF-5kdrIHAMPOeOfvhuzuNNxnceUl6kj6hf5y7O_TXdQLghVpZQ8HQxYQdXcpLHu7GfwJI539mk-HI49175ENFtdUSfo_CBclO735uAMXYboQQUUN-ZtgJddBJIQKO8eZaBHPoSCK1vgjtaiVE5HcZkhEvTHHQxZY8p8FgiN6Dde6VbwqX3hMKMdFewfxAF13CMt5DwcEl05GkhADrJqAUx7XZ5U5P5Yj71n2MqVYCqH2t3uHD705b-iJ_pAkMdSc')"></div>
+<div class="flex flex-col">
+<p class="text-sm font-medium text-white">Admin User</p>
+<p class="text-xs text-text-secondary">admin@kantra.com</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col h-full relative overflow-hidden bg-background-dark">
+<!-- Top Navbar -->
+<header class="h-16 border-b border-border-dark bg-[#111318] flex items-center justify-between px-6 flex-shrink-0 z-10">
+<div class="flex items-center gap-3 text-white">
+<span class="material-symbols-outlined text-primary">photo_camera</span>
+<h2 class="text-lg font-bold tracking-tight">Kantra Camera Booking</h2>
+</div>
+<div class="flex items-center gap-4">
+<button class="w-9 h-9 rounded-full flex items-center justify-center hover:bg-surface-dark text-text-secondary hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+</button>
+<button class="w-9 h-9 rounded-full flex items-center justify-center hover:bg-surface-dark text-text-secondary hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[20px]">help</span>
+</button>
+</div>
+</header>
+<!-- Content Scroll Area -->
+<div class="flex-1 overflow-y-auto p-6 md:p-8 pb-24">
+<div class="max-w-5xl mx-auto flex flex-col gap-8">
+<!-- Page Heading -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div class="flex flex-col gap-2">
+<h1 class="text-3xl font-black text-white tracking-tight">Cài đặt Admin</h1>
+<p class="text-text-secondary text-base">Quản lý giá, quy tắc thuê và kho thiết bị</p>
+</div>
+<button class="flex items-center justify-center gap-2 px-4 py-2 bg-surface-dark hover:bg-border-dark border border-border-dark rounded-lg text-white text-sm font-medium transition-colors">
+<span class="material-symbols-outlined text-[18px]">history</span>
+                        Lịch sử thay đổi
+                    </button>
+</div>
+<!-- Section 1: Pricing & Rules -->
+<section class="bg-surface-dark border border-border-dark rounded-xl p-6 shadow-sm">
+<div class="flex items-center gap-2 mb-6 border-b border-border-dark pb-4">
+<div class="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">payments</span>
+</div>
+<h2 class="text-lg font-bold text-white">1. Giá &amp; Quy tắc</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<div class="flex flex-col gap-2">
+<label class="text-sm font-medium text-text-secondary">Phí ship (VND/km)</label>
+<div class="relative">
+<input class="w-full bg-[#111318] border border-border-dark rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors placeholder:text-gray-600" type="number" value="8000"/>
+<span class="absolute right-4 top-3 text-text-secondary text-sm">₫</span>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-sm font-medium text-text-secondary">Tiền cọc mặc định</label>
+<div class="relative">
+<input class="w-full bg-[#111318] border border-border-dark rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors placeholder:text-gray-600" type="number" value="50000"/>
+<span class="absolute right-4 top-3 text-text-secondary text-sm">₫</span>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-sm font-medium text-text-secondary">Hệ số chia phí trễ</label>
+<input class="w-full bg-[#111318] border border-border-dark rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" type="number" value="5"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-sm font-medium text-text-secondary">Làm tròn phí trễ</label>
+<div class="relative">
+<select class="w-full bg-[#111318] border border-border-dark rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors appearance-none">
+<option selected="" value="ceil">Làm tròn lên (Ceil)</option>
+<option value="round">Làm tròn gần nhất (Round)</option>
+<option value="floor">Làm tròn xuống (Floor)</option>
+</select>
+<span class="material-symbols-outlined absolute right-4 top-3 text-text-secondary pointer-events-none">expand_more</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 2: Accessory Stock -->
+<section class="bg-surface-dark border border-border-dark rounded-xl p-6 shadow-sm">
+<div class="flex items-center gap-2 mb-6 border-b border-border-dark pb-4">
+<div class="w-8 h-8 rounded-lg bg-orange-500/20 flex items-center justify-center text-orange-500">
+<span class="material-symbols-outlined text-[20px]">category</span>
+</div>
+<h2 class="text-lg font-bold text-white">2. Kho phụ kiện</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="flex flex-col gap-2">
+<label class="text-sm font-medium text-text-secondary">Số lượng Tripod</label>
+<div class="flex items-center">
+<input class="w-full bg-[#111318] border border-border-dark rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" type="number" value="12"/>
+<span class="ml-3 text-sm text-text-secondary whitespace-nowrap">Cái</span>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-sm font-medium text-text-secondary">Số lượng Hắt sáng (Reflector)</label>
+<div class="flex items-center">
+<input class="w-full bg-[#111318] border border-border-dark rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" type="number" value="8"/>
+<span class="ml-3 text-sm text-text-secondary whitespace-nowrap">Cái</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 3: Camera Models -->
+<section class="bg-surface-dark border border-border-dark rounded-xl p-6 shadow-sm flex flex-col gap-6">
+<div class="flex flex-wrap items-center justify-between gap-4 border-b border-border-dark pb-4">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-500">
+<span class="material-symbols-outlined text-[20px]">camera_enhance</span>
+</div>
+<h2 class="text-lg font-bold text-white">3. Danh sách Camera</h2>
+</div>
+<button class="flex items-center gap-2 px-4 py-2.5 bg-primary hover:bg-blue-600 rounded-lg text-white text-sm font-bold transition-colors shadow-lg shadow-blue-900/20">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                            Thêm máy mới
+                        </button>
+</div>
+<div class="overflow-x-auto rounded-lg border border-border-dark">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-[#111318] border-b border-border-dark">
+<th class="px-6 py-4 text-xs font-semibold uppercase text-text-secondary tracking-wider">Tên máy</th>
+<th class="px-6 py-4 text-xs font-semibold uppercase text-text-secondary tracking-wider">Dòng máy</th>
+<th class="px-6 py-4 text-xs font-semibold uppercase text-text-secondary tracking-wider text-right">Giá 6h</th>
+<th class="px-6 py-4 text-xs font-semibold uppercase text-text-secondary tracking-wider text-right">Giá 12h</th>
+<th class="px-6 py-4 text-xs font-semibold uppercase text-text-secondary tracking-wider text-right">Giá 24h</th>
+<th class="px-6 py-4 text-xs font-semibold uppercase text-text-secondary tracking-wider text-center">SL</th>
+<th class="px-6 py-4 text-xs font-semibold uppercase text-text-secondary tracking-wider text-center">Trạng thái</th>
+<th class="px-6 py-4 text-xs font-semibold uppercase text-text-secondary tracking-wider text-right">Hành động</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-dark bg-surface-dark">
+<!-- Row 1 -->
+<tr class="hover:bg-[#252a35] transition-colors">
+<td class="px-6 py-4 text-sm font-medium text-white">Sony A7 Mark III</td>
+<td class="px-6 py-4 text-sm text-text-secondary">Full-frame Mirrorless</td>
+<td class="px-6 py-4 text-sm text-white text-right font-medium">350.000</td>
+<td class="px-6 py-4 text-sm text-white text-right font-medium">500.000</td>
+<td class="px-6 py-4 text-sm text-white text-right font-medium">800.000</td>
+<td class="px-6 py-4 text-sm text-white text-center">5</td>
+<td class="px-6 py-4 text-center">
+<div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+<input checked="" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer border-border-dark checked:border-primary transition-all duration-300 left-0 checked:left-5 top-0" id="toggle1" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-5 rounded-full bg-border-dark cursor-pointer checked:bg-primary transition-colors duration-300" for="toggle1"></label>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="text-text-secondary hover:text-primary transition-colors p-1">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-[#252a35] transition-colors">
+<td class="px-6 py-4 text-sm font-medium text-white">Canon EOS R6</td>
+<td class="px-6 py-4 text-sm text-text-secondary">Full-frame Mirrorless</td>
+<td class="px-6 py-4 text-sm text-white text-right font-medium">400.000</td>
+<td class="px-6 py-4 text-sm text-white text-right font-medium">600.000</td>
+<td class="px-6 py-4 text-sm text-white text-right font-medium">900.000</td>
+<td class="px-6 py-4 text-sm text-white text-center">3</td>
+<td class="px-6 py-4 text-center">
+<div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+<input checked="" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer border-border-dark checked:border-primary transition-all duration-300 left-0 checked:left-5 top-0" id="toggle2" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-5 rounded-full bg-border-dark cursor-pointer checked:bg-primary transition-colors duration-300" for="toggle2"></label>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="text-text-secondary hover:text-primary transition-colors p-1">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-[#252a35] transition-colors">
+<td class="px-6 py-4 text-sm font-medium text-text-secondary">Fujifilm X-T4 (Bảo trì)</td>
+<td class="px-6 py-4 text-sm text-text-secondary">APS-C Mirrorless</td>
+<td class="px-6 py-4 text-sm text-text-secondary text-right font-medium">250.000</td>
+<td class="px-6 py-4 text-sm text-text-secondary text-right font-medium">400.000</td>
+<td class="px-6 py-4 text-sm text-text-secondary text-right font-medium">600.000</td>
+<td class="px-6 py-4 text-sm text-text-secondary text-center">0</td>
+<td class="px-6 py-4 text-center">
+<div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+<input class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-gray-400 border-4 appearance-none cursor-pointer border-gray-600 checked:border-primary transition-all duration-300 left-0 checked:left-5 top-0" id="toggle3" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-5 rounded-full bg-border-dark cursor-pointer checked:bg-primary transition-colors duration-300" for="toggle3"></label>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="text-text-secondary hover:text-primary transition-colors p-1">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</div>
+</div>
+<!-- Sticky Footer Action -->
+<div class="absolute bottom-0 w-full bg-surface-dark border-t border-border-dark p-4 md:px-8 flex justify-end items-center shadow-2xl z-20">
+<button class="px-6 py-3 bg-primary hover:bg-blue-600 text-white rounded-lg font-bold text-sm shadow-lg shadow-blue-900/30 transition-all transform active:scale-95 flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">save</span>
+                Lưu cấu hình
+            </button>
+</div>
+<!-- Toast Notification (Simulated) -->
+<div class="fixed bottom-24 right-8 z-50 animate-bounce" style="animation-duration: 3s; animation-iteration-count: 1;">
+<div class="bg-[#1c1f27] border border-l-4 border-l-emerald-500 border-y-[#282e39] border-r-[#282e39] rounded-lg shadow-2xl p-4 flex items-center gap-3 max-w-sm">
+<span class="material-symbols-outlined text-emerald-500">check_circle</span>
+<div class="flex flex-col">
+<p class="text-white text-sm font-semibold">Thành công</p>
+<p class="text-text-secondary text-xs">Cấu hình hệ thống đã được cập nhật.</p>
+</div>
+<button class="text-text-secondary hover:text-white ml-auto">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+</div>
+</main>
+<script>
+        // Simple JS to simulate toggle behavior visually if needed, though pure CSS is handled above.
+        // The `toggle-checkbox` class logic is handled in the <style> block using standard CSS sibling selectors.
+    </script>
+</body></html>

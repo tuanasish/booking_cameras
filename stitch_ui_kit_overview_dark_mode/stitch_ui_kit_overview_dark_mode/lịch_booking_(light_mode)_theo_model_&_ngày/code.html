@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Kantra Camera Booking - Schedule</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                        "border-color": "#e5e7eb",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for dense tables */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        
+        /* Hide number input spinners */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+
+        .booking-card {
+            transition: transform 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
+        }
+        .booking-card:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            z-index: 10;
+        }
+    </style>
+</head>
+<body class="bg-background-light font-display h-screen flex flex-col overflow-hidden text-[#111318]">
+<!-- Top Navigation -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-border-color bg-white px-6 py-3 shrink-0 z-30">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3 text-[#111318]">
+<div class="flex items-center justify-center size-8 bg-primary rounded-lg text-white">
+<span class="material-symbols-outlined text-xl">photo_camera</span>
+</div>
+<h2 class="text-[#111318] text-lg font-bold leading-tight tracking-[-0.015em]">Kantra Booking</h2>
+</div>
+<!-- Search -->
+<label class="hidden md:flex flex-col min-w-40 !h-9 w-64">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+<div class="text-[#616f89] flex border-none bg-background-light items-center justify-center pl-3 rounded-l-lg border-r-0">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111318] focus:outline-0 focus:ring-0 border-none bg-background-light focus:border-none h-full placeholder:text-[#616f89] px-3 rounded-l-none border-l-0 pl-2 text-sm font-normal leading-normal" placeholder="Search bookings, phones..." value=""/>
+</div>
+</label>
+</div>
+<div class="flex items-center justify-end gap-4">
+<!-- Notifications -->
+<button class="flex items-center justify-center size-9 rounded-full hover:bg-gray-100 text-[#616f89]">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<!-- New Booking Action -->
+<button class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 px-4 bg-primary hover:bg-blue-700 text-white text-sm font-bold leading-normal transition-colors shadow-sm gap-2">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span class="truncate">New Booking</span>
+</button>
+<!-- Profile -->
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-9 border border-gray-200 cursor-pointer" data-alt="User Avatar" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC6KRbD4P5bbjx9HtkfUU7KexwbSvjrGGmItRxZvW741TXz6besacMvavCQg5YlcOOXCTztJ4InFzU_POL71UeEqlRWf2twqbkEVLnhew9I7pfGP5KySNoBFWXkaRFxp6mW9M-usSYQoICsx1WDsCjuCS_8QUSA4tFGnCDi_tXYO-3I7MyTOvZ7iWBypPQrWa58F11lbYm4DpgRwQnz2LKQYYIQ41JPYnSY6ANHj9bGT04xpvQgFiwIqsgqaiFlFsS4Wx3sfm-6hxs");'></div>
+</div>
+</header>
+<!-- Main Workspace -->
+<div class="flex flex-1 overflow-hidden">
+<!-- Left Sidebar (Filters) -->
+<aside class="w-64 bg-white border-r border-border-color flex flex-col overflow-y-auto shrink-0 py-4 px-4 gap-6">
+<!-- Date Filter -->
+<div class="flex flex-col gap-2">
+<h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Time View</h3>
+<div class="flex rounded-lg bg-background-light p-1">
+<button class="flex-1 rounded-md bg-white shadow-sm text-xs font-semibold py-1.5 text-center border border-gray-200 text-primary">Week</button>
+<button class="flex-1 rounded-md text-xs font-medium py-1.5 text-center text-gray-500 hover:text-gray-900">Month</button>
+</div>
+</div>
+<!-- Quick Toggles -->
+<div class="flex flex-col gap-3">
+<label class="inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="relative w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+<span class="ms-3 text-sm font-medium text-gray-700">Today Only</span>
+</label>
+<label class="inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="relative w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+<span class="ms-3 text-sm font-medium text-gray-700">Show Available</span>
+</label>
+</div>
+<!-- Payment Status -->
+<div class="flex flex-col gap-3">
+<h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Payment Status</h3>
+<div class="space-y-2">
+<label class="flex items-center gap-3">
+<input checked="" class="size-4 rounded border-gray-300 text-green-500 focus:ring-green-500 focus:ring-offset-0" type="checkbox"/>
+<span class="flex items-center gap-2">
+<span class="size-2 rounded-full bg-green-500"></span>
+<span class="text-sm text-gray-700">Paid</span>
+</span>
+</label>
+<label class="flex items-center gap-3">
+<input checked="" class="size-4 rounded border-gray-300 text-yellow-500 focus:ring-yellow-500 focus:ring-offset-0" type="checkbox"/>
+<span class="flex items-center gap-2">
+<span class="size-2 rounded-full bg-yellow-400"></span>
+<span class="text-sm text-gray-700">Deposit</span>
+</span>
+</label>
+<label class="flex items-center gap-3">
+<input checked="" class="size-4 rounded border-gray-300 text-red-500 focus:ring-red-500 focus:ring-offset-0" type="checkbox"/>
+<span class="flex items-center gap-2">
+<span class="size-2 rounded-full bg-red-500"></span>
+<span class="text-sm text-gray-700">Unpaid</span>
+</span>
+</label>
+</div>
+</div>
+<!-- Platform Filter -->
+<div class="flex flex-col gap-3">
+<h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Platform</h3>
+<div class="space-y-2">
+<label class="flex items-center gap-3">
+<input checked="" class="size-4 rounded border-gray-300 text-primary focus:ring-primary focus:ring-offset-0" type="checkbox"/>
+<span class="text-sm text-gray-700">Facebook</span>
+</label>
+<label class="flex items-center gap-3">
+<input checked="" class="size-4 rounded border-gray-300 text-primary focus:ring-primary focus:ring-offset-0" type="checkbox"/>
+<span class="text-sm text-gray-700">Website</span>
+</label>
+<label class="flex items-center gap-3">
+<input class="size-4 rounded border-gray-300 text-primary focus:ring-primary focus:ring-offset-0" type="checkbox"/>
+<span class="text-sm text-gray-700">Walk-in</span>
+</label>
+</div>
+</div>
+<!-- Footer Meta -->
+<div class="mt-auto pt-6 border-t border-gray-100">
+<p class="text-xs text-gray-400">Kantra v2.4.0</p>
+<div class="flex items-center gap-2 mt-2 text-primary cursor-pointer hover:underline">
+<span class="material-symbols-outlined text-sm">help</span>
+<span class="text-xs font-medium">Support Center</span>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col min-w-0 bg-white relative">
+<!-- Date Navigation Header -->
+<div class="flex items-center justify-between px-6 py-3 border-b border-border-color bg-white shrink-0">
+<div class="flex items-center gap-4">
+<div class="flex bg-background-light rounded-lg p-0.5 border border-gray-200">
+<button class="p-1.5 hover:bg-white rounded-md text-gray-600 hover:text-primary transition-all hover:shadow-sm">
+<span class="material-symbols-outlined text-lg">chevron_left</span>
+</button>
+<button class="p-1.5 hover:bg-white rounded-md text-gray-600 hover:text-primary transition-all hover:shadow-sm">
+<span class="material-symbols-outlined text-lg">chevron_right</span>
+</button>
+</div>
+<h2 class="text-[#111318] text-lg font-bold leading-tight">October 23 - October 29, 2023</h2>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-sm text-gray-500">Week 43</span>
+<button class="text-sm font-medium text-primary hover:bg-blue-50 px-3 py-1.5 rounded-lg transition-colors border border-transparent hover:border-blue-100">Today</button>
+</div>
+</div>
+<!-- Calendar Grid Container -->
+<div class="flex-1 overflow-auto relative bg-white" id="calendar-grid">
+<!-- Real-time Indicator Line (Mocked position) -->
+<div class="absolute top-[52px] bottom-0 left-[48%] w-[2px] bg-red-500 z-20 pointer-events-none opacity-80 shadow-[0_0_8px_rgba(239,68,68,0.6)]">
+<div class="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full absolute -top-2 left-1/2 -translate-x-1/2 shadow-sm whitespace-nowrap">
+                        14:30
+                    </div>
+</div>
+<table class="min-w-full border-collapse">
+<!-- Table Header -->
+<thead class="sticky top-0 z-30 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.05)]">
+<tr>
+<th class="sticky left-0 z-40 bg-white border-b border-r border-gray-200 w-48 min-w-[200px] p-0 shadow-[4px_0_8px_rgba(0,0,0,0.02)]">
+<div class="p-3 text-left text-xs font-bold uppercase tracking-wider text-gray-500 h-full flex items-center">
+                                    Model / Date
+                                </div>
+</th>
+<!-- Days -->
+<th class="border-b border-r border-gray-100 min-w-[160px] bg-white p-3 text-left">
+<div class="flex flex-col">
+<span class="text-xs font-medium text-gray-500 uppercase">Mon</span>
+<span class="text-xl font-bold text-gray-800">23</span>
+</div>
+</th>
+<th class="border-b border-r border-gray-100 min-w-[160px] bg-white p-3 text-left">
+<div class="flex flex-col">
+<span class="text-xs font-medium text-gray-500 uppercase">Tue</span>
+<span class="text-xl font-bold text-gray-800">24</span>
+</div>
+</th>
+<th class="border-b border-r border-gray-100 min-w-[160px] bg-blue-50/50 p-3 text-left">
+<div class="flex flex-col">
+<span class="text-xs font-bold text-primary uppercase">Wed</span>
+<span class="text-xl font-bold text-primary">25</span>
+</div>
+</th>
+<th class="border-b border-r border-gray-100 min-w-[160px] bg-white p-3 text-left">
+<div class="flex flex-col">
+<span class="text-xs font-medium text-gray-500 uppercase">Thu</span>
+<span class="text-xl font-bold text-gray-800">26</span>
+</div>
+</th>
+<th class="border-b border-r border-gray-100 min-w-[160px] bg-white p-3 text-left">
+<div class="flex flex-col">
+<span class="text-xs font-medium text-gray-500 uppercase">Fri</span>
+<span class="text-xl font-bold text-gray-800">27</span>
+</div>
+</th>
+<th class="border-b border-r border-gray-100 min-w-[160px] bg-gray-50 p-3 text-left">
+<div class="flex flex-col">
+<span class="text-xs font-medium text-gray-400 uppercase">Sat</span>
+<span class="text-xl font-bold text-gray-600">28</span>
+</div>
+</th>
+<th class="border-b border-r border-gray-100 min-w-[160px] bg-gray-50 p-3 text-left">
+<div class="flex flex-col">
+<span class="text-xs font-medium text-gray-400 uppercase">Sun</span>
+<span class="text-xl font-bold text-gray-600">29</span>
+</div>
+</th>
+</tr>
+</thead>
+<!-- Table Body -->
+<tbody class="divide-y divide-gray-100">
+<!-- Row 1: Sony A7III -->
+<tr class="group hover:bg-gray-50/50 transition-colors">
+<td class="sticky left-0 z-20 bg-white group-hover:bg-gray-50/50 border-r border-gray-200 p-3 align-top shadow-[4px_0_8px_rgba(0,0,0,0.02)]">
+<div class="flex flex-col gap-1">
+<h4 class="font-bold text-sm text-gray-900">Sony A7III</h4>
+<span class="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded w-fit">Total: 5</span>
+</div>
+</td>
+<!-- Mon -->
+<td class="border-r border-gray-100 p-1.5 align-top min-h-[140px] relative">
+<div class="text-[10px] text-gray-300 font-medium mb-1 px-1">Available 3/5</div>
+<!-- Card: Done (Paid) -->
+<div class="booking-card bg-emerald-100 border border-emerald-200 rounded p-2 mb-1.5 cursor-pointer relative overflow-hidden">
+<div class="absolute top-0 right-0 p-0.5 bg-emerald-500 rounded-bl-md">
+<span class="material-symbols-outlined text-[10px] text-white block">check</span>
+</div>
+<div class="flex justify-between items-start mb-1">
+<span class="text-[11px] font-bold text-emerald-900">N: 09:00</span>
+<span class="text-[10px] text-emerald-700 font-mono tracking-tighter">0987...</span>
+</div>
+<div class="text-xs font-semibold text-emerald-900 mb-1 truncate">Minh Hieu (FB)</div>
+<div class="flex flex-wrap gap-1">
+<span class="text-[9px] bg-white/60 px-1 rounded text-emerald-800 border border-emerald-200/50">Lens 24-70</span>
+</div>
+</div>
+<!-- Card: Deposit -->
+<div class="booking-card bg-amber-100 border border-amber-200 rounded p-2 mb-1.5 cursor-pointer">
+<div class="flex justify-between items-start mb-1">
+<span class="text-[11px] font-bold text-amber-900">T: 18:00</span>
+<span class="text-[10px] text-amber-800 font-mono tracking-tighter">0345...</span>
+</div>
+<div class="text-xs font-semibold text-amber-900 mb-1 truncate">Tran Tuan (Web)</div>
+<div class="flex flex-wrap gap-1">
+<span class="text-[9px] bg-white/60 px-1 rounded text-amber-800 border border-amber-200/50">Tripod</span>
+</div>
+</div>
+</td>
+<!-- Tue -->
+<td class="border-r border-gray-100 p-1.5 align-top">
+<div class="text-[10px] text-gray-300 font-medium mb-1 px-1">Available 5/5</div>
+</td>
+<!-- Wed (Today) -->
+<td class="border-r border-gray-100 p-1.5 align-top bg-blue-50/10">
+<div class="text-[10px] text-gray-300 font-medium mb-1 px-1">Available 1/5</div>
+<!-- Card: Unpaid & Overdue -->
+<div class="booking-card bg-red-100 border-2 border-red-500 rounded p-2 mb-1.5 cursor-pointer shadow-sm relative">
+<div class="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] px-1.5 py-0.5 rounded-bl-md font-bold uppercase">Overdue</div>
+<div class="flex justify-between items-start mb-1 mt-1">
+<span class="text-[11px] font-bold text-red-900">N: 10:00</span>
+<span class="text-[10px] text-red-800 font-mono tracking-tighter">0912...</span>
+</div>
+<div class="text-xs font-semibold text-red-900 mb-1 truncate">Nguyen A (Walk-in)</div>
+<div class="flex flex-wrap gap-1">
+<span class="text-[9px] bg-white/60 px-1 rounded text-red-800 border border-red-200/50">CCCD</span>
+</div>
+</div>
+<!-- Card: Paid -->
+<div class="booking-card bg-emerald-100 border border-emerald-200 rounded p-2 mb-1.5 cursor-pointer">
+<div class="flex justify-between items-start mb-1">
+<span class="text-[11px] font-bold text-emerald-900">N: 14:00</span>
+<span class="text-[10px] text-emerald-700 font-mono tracking-tighter">0909...</span>
+</div>
+<div class="text-xs font-semibold text-emerald-900 mb-1 truncate">Studio X (FB)</div>
+<div class="flex flex-wrap gap-1">
+<span class="text-[9px] bg-white/60 px-1 rounded text-emerald-800 border border-emerald-200/50">Full Set</span>
+<span class="text-[9px] bg-white/60 px-1 rounded text-emerald-800 border border-emerald-200/50">+Flash</span>
+</div>
+</div>
+<div class="booking-card bg-amber-100 border border-amber-200 rounded p-2 mb-1.5 cursor-pointer">
+<div class="flex justify-between items-start mb-1">
+<span class="text-[11px] font-bold text-amber-900">T: 19:30</span>
+</div>
+<div class="text-xs font-semibold text-amber-900 mb-1 truncate">Le Loi (FB)</div>
+</div>
+</td>
+<!-- Thu -->
+<td class="border-r border-gray-100 p-1.5 align-top">
+<div class="text-[10px] text-gray-300 font-medium mb-1 px-1">Available 4/5</div>
+<div class="booking-card bg-emerald-100 border border-emerald-200 rounded p-2 mb-1.5 cursor-pointer opacity-60">
+<div class="flex justify-between items-start mb-1">
+<span class="text-[11px] font-bold text-emerald-900">T: 09:00</span>
+</div>
+<div class="text-xs font-semibold text-emerald-900 mb-1 truncate">Studio X (FB)</div>
+<div class="flex flex-wrap gap-1">
+<span class="text-[9px] bg-white/60 px-1 rounded text-emerald-800">Return</span>
+</div>
+</div>
+</td>
+<!-- Fri -->
+<td class="border-r border-gray-100 p-1.5 align-top">
+<div class="text-[10px] text-gray-300 font-medium mb-1 px-1">Available 5/5</div>
+</td>
+<!-- Sat -->
+<td class="border-r border-gray-100 p-1.5 align-top bg-gray-50/30">
+<div class="text-[10px] text-gray-300 font-medium mb-1 px-1">Available 2/5</div>
+<div class="booking-card bg-amber-100 border border-amber-200 rounded p-2 mb-1.5 cursor-pointer">
+<div class="flex justify-between items-start mb-1">
+<span class="text-[11px] font-bold text-amber-900">N: 07:00</span>
+</div>
+<div class="text-xs font-semibold text-amber-900 mb-1 truncate">Wedding Team</div>
+</div>
+<div class="booking-card bg-amber-100 border border-amber-200 rounded p-2 mb-1.5 cursor-pointer">
+<div class="flex justify-between items-start mb-1">
+<span class="text-[11px] font-bold text-amber-900">N: 08:00</span>
+</div>
+<div class="text-xs font-semibold text-amber-900 mb-1 truncate">Event A</div>
+</div>
+</td>
+<!-- Sun -->
+<td class="border-r border-gray-100 p-1.5 align-top bg-gray-50/30">
+<div class="text-[10px] text-gray-300 font-medium mb-1 px-1">Available 5/5</div>
+</td>
+</tr>
+<!-- Row 2: Canon R5 -->
+<tr class="group hover:bg-gray-50/50 transition-colors">
+<td class="sticky left-0 z-20 bg-white group-hover:bg-gray-50/50 border-r border-gray-200 p-3 align-top shadow-[4px_0_8px_rgba(0,0,0,0.02)]">
+<div class="flex flex-col gap-1">
+<h4 class="font-bold text-sm text-gray-900">Canon R5</h4>
+<span class="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded w-fit">Total: 2</span>
+</div>
+</td>
+<!-- Mon -->
+<td class="border-r border-gray-100 p-1.5 align-top">
+<div class="text-[10px] text-gray-300 font-medium mb-1 px-1">Available 2/2</div>
+</td>
+<!-- Tue -->
+<td class="border-r border-gray-100 p-1.5 align-top">
+<div class="text-[10px] text-gray-300 font-medium mb-1 px-1">Available 1/2</div>
+<div class="booking-card bg-emerald-100 border border-emerald-200 rounded p-2 mb-1.5 cursor-pointer">
+<div class="flex justify-between items-start mb-1">
+<span class="text-[11px] font-bold text-emerald-900">N: 13:00</span>
+<span class="text-[10px] text-emerald-700 font-mono">0888...</span>
+</div>
+<div class="text-xs font-semibold text-emerald-900 mb-1 truncate">Production C</div>
+<div class="flex flex-wrap gap-1">
+<span class="text-[9px] bg-white/60 px-1 rounded text-emerald-800">Card 128GB</span>
+</div>
+</div>
+</td>
+<!-- Wed -->
+<td class="border-r border-gray-100 p-1.5 align-top bg-blue-50/10">
+<div class="text-[10px] text-gray-300 font-medium mb-1 px-1">Available 0/2</div>
+<div class="booking-card bg-emerald-100 border border-emerald-200 rounded p-2 mb-1.5 cursor-pointer opacity-60">
+<div class="flex justify-between items-start mb-1">
+<span class="text-[11px] font-bold text-emerald-900">Full Day</span>
+</div>
+<div class="text-xs font-semibold text-emerald-900 mb-1 truncate">Production C</div>
+</div>
+<div class="booking-card bg-red-100 border border-red-200 rounded p-2 mb-1.5 cursor-pointer">
+<div class="flex justify-between items-start mb-1">
+<span class="text-[11px] font-bold text-red-900">N: 15:00</span>
+<span class="text-[10px] text-red-700 font-mono">0911...</span>
+</div>
+<div class="text-xs font-semibold text-red-900 mb-1 truncate">Kien (Web)</div>
+</div>
+</td>
+<!-- Thu -->
+<td class="border-r border-gray-100 p-1.5 align-top">
+<div class="text-[10px] text-gray-300 font-medium mb-1 px-1">Available 2/2</div>
+</td>
+<!-- Fri -->
+<td class="border-r border-gray-100 p-1.5 align-top">
+<div class="text-[10px] text-gray-300 font-medium mb-1 px-1">Available 1/2</div>
+<div class="booking-card bg-amber-100 border border-amber-200 rounded p-2 mb-1.5 cursor-pointer">
+<div class="flex justify-between items-start mb-1">
+<span class="text-[11px] font-bold text-amber-900">N: 08:00</span>
+</div>
+<div class="text-xs font-semibold text-amber-900 mb-1 truncate">Trip A</div>
+</div>
+</td>
+<!-- Sat -->
+<td class="border-r border-gray-100 p-1.5 align-top bg-gray-50/30">
+<div class="text-[10px] text-gray-300 font-medium mb-1 px-1">Available 0/2</div>
+<div class="booking-card bg-amber-100 border border-amber-200 rounded p-2 mb-1.5 cursor-pointer opacity-60">
+<div class="flex justify-between items-start mb-1">
+<span class="text-[11px] font-bold text-amber-900">Full Day</span>
+</div>
+<div class="text-xs font-semibold text-amber-900 mb-1 truncate">Trip A</div>
+</div>
+<div class="booking-card bg-emerald-100 border border-emerald-200 rounded p-2 mb-1.5 cursor-pointer">
+<div class="flex justify-between items-start mb-1">
+<span class="text-[11px] font-bold text-emerald-900">N: 09:00</span>
+</div>
+<div class="text-xs font-semibold text-emerald-900 mb-1 truncate">Huy (FB)</div>
+</div>
+</td>
+<!-- Sun -->
+<td class="border-r border-gray-100 p-1.5 align-top bg-gray-50/30">
+<div class="text-[10px] text-gray-300 font-medium mb-1 px-1">Available 2/2</div>
+</td>
+</tr>
+<!-- Row 3: Fujifilm XT-4 -->
+<tr class="group hover:bg-gray-50/50 transition-colors">
+<td class="sticky left-0 z-20 bg-white group-hover:bg-gray-50/50 border-r border-gray-200 p-3 align-top shadow-[4px_0_8px_rgba(0,0,0,0.02)]">
+<div class="flex flex-col gap-1">
+<h4 class="font-bold text-sm text-gray-900">Fujifilm XT-4</h4>
+<span class="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded w-fit">Total: 4</span>
+</div>
+</td>
+<td class="border-r border-gray-100 p-1.5 align-top"><div class="text-[10px] text-gray-300 font-medium mb-1 px-1">Available 4/4</div></td>
+<td class="border-r border-gray-100 p-1.5 align-top"><div class="text-[10px] text-gray-300 font-medium mb-1 px-1">Available 4/4</div></td>
+<td class="border-r border-gray-100 p-1.5 align-top bg-blue-50/10">
+<div class="text-[10px] text-gray-300 font-medium mb-1 px-1">Available 3/4</div>
+<div class="booking-card bg-emerald-100 border border-emerald-200 rounded p-2 mb-1.5 cursor-pointer">
+<div class="flex justify-between items-start mb-1">
+<span class="text-[11px] font-bold text-emerald-900">N: 11:30</span>
+</div>
+<div class="text-xs font-semibold text-emerald-900 mb-1 truncate">Thao (Insta)</div>
+<div class="flex flex-wrap gap-1">
+<span class="text-[9px] bg-white/60 px-1 rounded text-emerald-800">Lens 18-55</span>
+</div>
+</div>
+</td>
+<td class="border-r border-gray-100 p-1.5 align-top"><div class="text-[10px] text-gray-300 font-medium mb-1 px-1">Available 4/4</div></td>
+<td class="border-r border-gray-100 p-1.5 align-top"><div class="text-[10px] text-gray-300 font-medium mb-1 px-1">Available 4/4</div></td>
+<td class="border-r border-gray-100 p-1.5 align-top bg-gray-50/30">
+<div class="text-[10px] text-gray-300 font-medium mb-1 px-1">Available 0/4</div>
+<div class="booking-card bg-red-100 border border-red-200 rounded p-2 mb-1.5 cursor-pointer">
+<div class="flex justify-between items-start mb-1">
+<span class="text-[11px] font-bold text-red-900">N: 08:00</span>
+</div>
+<div class="text-xs font-semibold text-red-900 mb-1 truncate">Group Z</div>
+</div>
+<div class="booking-card bg-red-100 border border-red-200 rounded p-2 mb-1.5 cursor-pointer">
+<div class="flex justify-between items-start mb-1">
+<span class="text-[11px] font-bold text-red-900">N: 08:00</span>
+</div>
+<div class="text-xs font-semibold text-red-900 mb-1 truncate">Group Z</div>
+</div>
+<div class="booking-card bg-red-100 border border-red-200 rounded p-2 mb-1.5 cursor-pointer">
+<div class="flex justify-between items-start mb-1">
+<span class="text-[11px] font-bold text-red-900">N: 08:00</span>
+</div>
+<div class="text-xs font-semibold text-red-900 mb-1 truncate">Group Z</div>
+</div>
+<div class="booking-card bg-red-100 border border-red-200 rounded p-2 mb-1.5 cursor-pointer">
+<div class="flex justify-between items-start mb-1">
+<span class="text-[11px] font-bold text-red-900">N: 08:00</span>
+</div>
+<div class="text-xs font-semibold text-red-900 mb-1 truncate">Group Z</div>
+</div>
+</td>
+<td class="border-r border-gray-100 p-1.5 align-top bg-gray-50/30"><div class="text-[10px] text-gray-300 font-medium mb-1 px-1">Available 4/4</div></td>
+</tr>
+<!-- Row 4: Lens Sony 24-70GM -->
+<tr class="group hover:bg-gray-50/50 transition-colors">
+<td class="sticky left-0 z-20 bg-white group-hover:bg-gray-50/50 border-r border-gray-200 p-3 align-top shadow-[4px_0_8px_rgba(0,0,0,0.02)]">
+<div class="flex flex-col gap-1">
+<h4 class="font-bold text-sm text-gray-900">Sony 24-70 GM</h4>
+<span class="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded w-fit">Total: 3</span>
+</div>
+</td>
+<td class="border-r border-gray-100 p-1.5 align-top h-32">
+<div class="text-[10px] text-gray-300 font-medium mb-1 px-1">Available 3/3</div>
+</td>
+<td class="border-r border-gray-100 p-1.5 align-top">
+<div class="text-[10px] text-gray-300 font-medium mb-1 px-1">Available 3/3</div>
+</td>
+<td class="border-r border-gray-100 p-1.5 align-top bg-blue-50/10">
+<div class="text-[10px] text-gray-300 font-medium mb-1 px-1">Available 2/3</div>
+<div class="booking-card bg-emerald-100 border border-emerald-200 rounded p-2 mb-1.5 cursor-pointer">
+<div class="flex justify-between items-start mb-1">
+<span class="text-[11px] font-bold text-emerald-900">N: 14:00</span>
+</div>
+<div class="text-xs font-semibold text-emerald-900 mb-1 truncate">Studio X (FB)</div>
+<div class="flex flex-wrap gap-1">
+<span class="text-[9px] bg-white/60 px-1 rounded text-emerald-800">Included w/ Body</span>
+</div>
+</div>
+</td>
+<td class="border-r border-gray-100 p-1.5 align-top">
+<div class="text-[10px] text-gray-300 font-medium mb-1 px-1">Available 3/3</div>
+</td>
+<td class="border-r border-gray-100 p-1.5 align-top">
+<div class="text-[10px] text-gray-300 font-medium mb-1 px-1">Available 3/3</div>
+</td>
+<td class="border-r border-gray-100 p-1.5 align-top bg-gray-50/30">
+<div class="text-[10px] text-gray-300 font-medium mb-1 px-1">Available 3/3</div>
+</td>
+<td class="border-r border-gray-100 p-1.5 align-top bg-gray-50/30">
+<div class="text-[10px] text-gray-300 font-medium mb-1 px-1">Available 3/3</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</main>
+</div>
+</body></html>

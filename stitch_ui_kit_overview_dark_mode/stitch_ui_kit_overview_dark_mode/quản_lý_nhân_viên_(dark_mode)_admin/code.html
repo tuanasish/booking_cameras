@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Quản lý Nhân viên - Kantra Camera Booking</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                        "surface-dark": "#1e293b",
+                        "border-dark": "#334155",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom Toggle Switch Style */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #135bec;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #135bec;
+        }
+        
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #101622; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569; 
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display overflow-hidden antialiased selection:bg-primary/30 selection:text-white">
+<div class="flex h-screen w-full">
+<!-- Sidebar -->
+<aside class="w-72 hidden lg:flex flex-col border-r border-border-dark bg-[#111318] p-4 flex-shrink-0">
+<!-- User Profile / Brand -->
+<div class="flex items-center gap-3 px-2 mb-8 mt-2">
+<div class="h-10 w-10 rounded-full bg-gradient-to-br from-primary to-purple-600 bg-cover bg-center shadow-lg shadow-primary/20" data-alt="Avatar of current admin user" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA_yRn4nWqTPBeRGY67x1-NLSoJjDN6QjnfYLY5-i6onAZ69ZhJO-flPIiHpqKGM4onIdJBcoOeEDCJT2QddR1BdiFjEa2Xxke1hNYwUGBgNeCeG_zIIyKbTqzhI5-ELbGm4dLqfh4KFaaSiECY6daRp8HkPJgpFphmW5j5RLCWGu134aE2M5SIL0ol31JXGxrOklwmi6rDYDCHQqHGgQtJUie8PpsFCQEPebuwCGeeCIfXS8Kou1vH0Vi3nIq0wSfWeybqo02a7Os');">
+</div>
+<div class="flex flex-col">
+<h1 class="text-white text-base font-semibold leading-tight">Kantra Admin</h1>
+<p class="text-slate-400 text-xs font-medium">Super Admin</p>
+</div>
+</div>
+<!-- Navigation -->
+<nav class="flex flex-col gap-2 flex-1">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-white/5 hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined text-[24px] group-hover:text-primary transition-colors">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-white/5 hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined text-[24px] group-hover:text-primary transition-colors">calendar_month</span>
+<span class="text-sm font-medium">Bookings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-white/5 hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined text-[24px] group-hover:text-primary transition-colors">inventory_2</span>
+<span class="text-sm font-medium">Inventory</span>
+</a>
+<!-- Active Item -->
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary text-white shadow-lg shadow-primary/25" href="#">
+<span class="material-symbols-outlined text-[24px] fill-1">group</span>
+<span class="text-sm font-medium">Employees</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-white/5 hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined text-[24px] group-hover:text-primary transition-colors">settings</span>
+<span class="text-sm font-medium">Settings</span>
+</a>
+</nav>
+<!-- Logout -->
+<div class="mt-auto pt-4 border-t border-border-dark">
+<button class="flex w-full items-center gap-3 px-4 py-3 rounded-lg text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors">
+<span class="material-symbols-outlined text-[24px]">logout</span>
+<span class="text-sm font-medium">Đăng xuất</span>
+</button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col h-full overflow-hidden bg-background-light dark:bg-background-dark relative">
+<!-- Top Header & Breadcrumbs -->
+<header class="flex flex-col gap-6 px-6 py-6 md:px-10 md:py-8 flex-shrink-0 z-10">
+<!-- Breadcrumbs -->
+<nav class="flex items-center gap-2 text-sm">
+<a class="text-slate-500 hover:text-primary transition-colors font-medium" href="#">Dashboard</a>
+<span class="text-slate-600 material-symbols-outlined text-[16px]">chevron_right</span>
+<span class="text-slate-900 dark:text-white font-semibold">Employees</span>
+</nav>
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div class="flex flex-col gap-1">
+<h2 class="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 dark:text-white">Quản lý Nhân viên</h2>
+<p class="text-slate-500 dark:text-slate-400 text-sm md:text-base">Quản lý danh sách nhân viên, phân quyền và trạng thái hoạt động.</p>
+</div>
+<button class="group flex items-center justify-center gap-2 bg-primary hover:bg-blue-600 text-white px-5 py-2.5 rounded-xl font-medium transition-all shadow-lg shadow-primary/30 active:scale-95" onclick="document.getElementById('addEmployeeModal').classList.remove('hidden')">
+<span class="material-symbols-outlined text-[20px]">add</span>
+<span>Thêm nhân viên</span>
+</button>
+</div>
+</header>
+<!-- Scrollable Content -->
+<div class="flex-1 overflow-y-auto px-6 pb-6 md:px-10 md:pb-10">
+<div class="max-w-[1200px] mx-auto flex flex-col gap-6">
+<!-- Search & Filter Bar -->
+<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200 dark:border-border-dark shadow-sm flex flex-col md:flex-row gap-4 justify-between items-center">
+<div class="relative w-full md:max-w-md">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 material-symbols-outlined text-[20px]">search</span>
+<input class="w-full bg-slate-50 dark:bg-[#101622] text-slate-900 dark:text-white border border-slate-200 dark:border-border-dark rounded-lg py-2.5 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/50 placeholder:text-slate-500 text-sm transition-shadow" placeholder="Tìm kiếm theo tên hoặc email..." type="text"/>
+</div>
+<div class="flex gap-2">
+<button class="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-slate-200 dark:border-border-dark text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors text-sm font-medium">
+<span class="material-symbols-outlined text-[18px]">filter_list</span>
+<span>Bộ lọc</span>
+</button>
+</div>
+</div>
+<!-- Table Container -->
+<div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark shadow-sm overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-white/5">
+<th class="py-4 px-6 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Nhân viên</th>
+<th class="py-4 px-6 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Vai trò</th>
+<th class="py-4 px-6 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Ngày tạo</th>
+<th class="py-4 px-6 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 text-center">Trạng thái</th>
+<th class="py-4 px-6 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 text-right">Hành động</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-200 dark:divide-border-dark">
+<!-- Row 1 -->
+<tr class="group hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors">
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 rounded-full bg-slate-200 bg-cover bg-center" data-alt="Portrait of Nguyen Van Hung" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAva57iod1oShXK3llkCvHIgN8v0QNteoj8_wZvqDNzrg16jTwEkwHYvi50wnFjzU3Pf8gINLmiEFPFcftHys7lKLhKUm0Q6VyBv16q9thdd86qEmROPvOfgwQKk084THyvAya3iQYxwQqeAIkZ4vhN-2QND7t0NPH62T-tBrBz8XU7FKZ6AP_gubqvXQCIvcj4rj_jK7K-4VeUxMDJJo090hf24D3nBSQVIOQ7zi_c-JxpiD4uujjhVfQXTla-5y9xmcAzrvSwqs0');"></div>
+<div class="flex flex-col">
+<span class="text-sm font-semibold text-slate-900 dark:text-white">Nguyễn Văn Hùng</span>
+<span class="text-xs text-slate-500 dark:text-slate-400">hung.nguyen@kantra.com</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-500/10 dark:text-purple-300 border border-purple-200 dark:border-purple-500/20">
+                                                Admin
+                                            </span>
+</td>
+<td class="py-4 px-6">
+<span class="text-sm text-slate-600 dark:text-slate-300">12 Th10, 2023</span>
+</td>
+<td class="py-4 px-6 text-center">
+<label class="relative inline-flex items-center cursor-pointer" for="toggle1">
+<input checked="" class="sr-only peer" id="toggle1" type="checkbox"/>
+<div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/50 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+</label>
+</td>
+<td class="py-4 px-6 text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="p-2 rounded-lg text-slate-400 hover:text-primary hover:bg-primary/10 transition-colors" title="Chỉnh sửa">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="p-2 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-500/10 transition-colors" onclick="document.getElementById('deleteConfirmModal').classList.remove('hidden')" title="Xóa">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="group hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors">
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 rounded-full bg-slate-200 bg-cover bg-center" data-alt="Portrait of Tran Thi Mai" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuABcfGIz9ghr8AhqPMHQMVpGfLvS3mjj3DuOOTXJjz0w_XHk2Wz__JPo6tEzm6PCEh_D1TEz2tH5YI0XdxYZF7xoF3y0zGf-8vz6x49oEPCfux84otEWVAbSs1oXl98raHXpWyyCUinEBB2Xc_zdGLY_8hin_OjoaxduZBnl7xdAPAdRXMR0ZPZCcwBtJPC8N1JeGlZyocTQzq58ZpCXJ9cp-Hg37focc57SooFLatbOaz0Mkq4q8bNViz3yTsy5Yamj3iD8l1ZrxM');"></div>
+<div class="flex flex-col">
+<span class="text-sm font-semibold text-slate-900 dark:text-white">Trần Thị Mai</span>
+<span class="text-xs text-slate-500 dark:text-slate-400">mai.tran@kantra.com</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-500/10 dark:text-blue-300 border border-blue-200 dark:border-blue-500/20">
+                                                Employee
+                                            </span>
+</td>
+<td class="py-4 px-6">
+<span class="text-sm text-slate-600 dark:text-slate-300">15 Th11, 2023</span>
+</td>
+<td class="py-4 px-6 text-center">
+<label class="relative inline-flex items-center cursor-pointer" for="toggle2">
+<input checked="" class="sr-only peer" id="toggle2" type="checkbox"/>
+<div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/50 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+</label>
+</td>
+<td class="py-4 px-6 text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="p-2 rounded-lg text-slate-400 hover:text-primary hover:bg-primary/10 transition-colors" title="Chỉnh sửa">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="p-2 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-500/10 transition-colors" onclick="document.getElementById('deleteConfirmModal').classList.remove('hidden')" title="Xóa">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 (Blocked) -->
+<tr class="group hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors">
+<td class="py-4 px-6">
+<div class="flex items-center gap-3 opacity-75">
+<div class="h-10 w-10 rounded-full bg-slate-200 bg-cover bg-center grayscale" data-alt="Portrait of Le Van C" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuASIMm--4MDFvs_j8w2fgD6BGjgRf3uRW5GcGzLsdsYEta1v6eZ0I3EcHtrSTQJVJNzm67moVG742q5Pjxu4gUevKIB5WAhbGEYe3d_W9qeO8FYt_Fysza09jj4fhhasLr4qjbPOOauV3LQkKtOJo7OCPhe5TEk4_MVVJ1HElSTDom3YyjMBc2ZDGJgOi6IO9ENR_P0i3P7AIGCaHYKN5e989DZQbb38GNKal6Rf5pPQdETuggYf37PbdmOLKEWty_lAwCzvN1KHdM');"></div>
+<div class="flex flex-col">
+<span class="text-sm font-semibold text-slate-900 dark:text-white line-through decoration-slate-500">Lê Văn Cường</span>
+<span class="text-xs text-slate-500 dark:text-slate-400">cuong.le@kantra.com</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-500/10 dark:text-blue-300 border border-blue-200 dark:border-blue-500/20 opacity-60">
+                                                Employee
+                                            </span>
+</td>
+<td class="py-4 px-6">
+<span class="text-sm text-slate-600 dark:text-slate-300 opacity-60">01 Th12, 2023</span>
+</td>
+<td class="py-4 px-6 text-center">
+<div class="flex flex-col items-center gap-1">
+<label class="relative inline-flex items-center cursor-pointer" for="toggle3">
+<input class="sr-only peer" id="toggle3" type="checkbox"/>
+<div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/50 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+</label>
+<span class="text-[10px] font-bold text-red-500 uppercase tracking-wide">Blocked</span>
+</div>
+</td>
+<td class="py-4 px-6 text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="p-2 rounded-lg text-slate-400 hover:text-primary hover:bg-primary/10 transition-colors" title="Chỉnh sửa">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="p-2 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-500/10 transition-colors" onclick="document.getElementById('deleteConfirmModal').classList.remove('hidden')" title="Xóa">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="group hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors">
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 rounded-full bg-slate-200 bg-cover bg-center" data-alt="Portrait of Pham Thi D" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAxeQwJySXqGwias1I4KxuDB57zKke094G-uxFx-DlW2QoCZtMG14Hf0jHhNbWGr3muq7eNhM5lUjOnfSwCU4c-xDaxpsnddK1DWem7b7LV_6aPji15f6Hrh5XN-tspcscwq_C3xXT82z9ZJY5xA1mGDkC51EoHL57wtogb87_-zjXHGEP7sQuu7IcccmledbuCx2KpFl8E_31DDobH1pE8epP9rPPldwk3RloStb0hOeJK_nuKyIDoOga4p2U2VLBlpOJaoIXHxPM');"></div>
+<div class="flex flex-col">
+<span class="text-sm font-semibold text-slate-900 dark:text-white">Phạm Thị Dung</span>
+<span class="text-xs text-slate-500 dark:text-slate-400">dung.pham@kantra.com</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-500/10 dark:text-blue-300 border border-blue-200 dark:border-blue-500/20">
+                                                Employee
+                                            </span>
+</td>
+<td class="py-4 px-6">
+<span class="text-sm text-slate-600 dark:text-slate-300">05 Th01, 2024</span>
+</td>
+<td class="py-4 px-6 text-center">
+<label class="relative inline-flex items-center cursor-pointer" for="toggle4">
+<input checked="" class="sr-only peer" id="toggle4" type="checkbox"/>
+<div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/50 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+</label>
+</td>
+<td class="py-4 px-6 text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="p-2 rounded-lg text-slate-400 hover:text-primary hover:bg-primary/10 transition-colors" title="Chỉnh sửa">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="p-2 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-500/10 transition-colors" onclick="document.getElementById('deleteConfirmModal').classList.remove('hidden')" title="Xóa">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="flex items-center justify-between p-4 border-t border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-white/[0.02]">
+<span class="text-sm text-slate-500 dark:text-slate-400">
+                                Hiển thị <span class="font-medium text-slate-900 dark:text-white">1</span> đến <span class="font-medium text-slate-900 dark:text-white">4</span> trong <span class="font-medium text-slate-900 dark:text-white">24</span> nhân viên
+                            </span>
+<div class="flex items-center gap-2">
+<button class="p-2 rounded-lg border border-slate-200 dark:border-border-dark text-slate-400 hover:bg-white dark:hover:bg-white/5 disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-[20px]">chevron_left</span>
+</button>
+<button class="px-3 py-1 rounded-lg bg-primary text-white text-sm font-medium">1</button>
+<button class="px-3 py-1 rounded-lg border border-slate-200 dark:border-border-dark text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-white/5 text-sm font-medium transition-colors">2</button>
+<button class="px-3 py-1 rounded-lg border border-slate-200 dark:border-border-dark text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-white/5 text-sm font-medium transition-colors">3</button>
+<span class="text-slate-400">...</span>
+<button class="p-2 rounded-lg border border-slate-200 dark:border-border-dark text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-white/5 transition-colors">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Delete Confirmation Modal (Visible on interaction) -->
+<div class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity" id="deleteConfirmModal">
+<div class="bg-white dark:bg-surface-dark rounded-2xl shadow-2xl max-w-sm w-full border border-slate-200 dark:border-border-dark p-6 transform transition-all scale-100">
+<div class="flex flex-col items-center text-center gap-4">
+<div class="h-14 w-14 rounded-full bg-red-100 dark:bg-red-500/10 flex items-center justify-center text-red-600 dark:text-red-500">
+<span class="material-symbols-outlined text-[32px]">warning</span>
+</div>
+<div class="flex flex-col gap-1">
+<h3 class="text-xl font-bold text-slate-900 dark:text-white">Xóa nhân viên?</h3>
+<p class="text-sm text-slate-500 dark:text-slate-400">Hành động này không thể hoàn tác. Bạn có chắc chắn muốn xóa nhân viên này khỏi hệ thống?</p>
+</div>
+<div class="flex w-full gap-3 mt-2">
+<button class="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-border-dark text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-50 dark:hover:bg-white/5 transition-colors" onclick="document.getElementById('deleteConfirmModal').classList.add('hidden')">Hủy bỏ</button>
+<button class="flex-1 px-4 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white font-medium shadow-lg shadow-red-500/20 transition-colors" onclick="document.getElementById('deleteConfirmModal').classList.add('hidden')">Xóa</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Add Employee Modal -->
+<div class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity" id="addEmployeeModal">
+<div class="bg-white dark:bg-surface-dark rounded-2xl shadow-2xl max-w-lg w-full border border-slate-200 dark:border-border-dark transform transition-all scale-100 flex flex-col max-h-[90vh]">
+<div class="flex items-center justify-between p-6 border-b border-slate-200 dark:border-border-dark">
+<h3 class="text-xl font-bold text-slate-900 dark:text-white">Thêm nhân viên mới</h3>
+<button class="text-slate-400 hover:text-slate-500 dark:hover:text-slate-300" onclick="document.getElementById('addEmployeeModal').classList.add('hidden')">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="p-6 flex flex-col gap-5 overflow-y-auto">
+<div class="flex flex-col gap-2">
+<label class="text-sm font-medium text-slate-700 dark:text-slate-300">Họ và tên</label>
+<input class="w-full bg-slate-50 dark:bg-[#101622] text-slate-900 dark:text-white border border-slate-200 dark:border-border-dark rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 placeholder:text-slate-400" placeholder="Nhập tên nhân viên" type="text"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-sm font-medium text-slate-700 dark:text-slate-300">Email công ty</label>
+<input class="w-full bg-slate-50 dark:bg-[#101622] text-slate-900 dark:text-white border border-slate-200 dark:border-border-dark rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 placeholder:text-slate-400" placeholder="example@kantra.com" type="email"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-sm font-medium text-slate-700 dark:text-slate-300">Vai trò</label>
+<div class="relative">
+<select class="w-full appearance-none bg-slate-50 dark:bg-[#101622] text-slate-900 dark:text-white border border-slate-200 dark:border-border-dark rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50">
+<option value="employee">Employee</option>
+<option value="admin">Admin</option>
+</select>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 material-symbols-outlined pointer-events-none">expand_more</span>
+</div>
+</div>
+<div class="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-[#101622] border border-slate-200 dark:border-border-dark">
+<div class="flex flex-col">
+<span class="text-sm font-medium text-slate-900 dark:text-white">Trạng thái hoạt động</span>
+<span class="text-xs text-slate-500 dark:text-slate-400">Cho phép nhân viên đăng nhập ngay lập tức</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/50 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+<div class="p-6 border-t border-slate-200 dark:border-border-dark flex justify-end gap-3 bg-slate-50 dark:bg-white/[0.02] rounded-b-2xl">
+<button class="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-border-dark text-slate-700 dark:text-slate-300 font-medium hover:bg-white dark:hover:bg-white/5 transition-colors" onclick="document.getElementById('addEmployeeModal').classList.add('hidden')">Hủy</button>
+<button class="px-5 py-2.5 rounded-xl bg-primary hover:bg-blue-600 text-white font-medium shadow-lg shadow-primary/25 transition-colors" onclick="document.getElementById('addEmployeeModal').classList.add('hidden')">Lưu nhân viên</button>
+</div>
+</div>
+</div>
+</body></html>

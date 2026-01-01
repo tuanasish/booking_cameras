@@ -1,0 +1,600 @@
+================================================================================
+          HỆ THỐNG QUẢN LÝ BOOKING CHO THUÊ MÁY ẢNH - KANTRA CAMERA
+                         KẾ HOẠCH NGHIỆP VỤ CHI TIẾT
+================================================================================
+
+I. TỔNG QUAN HỆ THỐNG
+================================================================================
+
+1.1. Mục đích:
+    - Thay thế Excel bằng hệ thống web-based
+    - Quản lý lịch cho thuê máy ảnh hiệu quả
+    - Theo dõi trạng thái thanh toán real-time
+    - Phân quyền quản lý/nhân viên
+    - Thống kê doanh thu
+
+1.2. Công nghệ sử dụng:
+    - Frontend: Next.js 14 + TypeScript
+    - Styling: Vanilla CSS (dark mode support)
+    - Database: Supabase (PostgreSQL)
+    - Authentication: Supabase Auth
+
+================================================================================
+
+II. PHÂN QUYỀN NGƯỜI DÙNG
+================================================================================
+
+2.1. QUẢN LÝ (Admin)
+    - Đăng nhập: Tên tài khoản + Mật khẩu
+    - Quyền hạn:
+      * Tất cả quyền của nhân viên
+      * Cấp quyền truy cập cho email nhân viên
+      * Xem thống kê doanh thu
+      * Lọc doanh thu theo ngày/tháng/năm
+      * Lọc doanh thu theo máy/dòng máy
+      * Phân tích hiệu quả cho thuê
+      * Quản lý danh sách máy ảnh (thêm/sửa/xóa)
+      * Chỉnh sửa các cấu hình hệ thống
+
+2.2. NHÂN VIÊN (Employee)
+    - Đăng nhập: Chỉ cần Email (đã được Admin cấp quyền)
+    - Quyền hạn:
+      * Xem lịch đặt
+      * Tạo/sửa booking
+      * Giao máy cho khách
+      * Thu máy từ khách
+      * Xử lý khôi phục thẻ nhớ
+      * Tìm kiếm thông tin khách hàng
+
+================================================================================
+
+III. QUY TRÌNH NGHIỆP VỤ
+================================================================================
+
+3.1. LUỒNG TẠO BOOKING MỚI (Lịch Nhận)
+--------------------------------------------------------------------------------
+
+Bước 1: Nhân viên mở form "Tạo lịch mới"
+
+Bước 2: Nhập thông tin khách hàng
+    - Tên khách hàng (bắt buộc)
+    - Số điện thoại (bắt buộc)
+    - Nền tảng liên hệ: IG, ZL, TT, FB, VL (chọn tối đa 2)
+
+Bước 3: Chọn máy ảnh và phụ kiện
+    - Chọn máy ảnh từ danh sách
+      * Hệ thống tự động kiểm tra lịch trống
+      * Nếu dòng máy không còn lịch trống → Đề xuất máy khác có lịch trống
+    - Tick nếu có Tripod
+      * Hiển thị số lượng Tripod còn trống
+      * Nếu hết → Báo lỗi: "Tripod không còn khả dụng"
+    - Tick nếu có Hắt sáng
+      * Hiển thị số lượng Hắt sáng còn trống
+      * Nếu hết → Báo lỗi: "Hắt sáng không còn khả dụng"
+    - Ghi rõ phụ kiện khác (nếu có)
+
+Bước 4: Chọn thời gian
+    - Thời gian nhận máy (ngày + giờ cụ thể)
+    - Thời gian trả máy (ngày + giờ cụ thể)
+
+Bước 5: Xử lý cọc
+    - Chưa cọc (mặc định) → Trạng thái ĐỎ
+    - Đã cọc 50.000 VNĐ (cọc đặt lịch) → Trạng thái VÀNG
+    - Đã cọc số tiền khác (nhập số) → Trạng thái VÀNG
+    - Cọc lại CCCD:
+      * Tick checkbox "Cọc CCCD"
+      * Nhập tên trên CCCD để nhắc nhở khi trả
+      * Lưu ý: Chỉ cần note khi khách cọc CCCD vật lý
+    - Khách có VNeID:
+      * Tick checkbox "Có VNeID"
+      * Không cần nhập tên CCCD
+    - Cọc lại CCCD → Nhập tên trên CCCD để nhắc nhở khi trả
+
+Bước 6: Địa điểm & Phí giao máy
+    - Nhập địa điểm giao máy (text)
+    - Nhập phí giao máy (nhân viên tự tính: 8.000 VNĐ/km)
+
+Bước 7: Phí thuê và chiết khấu
+    - Nhập phí thuê gốc (S)
+    - Tick nếu có chiết khấu:
+      * Nhập % chiết khấu
+      * Chọn lý do: Sinh nhật / Dài ngày / Để lại feedback / Thuê 2 máy / Khác
+      * Hệ thống tự tính phí sau chiết khấu (P)
+
+Bước 8: Ghi nhận nhân viên lên lịch
+    - Chọn tên nhân viên (từ dropdown)
+
+Bước 9: Lưu → Booking hiển thị trên Calendar
+
+--------------------------------------------------------------------------------
+
+3.2. LUỒNG GIAO MÁY (Ngày đến hạn nhận)
+--------------------------------------------------------------------------------
+
+Bước 1: Nhân viên xem lịch nhận trong ngày
+
+Bước 2: Click vào booking cần giao
+
+Bước 3: Xác nhận giao máy
+    - Chọn tên nhân viên bàn giao
+    - Tick "Đã giao máy"
+
+Bước 4: Xử lý thanh toán
+    - Cọc 50k là cọc đặt lịch, khi khách nhận máy thì không cần cọc nữa
+    - Khách sẽ thanh toán luôn vào lúc nhận máy
+    - Cập nhật trạng thái thanh toán → Trạng thái XANH (đã thanh toán)
+
+Bước 5: Lưu → Booking được đánh dấu "Đã giao"
+
+--------------------------------------------------------------------------------
+
+3.3. LUỒNG TRẢ MÁY (Lịch Trả)
+--------------------------------------------------------------------------------
+
+Bước 1: Nhân viên xem lịch trả trong ngày
+
+Bước 2: Click vào booking cần thu máy
+
+Bước 3: Điền thông tin thu máy
+    - Xem lại toàn bộ thông tin booking
+    - Chọn tên nhân viên thu máy
+    - Nhập địa điểm thu máy mới (nếu khác địa điểm giao)
+    - Nhập phí giao máy thu hồi (nếu có)
+    - Nhắc nhở phụ kiện cần thu lại:
+      * Nếu lịch nhận có Tripod → Nhắc thu lại Tripod
+      * Nếu lịch nhận có Hắt sáng → Nhắc thu lại Hắt sáng
+    
+Bước 4: Tính phí trả trễ (nếu có)
+    - Công thức: Phí trả trễ = Giá 6 tiếng / 5
+    - Ví dụ: Canon R50 giá 6h = 150k → Phí trễ = 30k/mốc
+    - Phí trả trễ KHÔNG áp dụng chiết khấu
+
+Bước 5: Dịch vụ thêm
+    - Tick "Khôi phục thẻ nhớ" (nếu khách cần)
+    - Tick "Tải ảnh lên Drive" (nếu khách cần)
+    → Nếu tick → Tạo task mới trong mục "Khôi phục + Tải ảnh"
+
+Bước 6: Trả CCCD cho khách (nếu có cọc CCCD)
+    - Nếu khách cọc CCCD vật lý:
+      * Hệ thống nhắc nhở tên trên CCCD cần trả
+      * Nhân viên tick xác nhận đã trả CCCD
+    - Nếu khách có VNeID:
+      * Không cần trả CCCD
+      * Không có nhắc nhở
+
+Bước 7: Cập nhật thanh toán
+    - Đã thanh toán đủ → Trạng thái XANH
+
+Bước 8: Lưu → Booking hoàn thành
+
+--------------------------------------------------------------------------------
+
+3.4. LUỒNG KHÔI PHỤC THẺ NHỚ + TẢI ẢNH
+--------------------------------------------------------------------------------
+
+Bước 1: Mở mục "Khôi phục + Tải ảnh"
+    - Danh sách các task cần xử lý
+
+Bước 2: Điền mã số thẻ nhớ
+    - Để dễ tìm lại sau này
+
+Bước 3: Xử lý từng bước (tick khi hoàn thành):
+    □ Đã khôi phục
+    □ Đã tải ảnh lên Drive
+    □ Đã gửi link cho khách
+    □ Khách không báo lỗi sau 24 giờ
+
+Bước 4: Khi tick hết cả 4 mục
+    - Hiển thị nút "Xóa thông tin"
+    - Xóa để xác nhận đã hoàn thành
+
+--------------------------------------------------------------------------------
+
+3.5. LUỒNG QUẢN LÝ NHÂN VIÊN (Chỉ Admin)
+--------------------------------------------------------------------------------
+
+Bước 1: Vào mục "Quản lý nhân viên"
+
+Bước 2: Thêm nhân viên mới
+    - Nhập email nhân viên
+    - Nhập tên nhân viên
+    - Lưu → Nhân viên có thể đăng nhập bằng email
+
+Bước 3: Quản lý quyền truy cập
+    - Bật/tắt quyền truy cập của từng nhân viên
+    - Xóa nhân viên (nếu cần)
+
+================================================================================
+
+IV. GIAO DIỆN CALENDAR
+================================================================================
+
+4.1. Cấu trúc hiển thị (giống Excel mẫu):
+    - Hàng: Mỗi máy ảnh là 1 hàng
+    - Cột: Mỗi ngày là 1 cột (theo tuần hoặc tháng)
+    - Ô: Hiển thị thông tin booking
+
+4.2. Mã màu trạng thái:
+    🔴 ĐỎ    = Chưa cọc (payment_status = 'pending')
+    🟡 VÀNG  = Đã cọc (payment_status = 'deposited')
+    🟢 XANH  = Đã thanh toán (payment_status = 'paid')
+
+4.3. Hiển thị trong ô booking:
+
+    Lịch NHẬN:
+    ┌─────────────────────────────┐
+    │ N: 09h00 (0912345678)       │
+    │ Minh Khang (Meta)           │
+    │ Tripod + Hắt sáng           │
+    └─────────────────────────────┘
+
+    Lịch TRẢ:
+    ┌─────────────────────────────┐
+    │ T: 18h00 (0912345678)       │
+    │ Minh Khang (Meta)           │
+    │ CCCD: Nguyễn Minh Khang     │
+    └─────────────────────────────┘
+
+4.4. Giá thuê:
+    - S: Phí thuê gốc
+    - P: Phí thuê sau chiết khấu
+
+4.5. Timeline thời gian thực:
+    - Đường kẻ chỉ thời gian hiện tại
+    - Auto-scroll đến thời gian hiện tại
+    - Tác vụ quá hạn chưa hoàn thành → Chuyển màu ĐỎ
+    - Tác vụ đã hoàn thành → Giữ màu XANH
+
+================================================================================
+
+V. TÍNH NĂNG TÌM KIẾM
+================================================================================
+
+5.1. Thanh tìm kiếm nhanh:
+    - Tìm theo tên khách hàng
+    - Tìm theo số điện thoại
+    - Tìm theo mã booking
+    - Tìm theo tên máy ảnh
+
+5.2. Kết quả tìm kiếm:
+    - Hiển thị danh sách booking phù hợp
+    - Click để xem chi tiết
+
+5.3. HIỂN THỊ LỊCH TRỐNG:
+    - Trên calendar, ô nào không có booking → hiển thị màu trắng/xám nhạt
+    - Hiển thị số lượng máy còn trống: "Còn X/Y máy"
+    - Nếu máy có SL > 1 và đang có booking: hiển thị "(X/Y đang thuê)"
+    
+    VD: Canon M100 (SL=2)
+        - Không có booking → "2/2 máy trống" (màu xám nhạt)
+        - Có 1 booking → "1/2 đang thuê" (1 ô màu theo trạng thái)
+        - Có 2 booking → "Hết máy" (2 ô màu)
+
+5.4. TÌM MÁY TRỐNG THEO THỜI GIAN:
+    - Nhân viên nhập: Ngày nhận + Ngày trả
+    - Hệ thống hiển thị:
+      * Danh sách máy CÒN TRỐNG trong khoảng thời gian đó
+      * Số lượng còn trống của mỗi model
+      * Loại bỏ máy đã có booking trùng thời gian
+    
+    VD: Tìm từ 1/1 đến 3/1
+        → Canon M10: 1 máy trống
+        → Canon M100: 2 máy trống
+        → Canon R50: Hết máy (đã có booking)
+
+5.5. GỢI Ý KHI TẠO BOOKING:
+    - Khi nhân viên chọn thời gian nhận/trả
+    - Tự động lọc dropdown máy ảnh:
+      * Chỉ hiển thị máy CÒN TRỐNG
+      * Máy hết → disabled/ẩn hoặc ghi "(Hết)"
+      * Nếu dòng máy không còn lịch trống:
+        → Hệ thống đề xuất những máy khác có lịch trống
+        → Hiển thị danh sách máy thay thế với số lượng còn trống
+    - Tương tự cho phụ kiện (tripod, hắt sáng):
+      * Hiển thị số lượng còn trống
+      * Nếu hết → Báo lỗi: "Tripod/Hắt sáng không còn khả dụng"
+
+================================================================================
+
+VI. THỐNG KÊ & BÁO CÁO (Chỉ Admin)
+================================================================================
+
+6.1. Bộ lọc:
+    - Theo ngày cụ thể
+    - Theo tháng
+    - Theo năm
+    - Theo khoảng thời gian tùy chọn
+
+6.2. Báo cáo doanh thu:
+    - Tổng doanh thu (theo bộ lọc)
+    - Doanh thu theo từng máy
+    - Doanh thu theo dòng máy (Canon M, Canon R...)
+    - Trung bình doanh thu/máy
+    - Số lượt cho thuê
+
+6.3. Phân tích hiệu quả:
+    - Máy nào được thuê nhiều nhất
+    - Máy nào ít được thuê
+    - Tỷ lệ sử dụng từng máy
+    - Doanh thu/ngày cho thuê
+
+================================================================================
+
+VII. CẤU HÌNH HỆ THỐNG (Chỉ Admin)
+================================================================================
+
+7.1. Cấu hình giá có thể chỉnh sửa:
+    - Phí giao máy / km (mặc định: 8.000 VNĐ)
+    - Cọc mặc định (mặc định: 50.000 VNĐ)
+    - Hệ số tính phí trả trễ (mặc định: chia 5)
+
+7.2. Quản lý máy ảnh:
+    - Thêm máy mới
+    - Sửa thông tin máy (tên, giá, số lượng)
+    - Xóa máy
+    - Số lượng tripod/hắt sáng đi kèm
+
+7.3. Danh sách máy ảnh (ví dụ):
+    ┌──────────────┬─────────┬─────────┬─────────┬─────┐
+    │ Tên máy      │ Giá 6h  │ Giá 1 ngày│ Giá +ngày│ SL  │
+    ├──────────────┼─────────┼─────────┼─────────┼─────┤
+    │ Canon M10    │ 200.000 │ 200.000 │ 150.000 │  1  │
+    │ Canon M100   │ 220.000 │ 220.000 │ 170.000 │  2  │
+    │ Canon R50    │ 300.000 │ 300.000 │ 250.000 │  1  │
+    └──────────────┴─────────┴─────────┴─────────┴─────┘
+    
+    Lưu ý:
+    - Giá 6h: Giá thuê trong 6 giờ đầu
+    - Giá 1 ngày: Giá thuê cho ngày đầu tiên (24 giờ)
+    - Giá +ngày: Giá thuê từ ngày thứ 2 trở đi
+    - Ví dụ: Thuê Canon M10 3 ngày
+      * Ngày 1: 200.000 VNĐ
+      * Ngày 2: 150.000 VNĐ
+      * Ngày 3: 150.000 VNĐ
+      * Tổng: 500.000 VNĐ
+
+================================================================================
+
+VIII. CÔNG THỨC TÍNH PHÍ
+================================================================================
+
+8.1. Phí thuê cuối cùng:
+    P = S × (1 - Chiết khấu%)
+    
+    Trong đó S được tính theo công thức:
+    - Nếu thuê ≤ 6 giờ: S = Giá 6h
+    - Nếu thuê ≤ 24 giờ (1 ngày): S = Giá 1 ngày
+    - Nếu thuê > 24 giờ:
+      * Ngày đầu: Giá 1 ngày
+      * Các ngày tiếp theo: Giá +ngày × số ngày
+      * S = Giá 1 ngày + (Giá +ngày × số ngày tiếp theo)
+    
+    Ví dụ: Thuê Canon M10 3 ngày
+    - Giá 1 ngày = 200.000
+    - Giá +ngày = 150.000
+    - S = 200.000 + (150.000 × 2) = 500.000 VNĐ
+    - Nếu chiết khấu 10%: P = 500.000 × 0.9 = 450.000 VNĐ
+
+8.2. Phí trả trễ:
+    Phí trễ = Giá 6 tiếng / 5
+    
+    Ví dụ: Canon R50 giá 6h = 150.000
+    → Phí trễ mỗi mốc = 150.000 / 5 = 30.000 VNĐ
+    
+    ⚠️ Lưu ý: Phí trả trễ KHÔNG được chiết khấu
+
+8.3. Phí giao máy:
+    Phí giao = Khoảng cách (km) × 8.000 VNĐ
+    
+    Ví dụ: Giao máy 5km
+    → Phí giao = 5 × 8.000 = 40.000 VNĐ
+
+8.4. Tổng thanh toán:
+    Tổng = P + Phí trễ + Phí giao nhận + Phí giao trả
+
+================================================================================
+
+IX. DỮ LIỆU LƯU TRỮ (NORMALIZED SCHEMA)
+================================================================================
+
+*** THIẾT KẾ THEO HƯỚNG NORMALIZE ĐỂ DỄ QUERY VÀ BẢO TRÌ ***
+
+9.1. Bảng cameras (Máy ảnh):
+    - id (UUID)
+    - name: Tên máy (VD: "Canon M10")
+    - model_line: Dòng máy (VD: "Canon M", "Canon R")
+    - price_6h: Giá thuê 6 giờ
+    - price_24h: Giá thuê 1 ngày (ngày đầu tiên)
+    - price_additional_day: Giá thuê +ngày (từ ngày thứ 2 trở đi)
+    - quantity: Số lượng máy cùng model (VD: Canon M100 có 2 máy)
+    - is_active: Trạng thái hoạt động
+    
+    Lưu ý: Không có price_12h, chỉ có 3 mức giá: 6h, 1 ngày, +ngày
+
+9.2. Bảng accessories (Phụ kiện có sẵn):
+    - id (UUID)
+    - type: 'tripod' | 'reflector' | 'other'
+    - name: Tên phụ kiện
+    - quantity: Số lượng tồn kho
+    - price: Giá thuê (nếu có)
+
+9.3. Bảng customers (Khách hàng):
+    - id (UUID)
+    - name: Tên khách
+    - phone: Số điện thoại
+    - platforms[]: Nền tảng liên hệ ['IG', 'ZL', 'TT', 'FB', 'VL']
+    
+    ⚠️ LƯU Ý: CCCD KHÔNG lưu ở đây (lưu theo từng booking)
+
+9.4. Bảng bookings (Thông tin chung của đơn thuê):
+    - id (UUID)
+    - customer_id → customers
+    - created_by → employees (NV lên lịch)
+    
+    -- Thời gian --
+    - pickup_time: Thời gian nhận
+    - return_time: Thời gian trả
+    
+    -- Thanh toán --
+    - payment_status: 'pending' | 'deposited' | 'paid'
+    - deposit_type: 'none' | 'default' | 'custom' | 'cccd' | 'vneid'
+    - deposit_amount: Số tiền cọc (50k là cọc đặt lịch)
+    - cccd_name: Tên trên CCCD (chỉ lưu khi deposit_type = 'cccd')
+    - has_vneid: Boolean - Khách có VNeID (không cần cọc CCCD)
+    
+    Lưu ý:
+    - Cọc 50k là cọc đặt lịch, khi khách nhận máy thì thanh toán luôn
+    - Nếu deposit_type = 'cccd': phải nhập cccd_name
+    - Nếu has_vneid = true: không cần nhập cccd_name
+    
+    -- Phí & Chiết khấu --
+    - total_rental_fee: Tổng phí thuê gốc (S)
+    - discount_percent: % chiết khấu
+    - discount_reason: Lý do chiết khấu
+    - final_fee: Phí sau chiết khấu (P)
+    - late_fee: Phí trả trễ
+    - total_delivery_fee: Tổng phí giao máy
+
+9.5. Bảng booking_items (Máy thuê trong 1 booking):
+    - id (UUID)
+    - booking_id → bookings
+    - camera_id → cameras
+    - quantity: Số lượng thuê (VD: thuê 2 Canon M100)
+    - unit_price: Đơn giá (giá 6h/12h/24h tùy thời gian thuê)
+    - subtotal: Thành tiền
+
+    *** CHO PHÉP 1 BOOKING THUÊ NHIỀU MÁY ***
+
+9.6. Bảng booking_accessories (Phụ kiện trong booking):
+    - id (UUID)
+    - booking_id → bookings
+    - accessory_type: 'tripod' | 'reflector' | 'other'
+    - name: Tên (nếu type = 'other')
+    - quantity: Số lượng
+    - note: Ghi chú
+
+9.7. Bảng tasks (Task nhận/trả máy):
+    - id (UUID)
+    - booking_id → bookings
+    - type: 'pickup' | 'return'
+    - due_at: Thời gian hẹn
+    - completed_at: Thời gian hoàn thành (null nếu chưa)
+    - staff_id → employees (NV thực hiện)
+    - location: Địa điểm
+    - delivery_fee: Phí giao máy
+
+    *** MỖI BOOKING CÓ 2 TASK: 1 PICKUP + 1 RETURN ***
+
+9.8. Bảng recovery_tasks (Khôi phục thẻ nhớ):
+    - id (UUID)
+    - booking_id → bookings
+    - memory_card_code: Mã thẻ nhớ
+    - need_recovery: Cần khôi phục
+    - need_upload: Cần tải lên Drive
+    - is_recovered: Đã khôi phục
+    - is_uploaded: Đã tải lên
+    - is_link_sent: Đã gửi link
+    - no_error_24h: Khách không báo lỗi sau 24h
+    - completed_at: Thời gian hoàn thành
+
+    *** CHỈ TẠO KHI RETURN TASK TICK RECOVERY/UPLOAD ***
+
+9.9. Bảng employees (Nhân viên):
+    - id (UUID)
+    - email: Email đăng nhập
+    - name: Tên nhân viên
+    - is_active: Được phép đăng nhập
+    - approved_by → admins
+
+9.10. Bảng admins (Quản lý):
+    - id (UUID)
+    - username: Tên đăng nhập
+    - password_hash: Mật khẩu đã hash
+    - name: Tên hiển thị
+
+9.11. Bảng settings (Cấu hình):
+    - delivery_fee_per_km: 8000 VNĐ (mặc định)
+    - default_deposit: 50000 VNĐ (mặc định)
+    - late_fee_divisor: 5 (phí trễ = giá 6h / 5)
+
+================================================================================
+
+X. QUY TẮC CHỐNG TRÙNG LỊCH (CONFLICT DETECTION)
+================================================================================
+
+10.1. Hiển thị Calendar theo MODEL (MVP):
+    - Mỗi hàng = 1 model máy (VD: Canon M100)
+    - Nếu model có SL > 1: hiển thị "đang dùng X/Y"
+    - VD: Canon M100 (SL=2), có 1 booking → hiển thị "1/2"
+
+10.2. Khi tạo booking mới, hệ thống PHẢI kiểm tra:
+
+    A) Kiểm tra máy ảnh:
+       - Đếm số máy đang được thuê trong khoảng thời gian
+       - So sánh với quantity của model
+       - Nếu vượt quá → BÁO LỖI, không cho lưu
+
+       VD: Canon M100 có SL=2
+           - Thời gian 1/1 - 3/1: đã có 2 booking
+           - Khách mới muốn thuê 2/1: KHÔNG CHO PHÉP
+
+    B) Kiểm tra phụ kiện:
+       - Tương tự, đếm tripod/hắt sáng đang cho thuê
+       - So sánh với tồn kho
+       - Nếu vượt → BÁO LỖI
+
+10.3. Công thức kiểm tra conflict:
+
+    available_qty = camera.quantity - COUNT(booking_items 
+        WHERE camera_id = X 
+        AND pickup_time < new_return_time 
+        AND return_time > new_pickup_time
+        AND booking.payment_status != 'cancelled'
+    )
+
+    IF available_qty < requested_qty THEN
+        → REJECT: "Máy X chỉ còn {available_qty} máy trong khoảng thời gian này"
+
+10.4. Tùy chọn tương lai (sau MVP):
+    - Admin override: cho phép vượt tồn kho (trường hợp đặc biệt)
+    - Hiển thị theo UNIT (M100-01, M100-02) thay vì MODEL
+
+================================================================================
+
+XI. KẾ HOẠCH TRIỂN KHAI
+================================================================================
+
+Giai đoạn 1: Setup cơ sở (1 ngày)
+    □ Tạo project Supabase
+    □ Thiết kế và tạo database schema
+    □ Khởi tạo project Next.js
+
+Giai đoạn 2: Authentication (1 ngày)
+    □ Trang đăng nhập Admin/Employee
+    □ Phân quyền truy cập
+
+Giai đoạn 3: Calendar & Booking (1 ngày)
+    □ Giao diện Calendar
+    □ Form tạo/sửa booking
+    □ Hiển thị trạng thái màu sắc
+
+Giai đoạn 4: Tính năng bổ sung (1 ngày)
+    □ Trang khôi phục thẻ nhớ
+    □ Tìm kiếm khách hàng
+    □ Timeline thời gian thực
+
+Giai đoạn 5: Admin Features (1 ngày)
+    □ Quản lý nhân viên
+    □ Thống kê doanh thu
+    □ Cấu hình hệ thống
+
+Giai đoạn 6: Testing & Polish (1 ngày)
+    □ Kiểm thử toàn bộ luồng
+    □ Tối ưu giao diện
+    □ Sửa lỗi
+
+================================================================================
+
+                              === HẾT ===
+
+================================================================================

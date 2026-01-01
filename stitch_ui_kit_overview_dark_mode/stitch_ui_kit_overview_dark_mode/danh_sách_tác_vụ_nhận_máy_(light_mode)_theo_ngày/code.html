@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Kantra Camera Booking - Task List</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#135bec",
+              "background-light": "#f6f6f8",
+              "background-dark": "#101622",
+            },
+            fontFamily: {
+              "display": ["Inter", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.5rem", "lg": "0.75rem", "xl": "1rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Hide scrollbar for clean horizontal scroll */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-[#111318] dark:text-gray-100 min-h-screen flex flex-col font-display transition-colors duration-200">
+<!-- Top Navbar -->
+<header class="sticky top-0 z-50 flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#e5e7eb] dark:border-b-gray-800 bg-white dark:bg-[#1a202c] px-6 md:px-10 py-3 shadow-sm">
+<div class="flex items-center gap-4">
+<div class="size-8 text-primary">
+<svg class="w-full h-full" fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M39.475 21.6262C40.358 21.4363 40.6863 21.5589 40.7581 21.5934C40.7876 21.655 40.8547 21.857 40.8082 22.3336C40.7408 23.0255 40.4502 24.0046 39.8572 25.2301C38.6799 27.6631 36.5085 30.6631 33.5858 33.5858C30.6631 36.5085 27.6632 38.6799 25.2301 39.8572C24.0046 40.4502 23.0255 40.7407 22.3336 40.8082C21.8571 40.8547 21.6551 40.7875 21.5934 40.7581C21.5589 40.6863 21.4363 40.358 21.6262 39.475C21.8562 38.4054 22.4689 36.9657 23.5038 35.2817C24.7575 33.2417 26.5497 30.9744 28.7621 28.762C30.9744 26.5497 33.2417 24.7574 35.2817 23.5037C36.9657 22.4689 38.4054 21.8562 39.475 21.6262ZM4.41189 29.2403L18.7597 43.5881C19.8813 44.7097 21.4027 44.9179 22.7217 44.7893C24.0585 44.659 25.5148 44.1631 26.9723 43.4579C29.9052 42.0387 33.2618 39.5667 36.4142 36.4142C39.5667 33.2618 42.0387 29.9052 43.4579 26.9723C44.1631 25.5148 44.659 24.0585 44.7893 22.7217C44.9179 21.4027 44.7097 19.8813 43.5881 18.7597L29.2403 4.41187C27.8527 3.02428 25.8765 3.02573 24.2861 3.36776C22.6081 3.72863 20.7334 4.58419 18.8396 5.74801C16.4978 7.18716 13.9881 9.18353 11.5858 11.5858C9.18354 13.988 7.18717 16.4978 5.74802 18.8396C4.58421 20.7334 3.72865 22.6081 3.36778 24.2861C3.02574 25.8765 3.02429 27.8527 4.41189 29.2403Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<h2 class="text-[#111318] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">Kantra Camera Booking</h2>
+</div>
+<div class="flex flex-1 justify-end gap-8">
+<nav class="hidden md:flex items-center gap-9">
+<a class="text-[#111318] dark:text-gray-300 hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Dashboard</a>
+<a class="text-[#111318] dark:text-white text-sm font-bold leading-normal border-b-2 border-primary pb-0.5" href="#">Tasks</a>
+<a class="text-[#111318] dark:text-gray-300 hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Inventory</a>
+<a class="text-[#111318] dark:text-gray-300 hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Customers</a>
+<a class="text-[#111318] dark:text-gray-300 hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Settings</a>
+</nav>
+<div class="flex items-center gap-4">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 ring-2 ring-gray-100 dark:ring-gray-700" data-alt="User profile picture of operations manager" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCAX_5gYGmcVFzxxsF-NOxIFovrMEUVktLGcDDVLbFWZBkYDbaBedR_kER9_7hWtJbe2d_FECn0CLT7kfFfl0CKztNbfpTJPH50X2BeNvzutZmarBq34k_yy9n6PJ4aCyFXP4abGcbeee6vSP3YkMef75hA9RUdAgTt495kIP1cQK3rA3c7x0fMVinoJ1pSGvRDAF5thygWmQCygzXLUrcs8MyO-O1nGDygjLOSe_zJCnoJEOsji88woH0TK8kUwPWPRJTNP2txkNY");'></div>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-1 px-4 md:px-10 lg:px-40 py-6 md:py-8 w-full max-w-[1440px] mx-auto flex flex-col gap-6">
+<!-- Page Heading & Date Controller -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div class="flex flex-col gap-2">
+<h1 class="text-[#111318] dark:text-white text-3xl md:text-4xl font-black leading-tight tracking-[-0.033em]">Danh sách Tác vụ Nhận máy</h1>
+<p class="text-[#616f89] dark:text-gray-400 text-base font-normal">Quản lý lịch trình giao nhận thiết bị theo ngày</p>
+</div>
+<div class="flex items-center gap-3">
+<!-- Date Picker Mock -->
+<div class="flex items-center bg-white dark:bg-[#1a202c] border border-gray-200 dark:border-gray-700 rounded-lg p-1 shadow-sm">
+<button class="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md text-gray-500">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<div class="flex items-center gap-2 px-4 cursor-pointer group">
+<span class="material-symbols-outlined text-primary text-[20px]">calendar_month</span>
+<span class="text-sm font-bold text-gray-900 dark:text-white whitespace-nowrap group-hover:text-primary transition-colors">Thứ Hai, 24/10/2023</span>
+</div>
+<button class="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md text-gray-500">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+<button class="hidden sm:flex items-center justify-center gap-2 rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold shadow-md hover:bg-blue-700 transition-colors">
+<span class="material-symbols-outlined text-[20px]">add</span>
+<span class="truncate">Add Booking</span>
+</button>
+</div>
+</div>
+<!-- Stats Overview -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<!-- Total -->
+<div class="flex flex-col gap-1 rounded-xl p-5 bg-white dark:bg-[#1a202c] border border-gray-200 dark:border-gray-700 shadow-sm relative overflow-hidden group">
+<div class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-4xl text-blue-500">assignment</span>
+</div>
+<p class="text-gray-500 dark:text-gray-400 text-sm font-medium uppercase tracking-wider">Tổng Tasks</p>
+<div class="flex items-end gap-2">
+<p class="text-[#111318] dark:text-white text-3xl font-bold leading-tight">12</p>
+<span class="text-xs text-gray-400 mb-1 font-medium">tasks today</span>
+</div>
+</div>
+<!-- Overdue -->
+<div class="flex flex-col gap-1 rounded-xl p-5 bg-white dark:bg-[#1a202c] border-l-4 border-l-red-500 border-y border-r border-y-gray-200 border-r-gray-200 dark:border-y-gray-700 dark:border-r-gray-700 shadow-sm relative overflow-hidden group">
+<div class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-4xl text-red-500">warning</span>
+</div>
+<p class="text-gray-500 dark:text-gray-400 text-sm font-medium uppercase tracking-wider">Overdue</p>
+<div class="flex items-end gap-2">
+<p class="text-red-600 dark:text-red-400 text-3xl font-bold leading-tight">2</p>
+<span class="text-xs text-red-400 mb-1 font-medium">Action needed</span>
+</div>
+</div>
+<!-- Done -->
+<div class="flex flex-col gap-1 rounded-xl p-5 bg-white dark:bg-[#1a202c] border-l-4 border-l-green-500 border-y border-r border-y-gray-200 border-r-gray-200 dark:border-y-gray-700 dark:border-r-gray-700 shadow-sm relative overflow-hidden group">
+<div class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-4xl text-green-500">check_circle</span>
+</div>
+<p class="text-gray-500 dark:text-gray-400 text-sm font-medium uppercase tracking-wider">Đã hoàn thành</p>
+<div class="flex items-end gap-2">
+<p class="text-green-600 dark:text-green-400 text-3xl font-bold leading-tight">5</p>
+<span class="text-xs text-green-500 mb-1 font-medium">41% complete</span>
+</div>
+</div>
+</div>
+<!-- Search & Filter Bar -->
+<div class="flex flex-col lg:flex-row gap-4 lg:items-center bg-white dark:bg-[#1a202c] p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800">
+<!-- Search -->
+<div class="flex-1 min-w-[300px]">
+<div class="relative w-full">
+<div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</div>
+<input class="bg-background-light dark:bg-gray-800 border-none text-gray-900 dark:text-white text-sm rounded-lg focus:ring-2 focus:ring-primary block w-full pl-10 p-2.5 placeholder-gray-400" placeholder="Tìm theo tên, SĐT hoặc Booking ID..." required="" type="text"/>
+</div>
+</div>
+<!-- Separator for desktop -->
+<div class="hidden lg:block w-px h-8 bg-gray-200 dark:bg-gray-700"></div>
+<!-- Filters -->
+<div class="flex flex-wrap gap-2 items-center">
+<span class="text-xs font-semibold text-gray-400 uppercase mr-1">Filter by:</span>
+<button class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-background-light dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors border border-transparent hover:border-gray-300 dark:hover:border-gray-600">
+<span class="text-sm font-medium text-gray-700 dark:text-gray-300">Status: All</span>
+<span class="material-symbols-outlined text-[16px] text-gray-500">expand_more</span>
+</button>
+<button class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-background-light dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors border border-transparent hover:border-gray-300 dark:hover:border-gray-600">
+<span class="text-sm font-medium text-gray-700 dark:text-gray-300">Staff: All</span>
+<span class="material-symbols-outlined text-[16px] text-gray-500">expand_more</span>
+</button>
+<button class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-background-light dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors border border-transparent hover:border-gray-300 dark:hover:border-gray-600">
+<span class="text-sm font-medium text-gray-700 dark:text-gray-300">Platform: Web</span>
+<span class="material-symbols-outlined text-[16px] text-gray-500">expand_more</span>
+</button>
+</div>
+</div>
+<!-- Task List (Cards) -->
+<div class="flex flex-col gap-4 pb-10">
+<!-- Task Card 1: Overdue -->
+<div class="group flex flex-col md:flex-row gap-5 p-5 bg-white dark:bg-[#1a202c] rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 hover:border-red-300 dark:hover:border-red-900 transition-all">
+<!-- Time Column -->
+<div class="flex flex-row md:flex-col items-center md:items-start justify-between md:justify-center min-w-[100px] md:border-r md:border-gray-100 dark:md:border-gray-800 md:pr-4">
+<div class="flex items-baseline gap-1">
+<span class="text-2xl font-black text-gray-900 dark:text-white">09:00</span>
+<span class="text-xs font-bold text-gray-400 uppercase">AM</span>
+</div>
+<span class="inline-flex md:hidden items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
+                        Overdue
+                    </span>
+</div>
+<!-- Info Column -->
+<div class="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-4">
+<div class="flex flex-col gap-3">
+<!-- Customer -->
+<div class="flex items-start gap-3">
+<div class="size-10 rounded-full bg-gray-200 dark:bg-gray-700 flex-shrink-0 bg-cover bg-center" data-alt="Customer avatar" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD7BNZ5IXypdgAuZPWmsqfVpW4VZdzN2nRP8TGrSp4sZb3l_d0jOUihWU1x9ExtOdGC6tQ58TDjdJgRQ7N_pvBjM0SzHQi9v9OP3N_g-ToqY_CYB6W54vO_E5fnzOY-ZJ7GjK3HmQ77-IzZXBBQ5yZXKvqIW9QXbgyXqW4QaIaZJNXNomMv9LXY3Ay9xk6z6UsHiWDm_xIB9e5VP2se9ChIGQZJ7tuDFw_ZMfhf-NIiEqiPmnYZhntVmccgARiSkrWWdKVj-h9AwjA");'></div>
+<div>
+<h3 class="text-base font-bold text-gray-900 dark:text-white leading-tight">Nguyen Van Minh</h3>
+<a class="text-sm text-primary hover:underline font-medium mt-0.5 inline-block" href="tel:0909123456">0909 123 456</a>
+</div>
+</div>
+<!-- Equipment -->
+<div class="bg-background-light dark:bg-gray-800/50 p-2.5 rounded-lg">
+<p class="text-sm font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-gray-500">camera_alt</span>
+                                Sony A7S III (Body) <span class="text-gray-400 font-normal">x1</span>
+</p>
+<p class="text-sm font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2 mt-1">
+<span class="material-symbols-outlined text-[16px] text-gray-500">lens</span>
+                                Lens FE 24-70mm GM <span class="text-gray-400 font-normal">x1</span>
+</p>
+</div>
+</div>
+<div class="flex flex-col gap-3 justify-between">
+<!-- Location -->
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-red-500 text-[20px] mt-0.5">location_on</span>
+<div class="flex flex-col">
+<span class="text-xs text-gray-400 uppercase font-bold tracking-wider">Giao tại</span>
+<a class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary transition-colors leading-snug" href="#">
+                                    Landmark 81, Vinhomes Central Park<br/>
+<span class="text-gray-500 font-normal text-xs">208 Nguyễn Hữu Cảnh, P.22, Bình Thạnh</span>
+</a>
+</div>
+</div>
+<!-- Badges Desktop -->
+<div class="flex flex-wrap gap-2 mt-auto">
+<span class="hidden md:inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-200 border border-red-200 dark:border-red-800">
+                                Overdue (+30m)
+                            </span>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-200 border border-yellow-200 dark:border-yellow-800">
+                                Deposit Paid
+                            </span>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400 border border-gray-200 dark:border-gray-700">
+                                #BK-9281
+                            </span>
+</div>
+</div>
+</div>
+<!-- Action Column -->
+<div class="flex md:flex-col items-center md:items-end justify-end gap-3 min-w-[140px] pt-4 md:pt-0 border-t border-gray-100 dark:border-gray-800 md:border-t-0 md:pl-4 md:border-l">
+<button class="flex-1 md:flex-none w-full px-4 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 text-sm font-bold rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                        Mở chi tiết
+                    </button>
+<button class="flex-1 md:flex-none w-full px-4 py-2 bg-primary text-white text-sm font-bold rounded-lg shadow-md hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
+<span>Đã giao</span>
+<span class="material-symbols-outlined text-[18px]">check</span>
+</button>
+</div>
+</div>
+<!-- Task Card 2: Upcoming/Normal -->
+<div class="group flex flex-col md:flex-row gap-5 p-5 bg-white dark:bg-[#1a202c] rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 hover:border-primary/50 transition-all">
+<!-- Time Column -->
+<div class="flex flex-row md:flex-col items-center md:items-start justify-between md:justify-center min-w-[100px] md:border-r md:border-gray-100 dark:md:border-gray-800 md:pr-4">
+<div class="flex items-baseline gap-1">
+<span class="text-2xl font-black text-gray-900 dark:text-white">10:30</span>
+<span class="text-xs font-bold text-gray-400 uppercase">AM</span>
+</div>
+<span class="inline-flex md:hidden items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                        Pending
+                    </span>
+</div>
+<!-- Info Column -->
+<div class="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-4">
+<div class="flex flex-col gap-3">
+<!-- Customer -->
+<div class="flex items-start gap-3">
+<div class="size-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-lg flex-shrink-0">
+                                TL
+                            </div>
+<div>
+<h3 class="text-base font-bold text-gray-900 dark:text-white leading-tight">Tran Linh</h3>
+<a class="text-sm text-primary hover:underline font-medium mt-0.5 inline-block" href="tel:0912345678">0912 345 678</a>
+</div>
+</div>
+<!-- Equipment -->
+<div class="bg-background-light dark:bg-gray-800/50 p-2.5 rounded-lg">
+<p class="text-sm font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-gray-500">videocam</span>
+                                Blackmagic Pocket 6K Pro <span class="text-gray-400 font-normal">x2</span>
+</p>
+<p class="text-sm font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2 mt-1">
+<span class="material-symbols-outlined text-[16px] text-gray-500">battery_charging_full</span>
+                                V-Mount Battery Kit <span class="text-gray-400 font-normal">x4</span>
+</p>
+</div>
+</div>
+<div class="flex flex-col gap-3 justify-between">
+<!-- Location -->
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-primary text-[20px] mt-0.5">storefront</span>
+<div class="flex flex-col">
+<span class="text-xs text-gray-400 uppercase font-bold tracking-wider">Nhận tại cửa hàng</span>
+<span class="text-sm font-medium text-gray-700 dark:text-gray-300 leading-snug">
+                                    Kantra Store - Quận 3<br/>
+<span class="text-gray-500 font-normal text-xs">123 Vo Van Tan, P.6, Q.3, TP.HCM</span>
+</span>
+</div>
+</div>
+<!-- Badges Desktop -->
+<div class="flex flex-wrap gap-2 mt-auto">
+<span class="hidden md:inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-200 border border-blue-200 dark:border-blue-800">
+                                Pending
+                            </span>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200 border border-green-200 dark:border-green-800">
+                                Fully Paid
+                            </span>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400 border border-gray-200 dark:border-gray-700">
+                                #BK-9285
+                            </span>
+</div>
+</div>
+</div>
+<!-- Action Column -->
+<div class="flex md:flex-col items-center md:items-end justify-end gap-3 min-w-[140px] pt-4 md:pt-0 border-t border-gray-100 dark:border-gray-800 md:border-t-0 md:pl-4 md:border-l">
+<button class="flex-1 md:flex-none w-full px-4 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 text-sm font-bold rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                        Mở chi tiết
+                    </button>
+<button class="flex-1 md:flex-none w-full px-4 py-2 bg-primary text-white text-sm font-bold rounded-lg shadow-md hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
+<span>Đã giao</span>
+</button>
+</div>
+</div>
+<!-- Task Card 3: Done -->
+<div class="group flex flex-col md:flex-row gap-5 p-5 bg-gray-50 dark:bg-gray-900/50 rounded-xl shadow-none border border-gray-200 dark:border-gray-800 opacity-80 hover:opacity-100 transition-all">
+<!-- Time Column -->
+<div class="flex flex-row md:flex-col items-center md:items-start justify-between md:justify-center min-w-[100px] md:border-r md:border-gray-200 dark:md:border-gray-800 md:pr-4">
+<div class="flex items-baseline gap-1">
+<span class="text-2xl font-black text-gray-500 dark:text-gray-400 line-through decoration-2 decoration-gray-300">08:00</span>
+<span class="text-xs font-bold text-gray-400 uppercase">AM</span>
+</div>
+<span class="inline-flex md:hidden items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                        Done
+                    </span>
+</div>
+<!-- Info Column -->
+<div class="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-4 grayscale-[50%] group-hover:grayscale-0 transition-all">
+<div class="flex flex-col gap-3">
+<!-- Customer -->
+<div class="flex items-start gap-3">
+<div class="size-10 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-lg flex-shrink-0">
+                                H
+                            </div>
+<div>
+<h3 class="text-base font-bold text-gray-700 dark:text-gray-300 leading-tight">Hoang Tu</h3>
+<a class="text-sm text-gray-500 hover:text-primary hover:underline font-medium mt-0.5 inline-block" href="tel:0988777666">0988 777 666</a>
+</div>
+</div>
+<!-- Equipment -->
+<div class="bg-white dark:bg-gray-800 p-2.5 rounded-lg border border-gray-100 dark:border-gray-700">
+<p class="text-sm font-semibold text-gray-600 dark:text-gray-400 flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-gray-400">flight</span>
+                                DJI Mavic 3 Cine <span class="text-gray-400 font-normal">x1</span>
+</p>
+</div>
+</div>
+<div class="flex flex-col gap-3 justify-between">
+<!-- Location -->
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-green-600 text-[20px] mt-0.5">check_circle</span>
+<div class="flex flex-col">
+<span class="text-xs text-gray-400 uppercase font-bold tracking-wider">Đã giao tại</span>
+<span class="text-sm font-medium text-gray-600 dark:text-gray-400 leading-snug">
+                                    Thao Dien, District 2<br/>
+<span class="text-gray-400 font-normal text-xs">Delivered at 08:15 AM</span>
+</span>
+</div>
+</div>
+<!-- Badges Desktop -->
+<div class="flex flex-wrap gap-2 mt-auto">
+<span class="hidden md:inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200 border border-green-200 dark:border-green-800">
+                                Completed
+                            </span>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200 border border-green-200 dark:border-green-800">
+                                Fully Paid
+                            </span>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400 border border-gray-200 dark:border-gray-700">
+                                #BK-9280
+                            </span>
+</div>
+</div>
+</div>
+<!-- Action Column -->
+<div class="flex md:flex-col items-center md:items-end justify-end gap-3 min-w-[140px] pt-4 md:pt-0 border-t border-gray-200 dark:border-gray-700 md:border-t-0 md:pl-4 md:border-l">
+<button class="flex-1 md:flex-none w-full px-4 py-2 bg-transparent text-gray-500 text-sm font-bold hover:text-primary transition-colors">
+                        Xem lại
+                    </button>
+<div class="hidden md:flex items-center gap-1 text-green-600 dark:text-green-400 font-bold text-sm px-4 py-2">
+<span class="material-symbols-outlined text-[20px]">check</span>
+<span>Đã xong</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

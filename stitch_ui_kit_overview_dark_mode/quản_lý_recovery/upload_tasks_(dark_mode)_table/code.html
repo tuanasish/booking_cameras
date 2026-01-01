@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Kantra - Quản lý Recovery/Upload Tasks</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                        "surface-dark": "#1F2937",
+                        "surface-darker": "#111827",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>/* Custom scrollbar for table if needed */
+.custom-scrollbar::-webkit-scrollbar {
+    height: 8px;
+    width: 8px
+    }
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #1f2937
+    }
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #374151;
+    border-radius: 4px
+    }
+.checkbox-custom:checked {
+    background-color: #135bec;
+    border-color: #135bec;
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuDbPwTIuch9TFbPEjkJNWfT7qXXJ3Bbhm9anrH0jyfpHoEDcFxM0aLFBxvUHijs7gYfhWtnOeZ5ICIQcL1Ttv_10lbDGt_UuQKWClBfjjSpBJAJsXEV7wY-73iibR3GvVruTDfD45udS5l0cOLRwX_JdAS-BsCYtywqghMGM6OEevtbfopSGhZYFIS3XcisBKPmRonBHHSQvYREoAFaF7Eg6nnfnr0GKJwNuSDSBRbhjI5Abwt7U_ZKAhIYd8RzBAOWL4lC4v2F3kQ)
+    }</style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display overflow-x-hidden">
+<div class="relative flex min-h-screen w-full flex-row">
+<!-- Sidebar -->
+<div class="hidden lg:flex flex-col w-64 shrink-0 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-[#111318] fixed h-full z-10">
+<div class="flex flex-col h-full justify-between p-4">
+<div class="flex flex-col gap-6">
+<!-- Logo / User -->
+<div class="flex gap-3 items-center px-2">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 bg-slate-200" data-alt="Kantra admin profile picture" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC-vaJnmgquQCmoRVIlPTti3stlR_dlnySdT8X-b_OC23qtz5tAlKSCsV_xQAA9L6nuYuBO1uAZ59xGICNFm1xQIQzLRtudL2gBX9z0q3hjtajqyNq7jS-j2quAcCnZYumdWyq7fNjUPw7ZszK68iPMAfarPIhd2SmU_3GPQmTb33UYY0USBTAbkiQih58-N62F4YCo_MjlWE0aqAHX2rjznozUepw9-sAy2Y1rwq06y6OnkFrDqPX3kqTRzIIzeRx1lisqqVee5ak");'></div>
+<div class="flex flex-col">
+<h1 class="text-slate-900 dark:text-white text-base font-bold leading-normal">Kantra Admin</h1>
+<p class="text-slate-500 dark:text-[#9da6b9] text-xs font-normal leading-normal">Camera Booking Ops</p>
+</div>
+</div>
+<!-- Nav Items -->
+<div class="flex flex-col gap-2">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-[#1F2937] transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-size: 24px;">dashboard</span>
+<p class="text-sm font-medium leading-normal">Dashboard</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 text-primary dark:text-white dark:bg-[#282e39]" href="#">
+<span class="material-symbols-outlined font-variation-fill" style="font-size: 24px;">task</span>
+<p class="text-sm font-medium leading-normal">Tasks &amp; Recovery</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-[#1F2937] transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-size: 24px;">photo_camera</span>
+<p class="text-sm font-medium leading-normal">Cameras</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-[#1F2937] transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-size: 24px;">group</span>
+<p class="text-sm font-medium leading-normal">Customers</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-[#1F2937] transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-size: 24px;">settings</span>
+<p class="text-sm font-medium leading-normal">Settings</p>
+</a>
+</div>
+</div>
+<div class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 cursor-pointer hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined" style="font-size: 24px;">logout</span>
+<p class="text-sm font-medium leading-normal">Logout</p>
+</div>
+</div>
+</div>
+<!-- Main Content -->
+<div class="flex-1 flex flex-col lg:ml-64 w-full">
+<div class="flex-1 flex justify-center py-6 px-4 md:px-8">
+<div class="flex flex-col w-full max-w-[1280px] gap-6">
+<!-- Page Heading -->
+<div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
+<div class="flex flex-col gap-2">
+<h1 class="text-slate-900 dark:text-white text-3xl md:text-4xl font-black leading-tight tracking-tight">Quản lý Recovery &amp; Upload</h1>
+<p class="text-slate-500 dark:text-[#9da6b9] text-base font-normal">Theo dõi và xử lý dữ liệu khách hàng sau khi trả máy</p>
+</div>
+<button class="flex items-center gap-2 bg-primary hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold text-sm transition-all shadow-lg shadow-blue-500/20">
+<span class="material-symbols-outlined" style="font-size: 20px;">add_task</span>
+<span>Tạo Task Mới</span>
+</button>
+</div>
+<!-- Stats Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="flex flex-col gap-1 rounded-2xl p-5 border border-slate-200 dark:border-[#3b4354] bg-white dark:bg-[#161b26] shadow-sm">
+<div class="flex items-center justify-between mb-2">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Tổng Task Đang Xử Lý</p>
+<span class="material-symbols-outlined text-primary" style="font-size: 24px;">pending_actions</span>
+</div>
+<p class="text-slate-900 dark:text-white text-3xl font-bold">24</p>
+<p class="text-[#0bda5e] text-sm font-medium mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+                            +2 tasks hôm nay
+                        </p>
+</div>
+<div class="flex flex-col gap-1 rounded-2xl p-5 border border-slate-200 dark:border-[#3b4354] bg-white dark:bg-[#161b26] shadow-sm">
+<div class="flex items-center justify-between mb-2">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Đến Hạn Hôm Nay</p>
+<span class="material-symbols-outlined text-blue-400" style="font-size: 24px;">today</span>
+</div>
+<p class="text-slate-900 dark:text-white text-3xl font-bold">8</p>
+<p class="text-slate-500 text-sm font-medium mt-1">Cần ưu tiên</p>
+</div>
+<div class="flex flex-col gap-1 rounded-2xl p-5 border border-slate-200 dark:border-[#3b4354] bg-white dark:bg-[#161b26] shadow-sm relative overflow-hidden">
+<div class="absolute top-0 right-0 w-16 h-16 bg-red-500/10 rounded-bl-full -mr-2 -mt-2"></div>
+<div class="flex items-center justify-between mb-2">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Cảnh Báo Quá Hạn</p>
+<span class="material-symbols-outlined text-red-500" style="font-size: 24px;">warning</span>
+</div>
+<p class="text-slate-900 dark:text-white text-3xl font-bold">3</p>
+<p class="text-red-500 text-sm font-medium mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">error</span>
+                            Chậm tiến độ
+                        </p>
+</div>
+</div>
+<!-- Filters & Search Toolbar -->
+<div class="flex flex-col md:flex-row justify-between gap-4 items-center bg-white dark:bg-[#1c2333] p-4 rounded-2xl border border-slate-200 dark:border-[#2f3646] shadow-sm">
+<!-- Search -->
+<div class="w-full md:w-1/3 relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-slate-400" style="font-size: 20px;">search</span>
+</div>
+<input class="block w-full pl-10 pr-3 py-2.5 border-none rounded-xl bg-slate-100 dark:bg-[#282e39] text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-[#9da6b9] focus:ring-2 focus:ring-primary sm:text-sm" placeholder="Tìm kiếm Booking ID, Tên, SĐT..." type="text"/>
+</div>
+<!-- Filter Chips -->
+<div class="flex flex-wrap gap-2 w-full md:w-auto justify-end">
+<button class="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-100 dark:bg-[#282e39] hover:bg-slate-200 dark:hover:bg-[#323945] transition text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">
+<span class="material-symbols-outlined text-slate-500" style="font-size: 18px;">filter_list</span>
+                            Tiến độ: Tất cả
+                        </button>
+<button class="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-100 dark:bg-[#282e39] hover:bg-slate-200 dark:hover:bg-[#323945] transition text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">
+<span class="material-symbols-outlined text-slate-500" style="font-size: 18px;">person</span>
+                            NV: Tất cả
+                        </button>
+<button class="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-100 dark:bg-[#282e39] hover:bg-slate-200 dark:hover:bg-[#323945] transition text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">
+<span class="material-symbols-outlined text-slate-500" style="font-size: 18px;">calendar_month</span>
+                            Ngày trả: Hôm nay
+                        </button>
+</div>
+</div>
+<!-- Data Table -->
+<div class="w-full overflow-hidden rounded-2xl border border-slate-200 dark:border-[#2f3646] bg-white dark:bg-[#161b26] shadow-sm">
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-slate-50 dark:bg-[#1c2333] border-b border-slate-200 dark:border-[#2f3646]">
+<th class="p-4 text-xs font-semibold text-slate-500 dark:text-[#9da6b9] uppercase tracking-wider whitespace-nowrap">Booking ID</th>
+<th class="p-4 text-xs font-semibold text-slate-500 dark:text-[#9da6b9] uppercase tracking-wider whitespace-nowrap">Khách hàng</th>
+<th class="p-4 text-xs font-semibold text-slate-500 dark:text-[#9da6b9] uppercase tracking-wider whitespace-nowrap">Thiết bị</th>
+<th class="p-4 text-xs font-semibold text-slate-500 dark:text-[#9da6b9] uppercase tracking-wider min-w-[140px]">Mã Thẻ Nhớ</th>
+<th class="p-4 text-xs font-semibold text-slate-500 dark:text-[#9da6b9] uppercase tracking-wider min-w-[200px]">Checklist Quy trình</th>
+<th class="p-4 text-xs font-semibold text-slate-500 dark:text-[#9da6b9] uppercase tracking-wider whitespace-nowrap">Updated Time</th>
+<th class="p-4 text-xs font-semibold text-slate-500 dark:text-[#9da6b9] uppercase tracking-wider whitespace-nowrap text-right">Hành động</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-200 dark:divide-[#2f3646]">
+<!-- Row 1: Active Task -->
+<tr class="group hover:bg-slate-50 dark:hover:bg-[#1c2333] transition-colors">
+<td class="p-4 align-top">
+<a class="text-primary hover:underline font-medium text-sm whitespace-nowrap" href="#">#BK-23-889</a>
+</td>
+<td class="p-4 align-top">
+<div class="flex flex-col">
+<span class="text-slate-900 dark:text-white font-semibold text-sm">Nguyễn Văn A</span>
+<span class="text-slate-500 text-xs">0909 123 456</span>
+</div>
+</td>
+<td class="p-4 align-top">
+<div class="flex items-center gap-2">
+<div class="size-8 rounded bg-slate-200 dark:bg-slate-700 bg-cover bg-center" data-alt="Camera thumbnail" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuALbdR3zt0GrS-nLHqs35UDtVxwLlK8fNYl28c54IKtt_M-j6chE0Vd8BsW0HjI3xtgxzgeE2tzWmAYbmzfrqAzTyLXx-tntB6XCMjhbdSXoyQOMycu761-cPqI76arZnE58YVVcmudhFhQ-uReNYDkPof18DBKNup-oh8krZEblUyHC2z0jaQMkiWbLX3YlMaVzRU32IPoOKthv5ej9FES66Fz8GxW_lMcTGYzKDfH1SWz0eior62_kzA0P0EcVStBN32rkIlpbaE");'></div>
+<span class="text-slate-700 dark:text-slate-300 text-sm">Sony A7III</span>
+</div>
+</td>
+<td class="p-4 align-top">
+<input class="w-full px-3 py-1.5 bg-slate-100 dark:bg-[#282e39] border border-transparent focus:border-primary dark:focus:border-primary rounded text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-primary transition-all placeholder-slate-400" placeholder="Nhập mã..." type="text" value="SD-01"/>
+</td>
+<td class="p-4 align-top">
+<div class="grid grid-cols-2 gap-2">
+<label class="flex items-center gap-2 cursor-pointer">
+<input checked="" class="checkbox-custom rounded border-slate-300 dark:border-slate-600 bg-white dark:bg-[#282e39] text-primary focus:ring-0 w-4 h-4" type="checkbox"/>
+<span class="text-xs text-slate-600 dark:text-slate-400">Recover</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input class="checkbox-custom rounded border-slate-300 dark:border-slate-600 bg-white dark:bg-[#282e39] text-primary focus:ring-0 w-4 h-4" type="checkbox"/>
+<span class="text-xs text-slate-600 dark:text-slate-400">Upload</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input class="checkbox-custom rounded border-slate-300 dark:border-slate-600 bg-white dark:bg-[#282e39] text-primary focus:ring-0 w-4 h-4" type="checkbox"/>
+<span class="text-xs text-slate-600 dark:text-slate-400">Link Sent</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input class="checkbox-custom rounded border-slate-300 dark:border-slate-600 bg-white dark:bg-[#282e39] text-primary focus:ring-0 w-4 h-4" type="checkbox"/>
+<span class="text-xs text-slate-600 dark:text-slate-400">No Error</span>
+</label>
+</div>
+</td>
+<td class="p-4 align-top">
+<div class="flex flex-col">
+<span class="text-slate-900 dark:text-white text-sm font-medium">10:30 AM</span>
+<span class="text-slate-500 text-xs">Today</span>
+</div>
+</td>
+<td class="p-4 align-top text-right">
+<button class="px-3 py-1.5 rounded-lg bg-primary/20 text-primary hover:bg-primary hover:text-white transition-colors text-sm font-semibold">
+                                            Lưu
+                                        </button>
+</td>
+</tr>
+<!-- Row 2: Overdue Task -->
+<tr class="group hover:bg-slate-50 dark:hover:bg-[#1c2333] transition-colors bg-red-50/50 dark:bg-red-900/10">
+<td class="p-4 align-top">
+<div class="flex items-center gap-2">
+<a class="text-primary hover:underline font-medium text-sm whitespace-nowrap" href="#">#BK-23-885</a>
+<span class="inline-flex items-center justify-center size-2 rounded-full bg-red-500 animate-pulse" title="Quá hạn"></span>
+</div>
+</td>
+<td class="p-4 align-top">
+<div class="flex flex-col">
+<span class="text-slate-900 dark:text-white font-semibold text-sm">Trần Thị B</span>
+<span class="text-slate-500 text-xs">0912 345 678</span>
+</div>
+</td>
+<td class="p-4 align-top">
+<div class="flex items-center gap-2">
+<div class="size-8 rounded bg-slate-200 dark:bg-slate-700 bg-cover bg-center" data-alt="Camera thumbnail" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAE_8uOuO-Jm4H9m15bL8ItcBG4T6KdI2tEL6W8225PFxHyy2LEQFOJag2YIbLMoxCPMGh8ARkhYI3iRO_MxYlCtVoG_0c8re-D4hrXIkUl0gNGAlBlZDXFB6yKgZwQgEpc5xHFl0aLYBLfc_PI4Ksi0k4KJWPExu9hy4IMeGm7SyKOb0ksBaEDOjv9kQ1c5Kg5TThafJi1OZjd4DS_ZEOnBKWSccI8Vtm4EiIFl4vuTkp5toFbZ_DRFcuRSJ1CRfWdxGd6BO5hMAo");'></div>
+<span class="text-slate-700 dark:text-slate-300 text-sm">Canon R5</span>
+</div>
+</td>
+<td class="p-4 align-top">
+<input class="w-full px-3 py-1.5 bg-slate-100 dark:bg-[#282e39] border border-red-300 dark:border-red-900/50 focus:border-red-500 dark:focus:border-red-500 rounded text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-red-500 transition-all placeholder-slate-400" placeholder="Chưa nhập..." type="text" value=""/>
+</td>
+<td class="p-4 align-top">
+<div class="grid grid-cols-2 gap-2">
+<label class="flex items-center gap-2 cursor-pointer">
+<input checked="" class="checkbox-custom rounded border-slate-300 dark:border-slate-600 bg-white dark:bg-[#282e39] text-primary focus:ring-0 w-4 h-4" type="checkbox"/>
+<span class="text-xs text-slate-600 dark:text-slate-400">Recover</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input class="checkbox-custom rounded border-slate-300 dark:border-slate-600 bg-white dark:bg-[#282e39] text-primary focus:ring-0 w-4 h-4" type="checkbox"/>
+<span class="text-xs text-slate-600 dark:text-slate-400">Upload</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input class="checkbox-custom rounded border-slate-300 dark:border-slate-600 bg-white dark:bg-[#282e39] text-primary focus:ring-0 w-4 h-4" type="checkbox"/>
+<span class="text-xs text-slate-600 dark:text-slate-400">Link Sent</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input class="checkbox-custom rounded border-slate-300 dark:border-slate-600 bg-white dark:bg-[#282e39] text-primary focus:ring-0 w-4 h-4" type="checkbox"/>
+<span class="text-xs text-slate-600 dark:text-slate-400">No Error</span>
+</label>
+</div>
+<div class="mt-2 flex items-center gap-1 text-red-500 text-[10px] font-bold uppercase tracking-wide">
+<span class="material-symbols-outlined text-[14px]">warning</span>
+                                            Quá hạn 2 ngày
+                                        </div>
+</td>
+<td class="p-4 align-top">
+<div class="flex flex-col">
+<span class="text-red-500 font-medium text-sm">2 days ago</span>
+<span class="text-slate-500 text-xs">Oct 24</span>
+</div>
+</td>
+<td class="p-4 align-top text-right">
+<button class="px-3 py-1.5 rounded-lg bg-primary/20 text-primary hover:bg-primary hover:text-white transition-colors text-sm font-semibold">
+                                            Lưu
+                                        </button>
+</td>
+</tr>
+<!-- Row 3: Completed Task -->
+<tr class="group hover:bg-slate-50 dark:hover:bg-[#1c2333] transition-colors">
+<td class="p-4 align-top">
+<a class="text-primary hover:underline font-medium text-sm whitespace-nowrap" href="#">#BK-23-880</a>
+</td>
+<td class="p-4 align-top">
+<div class="flex flex-col">
+<span class="text-slate-900 dark:text-white font-semibold text-sm">Lê Văn C</span>
+<span class="text-slate-500 text-xs">0987 654 321</span>
+</div>
+</td>
+<td class="p-4 align-top">
+<div class="flex items-center gap-2">
+<div class="size-8 rounded bg-slate-200 dark:bg-slate-700 bg-cover bg-center" data-alt="Camera thumbnail" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDQweASGwO5O-yJYvcr4-G-GGUH6lj72kl-vv8kYBghLhAuLlLdK-x5pgfMk2M7klLqJqRu8qLTv_Fbtl9jjPXtU1OyPrIkAKppKhgUQs7__RgcGgF3J7y4rvtpbTkgpf8azVMUGl5WjkVT5cdD_9Y0MeKVAOyz8ebFWkYCocE2Rbg_sM8Y3MN9VTy46zb3ePLkaQyo3ib6lSMpSZPGBqt608ippBdbek-A62Y8OrTSpGGd78kTzRxIu9VfQV9F5z1Y0IBZod3gZVI");'></div>
+<span class="text-slate-700 dark:text-slate-300 text-sm">Fujifilm XT4</span>
+</div>
+</td>
+<td class="p-4 align-top">
+<input class="w-full px-3 py-1.5 bg-transparent border border-transparent rounded text-sm text-slate-500 dark:text-slate-400 focus:outline-none cursor-default" readonly="" type="text" value="CF-09"/>
+</td>
+<td class="p-4 align-top">
+<div class="grid grid-cols-2 gap-2 opacity-50">
+<label class="flex items-center gap-2 cursor-pointer pointer-events-none">
+<input checked="" class="checkbox-custom rounded border-slate-300 dark:border-slate-600 bg-white dark:bg-[#282e39] text-primary focus:ring-0 w-4 h-4" type="checkbox"/>
+<span class="text-xs text-slate-600 dark:text-slate-400">Recover</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer pointer-events-none">
+<input checked="" class="checkbox-custom rounded border-slate-300 dark:border-slate-600 bg-white dark:bg-[#282e39] text-primary focus:ring-0 w-4 h-4" type="checkbox"/>
+<span class="text-xs text-slate-600 dark:text-slate-400">Upload</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer pointer-events-none">
+<input checked="" class="checkbox-custom rounded border-slate-300 dark:border-slate-600 bg-white dark:bg-[#282e39] text-primary focus:ring-0 w-4 h-4" type="checkbox"/>
+<span class="text-xs text-slate-600 dark:text-slate-400">Link Sent</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer pointer-events-none">
+<input checked="" class="checkbox-custom rounded border-slate-300 dark:border-slate-600 bg-white dark:bg-[#282e39] text-primary focus:ring-0 w-4 h-4" type="checkbox"/>
+<span class="text-xs text-slate-600 dark:text-slate-400">No Error</span>
+</label>
+</div>
+<div class="mt-2 flex items-center gap-1 text-[#0bda5e] text-[10px] font-bold uppercase tracking-wide">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                                            Ready to Archive
+                                        </div>
+</td>
+<td class="p-4 align-top">
+<div class="flex flex-col">
+<span class="text-slate-900 dark:text-white text-sm font-medium">09:00 AM</span>
+<span class="text-slate-500 text-xs">Yesterday</span>
+</div>
+</td>
+<td class="p-4 align-top text-right">
+<button class="flex items-center justify-center gap-1 w-full px-3 py-1.5 rounded-lg bg-[#0bda5e]/20 text-[#0bda5e] hover:bg-[#0bda5e] hover:text-white transition-colors text-sm font-semibold">
+<span class="material-symbols-outlined text-sm">archive</span>
+                                            Đóng Task
+                                        </button>
+</td>
+</tr>
+<!-- Row 4: Normal Task -->
+<tr class="group hover:bg-slate-50 dark:hover:bg-[#1c2333] transition-colors">
+<td class="p-4 align-top">
+<a class="text-primary hover:underline font-medium text-sm whitespace-nowrap" href="#">#BK-23-892</a>
+</td>
+<td class="p-4 align-top">
+<div class="flex flex-col">
+<span class="text-slate-900 dark:text-white font-semibold text-sm">Phạm Minh D</span>
+<span class="text-slate-500 text-xs">0901 888 999</span>
+</div>
+</td>
+<td class="p-4 align-top">
+<div class="flex items-center gap-2">
+<div class="size-8 rounded bg-slate-200 dark:bg-slate-700 bg-cover bg-center" data-alt="Camera thumbnail" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBms8zIa-X5QiM2meWvIwgjLmiZZbiDC8VpXorxGzuVwkv-NKl1Lu1guV2l7wEAOiQmD2yCqvU6JYtoBvD7-BITXr4KZKn-I72Nydl_96GDx6IZYcxd4CGY6UH2afInH5MflMNJ7biwdii-UtO-RGK7HRZORR_CR0qkmZ_-FUiNjMKVMssBJOB8sRt2R1gIdg-9-pVGGQVOH2Vq2-3zVKwBF6s0bKzyRycRLXUh6lF0OsNCt_Iif2F0siAdxWNKQVzlw9_DRuwABh4");'></div>
+<span class="text-slate-700 dark:text-slate-300 text-sm">Sony A6400</span>
+</div>
+</td>
+<td class="p-4 align-top">
+<input class="w-full px-3 py-1.5 bg-slate-100 dark:bg-[#282e39] border border-transparent focus:border-primary dark:focus:border-primary rounded text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-primary transition-all placeholder-slate-400" placeholder="Nhập mã..." type="text" value="SD-15"/>
+</td>
+<td class="p-4 align-top">
+<div class="grid grid-cols-2 gap-2">
+<label class="flex items-center gap-2 cursor-pointer">
+<input checked="" class="checkbox-custom rounded border-slate-300 dark:border-slate-600 bg-white dark:bg-[#282e39] text-primary focus:ring-0 w-4 h-4" type="checkbox"/>
+<span class="text-xs text-slate-600 dark:text-slate-400">Recover</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input checked="" class="checkbox-custom rounded border-slate-300 dark:border-slate-600 bg-white dark:bg-[#282e39] text-primary focus:ring-0 w-4 h-4" type="checkbox"/>
+<span class="text-xs text-slate-600 dark:text-slate-400">Upload</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input class="checkbox-custom rounded border-slate-300 dark:border-slate-600 bg-white dark:bg-[#282e39] text-primary focus:ring-0 w-4 h-4" type="checkbox"/>
+<span class="text-xs text-slate-600 dark:text-slate-400">Link Sent</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input class="checkbox-custom rounded border-slate-300 dark:border-slate-600 bg-white dark:bg-[#282e39] text-primary focus:ring-0 w-4 h-4" type="checkbox"/>
+<span class="text-xs text-slate-600 dark:text-slate-400">No Error</span>
+</label>
+</div>
+</td>
+<td class="p-4 align-top">
+<div class="flex flex-col">
+<span class="text-slate-900 dark:text-white text-sm font-medium">11:15 AM</span>
+<span class="text-slate-500 text-xs">Today</span>
+</div>
+</td>
+<td class="p-4 align-top text-right">
+<button class="px-3 py-1.5 rounded-lg bg-primary/20 text-primary hover:bg-primary hover:text-white transition-colors text-sm font-semibold">
+                                            Lưu
+                                        </button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="flex items-center justify-between p-4 border-t border-slate-200 dark:border-[#2f3646] bg-slate-50 dark:bg-[#1c2333]">
+<p class="text-xs text-slate-500 dark:text-[#9da6b9]">Hiển thị 1-4 trên tổng số 24 tasks</p>
+<div class="flex gap-2">
+<button class="size-8 flex items-center justify-center rounded-lg hover:bg-slate-200 dark:hover:bg-[#282e39] text-slate-500 dark:text-[#9da6b9]">
+<span class="material-symbols-outlined" style="font-size: 18px;">chevron_left</span>
+</button>
+<button class="size-8 flex items-center justify-center rounded-lg bg-primary text-white text-sm font-medium">1</button>
+<button class="size-8 flex items-center justify-center rounded-lg hover:bg-slate-200 dark:hover:bg-[#282e39] text-slate-500 dark:text-[#9da6b9] text-sm font-medium">2</button>
+<button class="size-8 flex items-center justify-center rounded-lg hover:bg-slate-200 dark:hover:bg-[#282e39] text-slate-500 dark:text-[#9da6b9] text-sm font-medium">3</button>
+<button class="size-8 flex items-center justify-center rounded-lg hover:bg-slate-200 dark:hover:bg-[#282e39] text-slate-500 dark:text-[#9da6b9]">
+<span class="material-symbols-outlined" style="font-size: 18px;">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body></html>

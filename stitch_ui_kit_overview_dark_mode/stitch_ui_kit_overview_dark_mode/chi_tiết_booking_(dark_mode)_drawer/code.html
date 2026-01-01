@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Booking Detail Drawer - Kantra Camera Booking</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622", // Adjusted slightly for depth
+                        "surface-dark": "#111318", // Drawer background
+                        "surface-highlight": "#1a1f29", // Card background
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "body": ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for better aesthetics in dark mode */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4b5563;
+        }
+    </style>
+</head>
+<body class="bg-background-dark font-display antialiased overflow-hidden">
+<!-- Mock Background Content (Calendar Context) -->
+<div class="fixed inset-0 z-0 p-8 opacity-20 pointer-events-none select-none flex flex-col gap-4">
+<div class="flex justify-between items-center mb-8">
+<div class="h-8 w-48 bg-gray-700 rounded"></div>
+<div class="flex gap-2">
+<div class="h-8 w-24 bg-gray-700 rounded"></div>
+<div class="h-8 w-24 bg-gray-700 rounded"></div>
+</div>
+</div>
+<div class="grid grid-cols-7 gap-4 h-full">
+<div class="bg-gray-800 h-full rounded-lg"></div>
+<div class="bg-gray-800 h-full rounded-lg"></div>
+<div class="bg-gray-800 h-full rounded-lg"></div>
+<div class="bg-gray-800 h-full rounded-lg col-span-2"></div>
+<div class="bg-gray-800 h-full rounded-lg"></div>
+<div class="bg-gray-800 h-full rounded-lg"></div>
+</div>
+</div>
+<!-- Backdrop -->
+<div class="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm flex justify-end transition-opacity duration-300">
+<!-- Drawer Container -->
+<div class="relative flex h-full w-full max-w-[720px] flex-col bg-surface-dark shadow-2xl border-l border-gray-800 animate-slide-in">
+<!-- 1. Sticky Header -->
+<div class="sticky top-0 z-50 flex flex-col border-b border-gray-800 bg-surface-dark/95 backdrop-blur-md pb-4 pt-6 px-6">
+<div class="flex items-start justify-between">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-3">
+<h1 class="text-white tracking-tight text-[28px] font-bold leading-tight">BK-202488</h1>
+<!-- Status Badges -->
+<div class="flex gap-2">
+<span class="flex items-center justify-center rounded-full bg-orange-500/10 border border-orange-500/20 px-2.5 py-0.5">
+<p class="text-orange-400 text-xs font-semibold uppercase tracking-wide">Pending</p>
+</span>
+<span class="flex items-center justify-center rounded-full bg-blue-500/10 border border-blue-500/20 px-2.5 py-0.5">
+<p class="text-blue-400 text-xs font-semibold uppercase tracking-wide">Active</p>
+</span>
+</div>
+</div>
+<p class="text-gray-400 text-sm">Tạo lúc: 10:30, 10/10/2023</p>
+</div>
+<!-- Quick Actions Toolbar -->
+<div class="flex gap-1">
+<button class="group p-2 text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors" title="Chỉnh sửa">
+<span class="material-symbols-outlined text-[24px]">edit</span>
+</button>
+<button class="group p-2 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors" title="Huỷ Booking">
+<span class="material-symbols-outlined text-[24px]">block</span>
+</button>
+<button class="group p-2 text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors" title="In / Export">
+<span class="material-symbols-outlined text-[24px]">print</span>
+</button>
+<div class="w-px h-8 bg-gray-700 mx-2 self-center"></div>
+<button class="group p-2 text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors" title="Đóng">
+<span class="material-symbols-outlined text-[24px]">close</span>
+</button>
+</div>
+</div>
+</div>
+<!-- 2. Scrollable Content Area -->
+<div class="flex-1 overflow-y-auto px-6 py-6 space-y-8">
+<!-- Customer Section -->
+<section>
+<h3 class="text-gray-500 text-xs font-bold uppercase tracking-wider mb-3 px-1">Khách Hàng</h3>
+<div class="bg-surface-highlight rounded-xl p-4 flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
+<div class="flex gap-4 items-center">
+<div class="h-14 w-14 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden border border-gray-600 bg-cover bg-center" data-alt="Portrait of a male customer named Nguyen Van A" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCiN3tHg-LAC97uwLjzn0MJU8H38Jjw95_GE_gMcIZ7cRUOk55jWUdsPP0eNX0MU8fTFVRVifOoQ6YklZ1x9lEXTG6W1_HMGrGC4_H1wer5hguwRpHpnfCfkOncLRsT8gyNsv-FVtkPIC-uWPYeesGs7hYSVK8AnJMjrZCN9BmVOzb16zyvTACuRaqBiMz3EXEz3YhlFtEWcDvfyEtOX5av0zhKSD8TOccDHZBaw2xPjE4WIhLb_5Ag5pciyNYCzzpUDbcKaEOvK34');">
+</div>
+<div>
+<h4 class="text-white text-lg font-bold">Nguyen Van A</h4>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-gray-400 text-sm font-mono">0909 123 456</span>
+<span class="w-1 h-1 rounded-full bg-gray-600"></span>
+<div class="flex gap-1">
+<span class="text-[10px] font-bold text-blue-400 bg-blue-900/30 px-1.5 py-0.5 rounded border border-blue-900/50">FACEBOOK</span>
+<span class="text-[10px] font-bold text-purple-400 bg-purple-900/30 px-1.5 py-0.5 rounded border border-purple-900/50">VIP</span>
+</div>
+</div>
+</div>
+</div>
+<button class="flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors w-full sm:w-auto justify-center">
+<span class="material-symbols-outlined text-[18px]">call</span>
+                            Gọi điện
+                        </button>
+</div>
+</section>
+<!-- Equipment & Accessories Section -->
+<section>
+<h3 class="text-gray-500 text-xs font-bold uppercase tracking-wider mb-3 px-1">Thiết bị thuê</h3>
+<div class="bg-surface-highlight rounded-xl border border-gray-800 overflow-hidden">
+<!-- Table Header -->
+<div class="grid grid-cols-12 gap-4 p-3 bg-gray-800/50 border-b border-gray-800 text-xs font-medium text-gray-400 uppercase">
+<div class="col-span-6">Model</div>
+<div class="col-span-2 text-center">SL</div>
+<div class="col-span-2 text-right">Đơn giá</div>
+<div class="col-span-2 text-right">Thành tiền</div>
+</div>
+<!-- Items -->
+<div class="divide-y divide-gray-800">
+<div class="grid grid-cols-12 gap-4 p-4 items-center hover:bg-white/[0.02] transition-colors">
+<div class="col-span-6 flex items-center gap-3">
+<div class="w-10 h-10 bg-gray-700 rounded-md flex items-center justify-center text-gray-400">
+<span class="material-symbols-outlined text-[20px]">camera_alt</span>
+</div>
+<div>
+<p class="text-white text-sm font-medium">Sony A7 Mark III Body</p>
+<p class="text-gray-500 text-xs">Body Only</p>
+</div>
+</div>
+<div class="col-span-2 text-center text-white text-sm">1</div>
+<div class="col-span-2 text-right text-gray-400 text-sm">400.000</div>
+<div class="col-span-2 text-right text-white font-medium text-sm">400.000</div>
+</div>
+<div class="grid grid-cols-12 gap-4 p-4 items-center hover:bg-white/[0.02] transition-colors">
+<div class="col-span-6 flex items-center gap-3">
+<div class="w-10 h-10 bg-gray-700 rounded-md flex items-center justify-center text-gray-400">
+<span class="material-symbols-outlined text-[20px]">lens_blur</span>
+</div>
+<div>
+<p class="text-white text-sm font-medium">Lens Sony GM 24-70mm f/2.8</p>
+<p class="text-gray-500 text-xs">Mark I</p>
+</div>
+</div>
+<div class="col-span-2 text-center text-white text-sm">1</div>
+<div class="col-span-2 text-right text-gray-400 text-sm">250.000</div>
+<div class="col-span-2 text-right text-white font-medium text-sm">250.000</div>
+</div>
+</div>
+<!-- Accessories Footer -->
+<div class="p-4 bg-gray-800/30 border-t border-gray-800 flex items-center gap-3">
+<span class="text-gray-400 text-xs font-bold uppercase">Phụ kiện kèm theo:</span>
+<div class="flex gap-2 flex-wrap">
+<span class="bg-gray-700 text-gray-300 text-xs px-2 py-1 rounded">Tripod Benro</span>
+<span class="bg-gray-700 text-gray-300 text-xs px-2 py-1 rounded">Thẻ nhớ 64GB Extreme</span>
+<span class="bg-gray-700 text-gray-300 text-xs px-2 py-1 rounded">Túi máy ảnh</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Deposit / Security -->
+<section>
+<h3 class="text-gray-500 text-xs font-bold uppercase tracking-wider mb-3 px-1">Cọc / Đảm bảo</h3>
+<div class="bg-amber-900/20 border border-amber-500/30 rounded-xl p-4 flex gap-4 items-start">
+<div class="p-2 bg-amber-500/20 rounded-lg text-amber-500">
+<span class="material-symbols-outlined text-[24px]">badge</span>
+</div>
+<div class="flex-1">
+<p class="text-amber-100 font-bold text-sm">Giữ CCCD</p>
+<p class="text-amber-200/70 text-sm mt-0.5">Nguyễn Van A - 079xxxxxxxxx</p>
+</div>
+<div class="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500/10 rounded-lg border border-amber-500/20">
+<span class="material-symbols-outlined text-amber-500 text-[18px]">warning</span>
+<span class="text-xs font-bold text-amber-500">NHỚ TRẢ KHÁCH</span>
+</div>
+</div>
+</section>
+<!-- Logistics Timeline -->
+<section>
+<h3 class="text-gray-500 text-xs font-bold uppercase tracking-wider mb-3 px-1">Giao Nhận</h3>
+<div class="relative pl-4 border-l-2 border-gray-800 space-y-8 ml-2">
+<!-- Pickup Task -->
+<div class="relative">
+<span class="absolute -left-[21px] top-0 h-3 w-3 rounded-full bg-primary ring-4 ring-surface-dark"></span>
+<div class="bg-surface-highlight rounded-xl p-4 border border-gray-800">
+<div class="flex justify-between items-start mb-3">
+<div>
+<p class="text-xs font-bold text-primary uppercase mb-1">Pickup Task (Giao Máy)</p>
+<p class="text-white font-bold text-base">14:00 - 12/10/2023</p>
+</div>
+<label class="flex items-center cursor-pointer gap-2 group">
+<input checked="" class="form-checkbox h-5 w-5 rounded border-gray-600 bg-gray-700 text-primary focus:ring-primary focus:ring-offset-gray-900" type="checkbox"/>
+<span class="text-sm font-medium text-gray-300 group-hover:text-white transition-colors">Đã giao</span>
+</label>
+</div>
+<div class="flex flex-col gap-2 text-sm text-gray-400">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+<a class="hover:text-primary underline decoration-dotted" href="#">123 Đường ABC, Quận 1, TP.HCM</a>
+<span class="text-xs bg-gray-700 px-1.5 rounded text-gray-300 ml-1">Map</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">local_shipping</span>
+<span>Nhân viên: <strong>Hùng Phạm</strong></span>
+<span class="text-xs text-gray-500 mx-1">•</span>
+<span>Phí giao: 30.000đ</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Return Task -->
+<div class="relative">
+<span class="absolute -left-[21px] top-0 h-3 w-3 rounded-full bg-gray-600 ring-4 ring-surface-dark"></span>
+<div class="bg-surface-highlight rounded-xl p-4 border border-gray-800 opacity-80 hover:opacity-100 transition-opacity">
+<div class="flex justify-between items-start mb-3">
+<div>
+<p class="text-xs font-bold text-gray-500 uppercase mb-1">Return Task (Thu Máy)</p>
+<p class="text-white font-bold text-base">14:00 - 13/10/2023</p>
+</div>
+<label class="flex items-center cursor-pointer gap-2 group">
+<input class="form-checkbox h-5 w-5 rounded border-gray-600 bg-gray-700 text-primary focus:ring-primary focus:ring-offset-gray-900" type="checkbox"/>
+<span class="text-sm font-medium text-gray-300 group-hover:text-white transition-colors">Đã thu</span>
+</label>
+</div>
+<div class="flex flex-col gap-2 text-sm text-gray-400">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">store</span>
+<span>Tại cửa hàng</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">person</span>
+<span>Nhân viên thu: <strong>Lan Trần</strong></span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Pricing & Services -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Additional Services -->
+<div>
+<h3 class="text-gray-500 text-xs font-bold uppercase tracking-wider mb-3 px-1">Dịch vụ thêm</h3>
+<div class="space-y-3">
+<label class="flex items-center justify-between p-3 rounded-lg bg-surface-highlight border border-gray-800 cursor-pointer hover:border-gray-600 transition-colors">
+<div class="flex items-center gap-3">
+<div class="bg-blue-500/20 p-1.5 rounded text-blue-400">
+<span class="material-symbols-outlined text-[20px]">sd_card</span>
+</div>
+<span class="text-sm text-gray-200">Khôi phục thẻ nhớ</span>
+</div>
+<input class="form-checkbox rounded bg-gray-700 border-gray-600 text-primary focus:ring-offset-gray-900" type="checkbox"/>
+</label>
+<label class="flex items-center justify-between p-3 rounded-lg bg-surface-highlight border border-gray-800 cursor-pointer hover:border-gray-600 transition-colors">
+<div class="flex items-center gap-3">
+<div class="bg-green-500/20 p-1.5 rounded text-green-400">
+<span class="material-symbols-outlined text-[20px]">cloud_upload</span>
+</div>
+<span class="text-sm text-gray-200">Tải ảnh lên Drive</span>
+</div>
+<input checked="" class="form-checkbox rounded bg-gray-700 border-gray-600 text-primary focus:ring-offset-gray-900" type="checkbox"/>
+</label>
+</div>
+</div>
+<!-- Pricing Summary -->
+<div class="bg-surface-highlight rounded-xl p-5 border border-gray-800">
+<div class="space-y-3 text-sm">
+<div class="flex justify-between text-gray-400">
+<span>Tạm tính</span>
+<span class="font-mono">650.000</span>
+</div>
+<div class="flex justify-between text-green-400">
+<span>Chiết khấu (Khách quen)</span>
+<span class="font-mono">-65.000</span>
+</div>
+<div class="flex justify-between text-gray-400">
+<span>Phí giao hàng</span>
+<span class="font-mono">30.000</span>
+</div>
+<div class="flex justify-between text-gray-400">
+<span>Phụ phí trễ (0h)</span>
+<span class="font-mono">0</span>
+</div>
+<div class="border-t border-gray-700 pt-3 flex justify-between items-end">
+<span class="text-white font-bold">Tổng cộng</span>
+<span class="text-2xl font-bold text-primary font-mono tracking-tight">615.000<span class="text-base font-normal text-gray-400 ml-1">đ</span></span>
+</div>
+</div>
+</div>
+</section>
+<!-- Bottom Spacer for sticky footer -->
+<div class="h-4"></div>
+</div>
+<!-- 3. Sticky Footer -->
+<div class="sticky bottom-0 z-50 border-t border-gray-800 bg-surface-dark/95 backdrop-blur-md p-6">
+<div class="flex gap-4">
+<button class="flex-1 bg-gray-800 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-xl transition-colors border border-gray-700">
+                        Đánh dấu đã thanh toán
+                    </button>
+<button class="flex-1 bg-primary hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-xl transition-colors shadow-[0_0_15px_rgba(19,91,236,0.3)]">
+                        Lưu thay đổi
+                    </button>
+</div>
+</div>
+</div>
+</div>
+</body></html>

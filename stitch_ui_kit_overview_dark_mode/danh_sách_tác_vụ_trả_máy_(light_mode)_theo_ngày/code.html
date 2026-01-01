@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Danh sách Tác vụ Trả máy - Kantra Camera Booking</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<!-- Material Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1e293b",
+                        "text-main-light": "#111318",
+                        "text-main-dark": "#e2e8f0",
+                        "text-sub-light": "#616f89",
+                        "text-sub-dark": "#94a3b8",
+                        "border-light": "#e2e8f0",
+                        "border-dark": "#334155",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for better look */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #475569; 
+        }
+        .dark ::-webkit-scrollbar-thumb:hover {
+            background: #64748b; 
+        }
+        
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            font-size: 20px;
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-text-main-light dark:text-text-main-dark overflow-hidden flex h-screen antialiased">
+<!-- Sidebar -->
+<aside class="w-64 bg-surface-light dark:bg-surface-dark border-r border-border-light dark:border-border-dark hidden md:flex flex-col h-full shrink-0 transition-colors duration-200">
+<div class="p-6 pb-2">
+<div class="flex items-center gap-3 mb-8">
+<div class="size-10 rounded-full bg-primary flex items-center justify-center text-white">
+<span class="material-symbols-outlined icon-fill text-2xl">camera</span>
+</div>
+<div>
+<h1 class="font-bold text-lg tracking-tight">Kantra Admin</h1>
+<p class="text-xs text-text-sub-light dark:text-text-sub-dark font-medium">Operations Panel</p>
+</div>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-sub-light dark:text-text-sub-dark hover:bg-background-light dark:hover:bg-slate-800 transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-sub-light dark:text-text-sub-dark hover:bg-background-light dark:hover:bg-slate-800 transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary">calendar_month</span>
+<span class="text-sm font-medium">Booking</span>
+</a>
+<!-- Active Item -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 text-primary dark:text-blue-400" href="#">
+<span class="material-symbols-outlined icon-fill">assignment_turned_in</span>
+<span class="text-sm font-bold">Tác vụ (Tasks)</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-sub-light dark:text-text-sub-dark hover:bg-background-light dark:hover:bg-slate-800 transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary">inventory_2</span>
+<span class="text-sm font-medium">Kho máy</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-sub-light dark:text-text-sub-dark hover:bg-background-light dark:hover:bg-slate-800 transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary">group</span>
+<span class="text-sm font-medium">Khách hàng</span>
+</a>
+</nav>
+</div>
+<div class="mt-auto p-4 border-t border-border-light dark:border-border-dark">
+<div class="flex items-center gap-3 px-2">
+<div class="bg-center bg-no-repeat bg-cover rounded-full size-8 shrink-0" data-alt="User profile picture" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCl0nn-oH0fSved2AE009R2L14TuAJK6pR-S9qo5a0MqZmEZl9cqEOpQKfX5FtW25T6-qI6bhc06MJij6JbzPi_o3RUs2Av5UYi9jaQhC9YcTVKbwB3F0cFJaXesQrlW7jsFsVbj54_0EY8dju3cksvNocoScgZ4QVvCly2ngHxQHqUm5HJzggFwAaWa3MpUznt_49CjUcxSueJ-TOCpxWZwEt8D-tTTsFLy0xDRX03EcGVbdDrTT5FS6g4-jfJktvyM5u934tk_ac");'></div>
+<div class="flex flex-col overflow-hidden">
+<p class="text-sm font-semibold truncate">Minh Hoang</p>
+<p class="text-xs text-text-sub-light dark:text-text-sub-dark truncate">Lead Ops</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col h-full relative overflow-hidden bg-background-light dark:bg-background-dark">
+<!-- Header -->
+<header class="bg-surface-light dark:bg-surface-dark border-b border-border-light dark:border-border-dark px-6 py-4 shrink-0 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<button class="md:hidden p-2 -ml-2 text-text-sub-light hover:text-primary">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div>
+<h2 class="text-xl font-bold leading-tight">Danh sách Trả máy</h2>
+<p class="text-sm text-text-sub-light dark:text-text-sub-dark mt-0.5">Quản lý tác vụ trả máy theo ngày</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="hidden sm:flex items-center bg-background-light dark:bg-slate-800 rounded-lg p-1 border border-border-light dark:border-border-dark">
+<button class="p-1.5 hover:bg-white dark:hover:bg-slate-700 rounded-md transition-colors text-text-sub-light dark:text-text-sub-dark">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<div class="flex items-center gap-2 px-3">
+<span class="material-symbols-outlined text-primary text-lg">calendar_today</span>
+<span class="text-sm font-semibold">Today, 24 Oct 2023</span>
+</div>
+<button class="p-1.5 hover:bg-white dark:hover:bg-slate-700 rounded-md transition-colors text-text-sub-light dark:text-text-sub-dark">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+<button class="relative p-2 rounded-xl bg-background-light dark:bg-slate-800 text-text-main-light dark:text-text-main-dark hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+<span class="material-symbols-outlined icon-fill">notifications</span>
+<span class="absolute top-2 right-2 size-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-800"></span>
+</button>
+</div>
+</header>
+<!-- Main Scrollable Area -->
+<div class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 scroll-smooth">
+<div class="max-w-7xl mx-auto flex flex-col gap-6">
+<!-- Stats Row -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl p-5 border border-border-light dark:border-border-dark shadow-sm flex items-center justify-between">
+<div>
+<p class="text-text-sub-light dark:text-text-sub-dark text-sm font-medium mb-1">Tổng Tasks</p>
+<p class="text-3xl font-bold tracking-tight text-primary">15</p>
+</div>
+<div class="size-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined icon-fill text-3xl">list_alt</span>
+</div>
+</div>
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl p-5 border border-red-200 dark:border-red-900 shadow-sm flex items-center justify-between relative overflow-hidden">
+<div class="absolute right-0 top-0 p-2 opacity-5">
+<span class="material-symbols-outlined text-9xl">warning</span>
+</div>
+<div class="relative z-10">
+<div class="flex items-center gap-2 mb-1">
+<p class="text-text-sub-light dark:text-text-sub-dark text-sm font-medium">Overdue</p>
+<span class="bg-red-100 text-red-700 text-[10px] font-bold px-1.5 py-0.5 rounded uppercase">Critical</span>
+</div>
+<p class="text-3xl font-bold tracking-tight text-red-600 dark:text-red-500">2</p>
+</div>
+<div class="size-12 rounded-full bg-red-50 dark:bg-red-900/30 flex items-center justify-center text-red-500 relative z-10">
+<span class="material-symbols-outlined icon-fill text-3xl">timer_off</span>
+</div>
+</div>
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl p-5 border border-green-200 dark:border-green-900 shadow-sm flex items-center justify-between">
+<div>
+<p class="text-text-sub-light dark:text-text-sub-dark text-sm font-medium mb-1">Done</p>
+<p class="text-3xl font-bold tracking-tight text-green-600 dark:text-green-500">8</p>
+</div>
+<div class="size-12 rounded-full bg-green-50 dark:bg-green-900/30 flex items-center justify-center text-green-600 dark:text-green-500">
+<span class="material-symbols-outlined icon-fill text-3xl">check_circle</span>
+</div>
+</div>
+</div>
+<!-- Filters & Search Toolbar -->
+<div class="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+<div class="relative w-full lg:w-96 group">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-text-sub-light dark:text-text-sub-dark group-focus-within:text-primary transition-colors">search</span>
+</div>
+<input class="block w-full pl-10 pr-3 py-2.5 border border-border-light dark:border-border-dark rounded-lg leading-5 bg-surface-light dark:bg-slate-800 text-text-main-light dark:text-text-main-dark placeholder-text-sub-light focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm transition-shadow" placeholder="Search customer, phone, ID..." type="text"/>
+</div>
+<div class="flex flex-wrap gap-2 w-full lg:w-auto">
+<select class="form-select pl-3 pr-8 py-2 text-sm border-border-light dark:border-border-dark rounded-lg bg-surface-light dark:bg-slate-800 text-text-main-light dark:text-text-main-dark focus:ring-primary focus:border-primary">
+<option>Status: All</option>
+<option>Pending</option>
+<option>Overdue</option>
+<option>Done</option>
+</select>
+<select class="form-select pl-3 pr-8 py-2 text-sm border-border-light dark:border-border-dark rounded-lg bg-surface-light dark:bg-slate-800 text-text-main-light dark:text-text-main-dark focus:ring-primary focus:border-primary">
+<option>Platform: All</option>
+<option>Website</option>
+<option>Facebook</option>
+<option>Zalo</option>
+</select>
+<select class="form-select pl-3 pr-8 py-2 text-sm border-border-light dark:border-border-dark rounded-lg bg-surface-light dark:bg-slate-800 text-text-main-light dark:text-text-main-dark focus:ring-primary focus:border-primary">
+<option>Staff: Me</option>
+<option>All Staff</option>
+</select>
+</div>
+</div>
+<!-- Task List Table -->
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl border border-border-light dark:border-border-dark shadow-sm overflow-hidden flex flex-col">
+<div class="overflow-x-auto">
+<table class="min-w-full divide-y divide-border-light dark:divide-border-dark">
+<thead class="bg-background-light dark:bg-slate-800">
+<tr>
+<th class="px-6 py-3 text-left text-xs font-semibold text-text-sub-light dark:text-text-sub-dark uppercase tracking-wider" scope="col">Time</th>
+<th class="px-6 py-3 text-left text-xs font-semibold text-text-sub-light dark:text-text-sub-dark uppercase tracking-wider" scope="col">Customer</th>
+<th class="px-6 py-3 text-left text-xs font-semibold text-text-sub-light dark:text-text-sub-dark uppercase tracking-wider" scope="col">Equipment</th>
+<th class="px-6 py-3 text-left text-xs font-semibold text-text-sub-light dark:text-text-sub-dark uppercase tracking-wider" scope="col">Location</th>
+<th class="px-6 py-3 text-left text-xs font-semibold text-text-sub-light dark:text-text-sub-dark uppercase tracking-wider" scope="col">Status</th>
+<th class="px-6 py-3 text-right text-xs font-semibold text-text-sub-light dark:text-text-sub-dark uppercase tracking-wider" scope="col">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-light dark:divide-border-dark bg-surface-light dark:bg-surface-dark">
+<!-- Row 1: Normal Pending -->
+<tr class="hover:bg-background-light dark:hover:bg-slate-800/50 transition-colors">
+<td class="px-6 py-4 whitespace-nowrap text-sm text-text-main-light dark:text-text-main-dark font-medium">
+                                        09:00 AM
+                                    </td>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="flex items-center">
+<div>
+<div class="text-sm font-semibold text-text-main-light dark:text-text-main-dark">Nguyen Van A</div>
+<a class="text-xs text-primary hover:underline flex items-center gap-1 mt-0.5" href="tel:0909123456">
+<span class="material-symbols-outlined text-[14px]">call</span>
+                                                    0909 123 456
+                                                </a>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="flex items-center gap-2">
+<div class="text-sm text-text-main-light dark:text-text-main-dark">Sony A7M3</div>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-gray-200">
+                                                x2
+                                            </span>
+</div>
+<div class="text-xs text-text-sub-light dark:text-text-sub-dark mt-1">+ Lens 24-70GM</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<a class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 text-xs font-medium hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors" href="#">
+<span class="material-symbols-outlined text-[16px] icon-fill">location_on</span>
+                                            Landmark 81
+                                        </a>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="flex flex-col gap-1 items-start">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400">
+                                                Unpaid
+                                            </span>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
+                                                Pending
+                                            </span>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+<div class="flex items-center justify-end gap-2">
+<button class="text-text-sub-light dark:text-text-sub-dark hover:text-primary p-1.5 rounded-lg hover:bg-background-light dark:hover:bg-slate-700 transition-colors" title="View Details">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+<button class="flex items-center gap-1.5 bg-primary hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm shadow-blue-500/30">
+<span class="material-symbols-outlined text-[16px]">task_alt</span>
+                                                Thu máy
+                                            </button>
+</div>
+</td>
+</tr>
+<!-- Row 2: Overdue -->
+<tr class="bg-red-50/50 dark:bg-red-900/10 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+<td class="px-6 py-4 whitespace-nowrap text-sm text-text-main-light dark:text-text-main-dark font-medium">
+                                        10:30 AM
+                                    </td>
+<td class="px-6 py-4 whitespace-nowrap">
+<div>
+<div class="text-sm font-semibold text-text-main-light dark:text-text-main-dark">Tran Thi B</div>
+<a class="text-xs text-primary hover:underline flex items-center gap-1 mt-0.5" href="tel:0988777666">
+<span class="material-symbols-outlined text-[14px]">call</span>
+                                                0988 777 666
+                                            </a>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="flex items-center gap-2">
+<div class="text-sm text-text-main-light dark:text-text-main-dark">Fujifilm XT4</div>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-gray-200">
+                                                x1
+                                            </span>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<a class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 text-xs font-medium hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors" href="#">
+<span class="material-symbols-outlined text-[16px] icon-fill">location_on</span>
+                                            Bitexco Tower
+                                        </a>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="flex flex-col gap-1 items-start">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400">
+                                                Paid
+                                            </span>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400">
+                                                Overdue (+2h)
+                                            </span>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+<div class="flex items-center justify-end gap-2">
+<button class="text-text-sub-light dark:text-text-sub-dark hover:text-primary p-1.5 rounded-lg hover:bg-background-light dark:hover:bg-slate-700 transition-colors">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+<button class="flex items-center gap-1.5 bg-primary hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm shadow-blue-500/30">
+<span class="material-symbols-outlined text-[16px]">task_alt</span>
+                                                Thu máy
+                                            </button>
+</div>
+</td>
+</tr>
+<!-- Row 3: Done -->
+<tr class="opacity-75 hover:opacity-100 hover:bg-background-light dark:hover:bg-slate-800/50 transition-colors">
+<td class="px-6 py-4 whitespace-nowrap text-sm text-text-sub-light dark:text-text-sub-dark line-through decoration-slate-400">
+                                        08:00 AM
+                                    </td>
+<td class="px-6 py-4 whitespace-nowrap">
+<div>
+<div class="text-sm font-medium text-text-sub-light dark:text-text-sub-dark">Le Van C</div>
+<div class="text-xs text-text-sub-light dark:text-text-sub-dark mt-0.5">0912 345 678</div>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="text-sm text-text-sub-light dark:text-text-sub-dark">GoPro Hero 11</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="text-xs text-text-sub-light dark:text-text-sub-dark">Office</span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400">
+                                            Completed
+                                        </span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+<div class="flex items-center justify-end gap-2">
+<button class="text-text-sub-light dark:text-text-sub-dark p-1.5">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-6 py-4 border-t border-border-light dark:border-border-dark flex items-center justify-between">
+<span class="text-sm text-text-sub-light dark:text-text-sub-dark">Showing 1-3 of 15 tasks</span>
+<div class="flex gap-2">
+<button class="px-3 py-1 text-sm border border-border-light dark:border-border-dark rounded bg-white dark:bg-slate-800 hover:bg-background-light">Prev</button>
+<button class="px-3 py-1 text-sm border border-border-light dark:border-border-dark rounded bg-white dark:bg-slate-800 hover:bg-background-light">Next</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Modal: Thu Máy (Collect Machine) -->
+<!-- Positioned absolutely to simulate being open -->
+<div aria-modal="true" class="absolute inset-0 z-50 flex items-center justify-center p-4" role="dialog">
+<!-- Backdrop -->
+<div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity"></div>
+<!-- Modal Panel -->
+<div class="relative w-full max-w-lg bg-surface-light dark:bg-surface-dark rounded-2xl shadow-2xl border border-border-light dark:border-border-dark flex flex-col overflow-hidden animate-[fade-in_0.2s_ease-out]">
+<!-- Header -->
+<div class="flex items-center justify-between px-6 py-4 border-b border-border-light dark:border-border-dark bg-background-light dark:bg-slate-800/50">
+<div>
+<h3 class="text-lg font-bold text-text-main-light dark:text-text-main-dark">Xác nhận Thu máy</h3>
+<p class="text-xs text-text-sub-light dark:text-text-sub-dark">Booking ID: <span class="font-mono text-primary font-bold">#BK99281</span></p>
+</div>
+<button class="text-text-sub-light dark:text-text-sub-dark hover:text-red-500 transition-colors p-1 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Body -->
+<div class="p-6 overflow-y-auto max-h-[70vh]">
+<form class="flex flex-col gap-5">
+<!-- Location -->
+<div>
+<label class="block text-sm font-medium text-text-main-light dark:text-text-main-dark mb-1.5">Địa điểm thu máy thực tế</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-text-sub-light">
+<span class="material-symbols-outlined text-[18px]">pin_drop</span>
+</span>
+<input class="block w-full pl-10 border border-border-light dark:border-border-dark rounded-lg py-2.5 text-sm bg-background-light dark:bg-slate-800 focus:ring-primary focus:border-primary placeholder-text-sub-light" placeholder="Enter location if changed" type="text" value="Landmark 81, Binh Thanh"/>
+</div>
+</div>
+<!-- Fees Grid -->
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="block text-sm font-medium text-text-main-light dark:text-text-main-dark mb-1.5">Phí thu hồi (Ship)</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-text-sub-light text-sm font-bold">₫</span>
+<input class="block w-full pl-8 border border-border-light dark:border-border-dark rounded-lg py-2.5 text-sm bg-background-light dark:bg-slate-800 focus:ring-primary focus:border-primary" placeholder="0" type="number"/>
+</div>
+</div>
+<div>
+<div class="flex items-center justify-between mb-1.5">
+<label class="block text-sm font-medium text-text-main-light dark:text-text-main-dark">Phí trễ (Late fee)</label>
+<div class="group relative">
+<span class="material-symbols-outlined text-text-sub-light text-[16px] cursor-help">help</span>
+<div class="absolute bottom-full right-0 mb-2 w-48 p-2 bg-slate-800 text-white text-xs rounded hidden group-hover:block z-50">
+                                        Formula: Price 6h / 5 (No discount)
+                                    </div>
+</div>
+</div>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-text-sub-light text-sm font-bold">₫</span>
+<input class="block w-full pl-8 border border-red-200 dark:border-red-900 rounded-lg py-2.5 text-sm bg-red-50 dark:bg-red-900/10 focus:ring-red-500 focus:border-red-500 text-red-600 dark:text-red-400 font-bold" type="number" value="30000"/>
+</div>
+<p class="text-[10px] text-text-sub-light mt-1 text-right">Recommended: 30.000đ</p>
+</div>
+</div>
+<div class="h-px bg-border-light dark:border-border-dark w-full"></div>
+<!-- Additional Services -->
+<div>
+<p class="text-sm font-bold text-text-main-light dark:text-text-main-dark mb-3">Dịch vụ &amp; Tình trạng</p>
+<div class="space-y-3">
+<label class="flex items-center p-3 border border-border-light dark:border-border-dark rounded-lg cursor-pointer hover:bg-background-light dark:hover:bg-slate-800 transition-colors">
+<input class="size-4 rounded border-gray-300 text-primary focus:ring-primary" type="checkbox"/>
+<span class="ml-3 text-sm text-text-main-light dark:text-text-main-dark">Khôi phục thẻ nhớ (Recover SD)</span>
+</label>
+<label class="flex items-center p-3 border border-border-light dark:border-border-dark rounded-lg cursor-pointer hover:bg-background-light dark:hover:bg-slate-800 transition-colors">
+<input checked="" class="size-4 rounded border-gray-300 text-primary focus:ring-primary" type="checkbox"/>
+<span class="ml-3 text-sm text-text-main-light dark:text-text-main-dark">Tải ảnh lên Drive (Upload cloud)</span>
+</label>
+</div>
+</div>
+<!-- Critical Action -->
+<div class="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg border border-yellow-200 dark:border-yellow-900/50">
+<label class="flex items-center gap-3 cursor-pointer">
+<div class="relative flex items-center">
+<input class="peer h-5 w-5 cursor-pointer appearance-none rounded border border-yellow-400 bg-white checked:bg-yellow-500 checked:border-yellow-500 focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2" type="checkbox"/>
+<span class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 peer-checked:opacity-100 material-symbols-outlined text-[16px]">check</span>
+</div>
+<div>
+<span class="text-sm font-bold text-gray-800 dark:text-yellow-100">Đã trả CCCD cho khách</span>
+<p class="text-xs text-yellow-700 dark:text-yellow-400 mt-0.5">Booking này đang giữ CCCD của khách.</p>
+</div>
+</label>
+</div>
+</form>
+</div>
+<!-- Footer -->
+<div class="p-6 pt-2 flex flex-col sm:flex-row gap-3">
+<button class="flex-1 justify-center items-center px-4 py-2.5 bg-background-light dark:bg-slate-800 border border-border-light dark:border-border-dark rounded-xl text-sm font-bold text-text-main-light dark:text-text-main-dark hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors">
+                    Đánh dấu Đã thanh toán
+                </button>
+<button class="flex-[2] flex justify-center items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/30">
+<span class="material-symbols-outlined text-[20px]">check</span>
+                    Xác nhận đã thu máy
+                </button>
+</div>
+</div>
+</div>
+</body></html>
