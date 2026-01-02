@@ -9,6 +9,8 @@ export const metadata: Metadata = {
   description: "Hệ thống quản lý booking cho thuê máy ảnh",
   icons: {
     icon: '/favicon.png',
+    shortcut: '/favicon.png',
+    apple: '/favicon.png',
   },
 };
 
