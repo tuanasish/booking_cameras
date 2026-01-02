@@ -227,13 +227,16 @@ export default function GoogleWeekGrid({
                                                 <div
                                                     key={booking.id}
                                                     className={clsx(
-                                                        'absolute left-1 right-2 rounded border-l-4 shadow-sm cursor-pointer hover:brightness-110 transition-all z-10 p-1.5 overflow-hidden flex flex-col gap-0.5',
+                                                        'absolute left-1 right-2 rounded border-l-4 shadow-sm cursor-pointer hover:brightness-110 transition-all z-20 p-1.5 overflow-hidden flex flex-col gap-0.5',
                                                         styles.bg,
                                                         styles.border
                                                     )}
                                                     style={{ top: `${top}px`, height: `${height}px` }}
                                                     onClick={() => onBookingClick?.(booking)}
                                                 >
+                                                    {/* Background overlay to hide grid lines */}
+                                                    <div className="absolute inset-0 bg-background-dark rounded -z-10" />
+
                                                     <div className={clsx('text-[10px] font-semibold leading-tight flex justify-between', styles.text)}>
                                                         <span>{pickupTime} - {returnTime}</span>
                                                         <span className="material-symbols-outlined text-[14px]">

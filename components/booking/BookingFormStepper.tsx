@@ -171,6 +171,7 @@ export default function BookingFormStepper({
             deliveryLocation={formData.deliveryLocation}
             deliveryFee={formData.deliveryFee}
             totalRentalFee={formData.totalRentalFee}
+            extraPriceTotal={formData.extraPriceTotal}
             hasDiscount={formData.hasDiscount}
             discountPercent={formData.discountPercent}
             discountReason={formData.discountReason}

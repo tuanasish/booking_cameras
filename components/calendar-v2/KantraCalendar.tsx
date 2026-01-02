@@ -106,43 +106,43 @@ export default function KantraCalendar({
             {/* Header */}
             <header className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between px-4 py-3 gap-3 border-b border-border bg-surface shrink-0 z-20 shadow-sm">
                 <div className="flex items-center justify-between sm:justify-start gap-4">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1.5 sm:gap-2">
                         {/* Sidebar Toggle */}
                         <button
                             onClick={() => setSidebarOpen(!sidebarOpen)}
-                            className="flex items-center justify-center size-9 rounded-lg bg-background border border-border text-text-secondary hover:text-text-main transition-colors"
+                            className="flex items-center justify-center size-9 rounded-lg bg-background border border-border text-text-secondary hover:text-text-main transition-all active:scale-95 shadow-sm"
                             title={sidebarOpen ? 'Ẩn sidebar' : 'Hiện sidebar'}
                         >
                             <span className="material-symbols-outlined text-[20px]">
-                                {sidebarOpen ? 'menu_open' : 'menu'}
+                                {sidebarOpen ? 'menu_open' : 'filter_list'}
                             </span>
                         </button>
 
                         {/* Navigation */}
-                        <div className="flex items-center bg-background border border-border rounded-lg p-0.5">
+                        <div className="flex items-center bg-background border border-border rounded-lg p-0.5 shadow-sm">
                             <button
                                 onClick={viewMode === 'day' ? handlePrevDay : handlePrevWeek}
-                                className="size-7 flex items-center justify-center rounded hover:bg-surface text-text-secondary hover:text-text-main transition-colors"
+                                className="size-8 flex items-center justify-center rounded hover:bg-surface text-text-secondary hover:text-text-main transition-colors"
                             >
-                                <span className="material-symbols-outlined text-sm">chevron_left</span>
+                                <span className="material-symbols-outlined text-lg">chevron_left</span>
                             </button>
                             <button
                                 onClick={handleToday}
-                                className="px-2 sm:px-3 text-xs sm:text-sm font-medium text-text-secondary hover:text-text-main transition-colors"
+                                className="px-3 text-xs sm:text-sm font-bold text-primary hover:text-primary/80 transition-colors"
                             >
                                 Nay
                             </button>
                             <button
                                 onClick={viewMode === 'day' ? handleNextDay : handleNextWeek}
-                                className="size-7 flex items-center justify-center rounded hover:bg-surface text-text-secondary hover:text-text-main transition-colors"
+                                className="size-8 flex items-center justify-center rounded hover:bg-surface text-text-secondary hover:text-text-main transition-colors"
                             >
-                                <span className="material-symbols-outlined text-sm">chevron_right</span>
+                                <span className="material-symbols-outlined text-lg">chevron_right</span>
                             </button>
                         </div>
                     </div>
 
                     {/* Date Display - Responsive font size */}
-                    <h2 className="text-sm sm:text-xl font-bold text-text-main tracking-tight truncate max-w-[150px] sm:max-w-none">
+                    <h2 className="text-base sm:text-xl font-bold text-text-main tracking-tight truncate ml-auto sm:ml-0">
                         {viewMode === 'week'
                             ? `${format(weekDays[0], 'd/M')} - ${format(weekDays[6], 'd/M')}`
                             : format(currentDate, 'd MMMM', { locale: vi })
@@ -197,16 +197,24 @@ export default function KantraCalendar({
             </header>
 
             {/* Main Content with Sidebar */}
-            <div className="flex flex-1 overflow-hidden">
+            <div className="flex flex-1 overflow-hidden relative">
+                {/* Mobile Backdrop */}
+                {sidebarOpen && (
+                    <div
+                        className="absolute inset-0 bg-black/40 backdrop-blur-[2px] z-30 md:hidden"
+                        onClick={() => setSidebarOpen(false)}
+                    />
+                )}
+
                 {/* Collapsible Sidebar */}
                 <div
                     className={clsx(
-                        'flex flex-col border-r border-border bg-background transition-all duration-300 z-10',
-                        sidebarOpen ? 'w-64' : 'w-0 overflow-hidden',
-                        'absolute md:relative h-full md:h-auto shadow-xl md:shadow-none'
+                        'flex flex-col border-r border-border bg-surface transition-all duration-300 z-40',
+                        sidebarOpen ? 'translate-x-0' : '-translate-x-full',
+                        'absolute md:relative md:translate-x-0 top-0 bottom-0 left-0 w-64 shadow-2xl md:shadow-none'
                     )}
                 >
-                    <div className="w-64 flex flex-col h-full">
+                    <div className="w-64 flex flex-col h-full bg-surface">
                         <CalendarSidebar
                             currentDate={currentDate}
                             selectedDate={selectedDate}
@@ -218,6 +226,11 @@ export default function KantraCalendar({
                             cameras={cameras}
                             selectedCameraIds={selectedCameraIds}
                             onCameraToggle={handleCameraToggle}
+                            onCameraClick={(cameraId) => {
+                                setViewMode('day');
+                                setSelectedCameraIds([cameraId]);
+                            }}
+                            onClose={() => setSidebarOpen(false)}
                             onCreateBooking={handleSidebarCreate}
                         />
                     </div>
@@ -244,6 +257,15 @@ export default function KantraCalendar({
                         />
                     )}
                 </div>
+
+                {/* Mobile Floating Action Button */}
+                <button
+                    onClick={handleSidebarCreate}
+                    className="md:hidden fixed bottom-6 right-6 size-14 rounded-full bg-primary text-white shadow-2xl flex items-center justify-center z-50 active:scale-95 transition-all outline-none"
+                    title="Tạo mới"
+                >
+                    <span className="material-symbols-outlined text-3xl">add</span>
+                </button>
             </div>
         </div>
     );

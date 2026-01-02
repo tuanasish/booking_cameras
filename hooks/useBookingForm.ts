@@ -30,6 +30,7 @@ export interface BookingFormData {
   deliveryLocation: string;
   deliveryFee: number;
   totalRentalFee: number; // S
+  extraPriceTotal: number; // Phần không chiết khấu
   hasDiscount: boolean;
   discountPercent: number;
   discountReason: string;
@@ -57,6 +58,7 @@ export function useBookingForm() {
     deliveryLocation: '',
     deliveryFee: 0,
     totalRentalFee: 0,
+    extraPriceTotal: 0,
     hasDiscount: false,
     discountPercent: 0,
     discountReason: '',

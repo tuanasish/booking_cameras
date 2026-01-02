@@ -105,7 +105,7 @@ export default function BookingFormStepC({
     // Recalculate prices when time changes
     if (pickupTime && returnTime && selectedCameras.length > 0) {
       const updatedCameras = selectedCameras.map((item) => {
-        const price = calculateRentalPrice(item.camera, pickupTime, returnTime);
+        // Price breakdown is calculated but we only need to pass through
         return {
           ...item,
           camera: { ...item.camera },
@@ -138,7 +138,7 @@ export default function BookingFormStepC({
     } else {
       // Add camera
       const price = pickupTime && returnTime
-        ? calculateRentalPrice(camera, pickupTime, returnTime)
+        ? calculateRentalPrice(camera, pickupTime, returnTime).total
         : camera.price_6h;
 
       onUpdate({
@@ -195,8 +195,8 @@ export default function BookingFormStepC({
     if (!pickupTime || !returnTime) return 0;
 
     return selectedCameras.reduce((sum, item) => {
-      const price = calculateRentalPrice(item.camera, pickupTime, returnTime);
-      return sum + price * item.quantity;
+      const priceBreakdown = calculateRentalPrice(item.camera, pickupTime, returnTime);
+      return sum + priceBreakdown.total * item.quantity;
     }, 0);
   };
 
@@ -329,14 +329,14 @@ export default function BookingFormStepC({
                           <div className="flex items-center justify-between text-xs">
                             <span className="text-text-secondary">Giá thuê:</span>
                             <span className="text-text-main font-bold">
-                              {calculateRentalPrice(camera, pickupTime, returnTime).toLocaleString('vi-VN')}đ
+                              {calculateRentalPrice(camera, pickupTime, returnTime).total.toLocaleString('vi-VN')}đ
                             </span>
                           </div>
                           {selectedQty > 1 && (
                             <div className="flex items-center justify-between text-xs mt-1">
                               <span className="text-text-secondary">Tổng ({selectedQty} máy):</span>
                               <span className="text-primary font-bold">
-                                {(calculateRentalPrice(camera, pickupTime, returnTime) * selectedQty).toLocaleString('vi-VN')}đ
+                                {(calculateRentalPrice(camera, pickupTime, returnTime).total * selectedQty).toLocaleString('vi-VN')}đ
                               </span>
                             </div>
                           )}

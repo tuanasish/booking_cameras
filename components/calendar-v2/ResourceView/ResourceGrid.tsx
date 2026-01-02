@@ -78,7 +78,7 @@ export default function ResourceGrid({
             <div className="flex shrink-0 border-b border-border bg-surface shadow-sm z-30 overflow-x-auto overflow-y-hidden custom-scrollbar no-scrollbar">
                 <div className="flex min-w-max">
                     {/* Time column spacer - STICKY */}
-                    <div className="w-12 sm:w-16 shrink-0 border-r border-border bg-surface sticky left-0 z-40" />
+                    <div className="w-10 sm:w-16 shrink-0 border-r border-border bg-surface sticky left-0 z-40" />
 
                     {/* Camera Headers */}
                     <div className="flex">
@@ -101,11 +101,11 @@ export default function ResourceGrid({
             <div className="flex-1 overflow-auto custom-scrollbar" id="resource-grid-scroll">
                 <div className="flex min-w-max" style={{ minHeight: `${totalHeight}px` }}>
                     {/* Time Labels Column - STICKY LEFT */}
-                    <div className="w-12 sm:w-16 shrink-0 sticky left-0 z-20 bg-surface/90 backdrop-blur-sm border-r border-border shadow-sm">
+                    <div className="w-10 sm:w-16 shrink-0 sticky left-0 z-20 bg-surface/90 backdrop-blur-sm border-r border-border shadow-sm">
                         {hours.map((hour) => (
                             <div
                                 key={hour}
-                                className="text-right pr-2 sm:pr-3 text-[9px] sm:text-[10px] font-bold text-text-secondary py-1"
+                                className="text-right pr-1.5 sm:pr-3 text-[8px] sm:text-[10px] font-bold text-text-secondary py-1"
                                 style={{ height: `${HOUR_HEIGHT}px` }}
                             >
                                 {`${hour.toString().padStart(2, '0')}:00`}
@@ -116,7 +116,7 @@ export default function ResourceGrid({
                     {/* Grid Content - Time lines + Booking columns */}
                     <div className="flex-1 relative">
                         {/* Background Grid Lines */}
-                        <div className="absolute inset-0 pointer-events-none">
+                        <div className="absolute inset-0 pointer-events-none z-0">
                             {hours.map((hour) => (
                                 <div
                                     key={hour}

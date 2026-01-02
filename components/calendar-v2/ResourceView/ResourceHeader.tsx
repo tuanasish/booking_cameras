@@ -28,15 +28,15 @@ export default function ResourceHeader({
     return (
         <div
             className={clsx(
-                'border-r border-border flex flex-col relative group',
-                isMultiUnit && showLanes ? 'w-80' : 'w-64'
+                'border-r border-border flex flex-col relative group shrink-0',
+                isMultiUnit && showLanes ? 'w-60 sm:w-80' : 'w-32 sm:w-64'
             )}
         >
             {/* Main Header */}
             <div className="p-4 bg-surface z-10 transition-colors group-hover:bg-background/20">
-                <div className="flex items-center justify-between mb-2">
-                    <span className="text-text-main text-sm font-bold tracking-tight">{camera.name}</span>
-                    <span className="bg-background border border-border text-text-secondary text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-2">
+                    <span className="text-text-main text-[11px] sm:text-sm font-bold tracking-tight truncate">{camera.name}</span>
+                    <span className="bg-background border border-border text-text-secondary text-[8px] sm:text-[10px] font-bold px-1 sm:px-2 py-0.5 rounded-full uppercase tracking-wider w-fit">
                         {camera.quantity} máy
                     </span>
                 </div>

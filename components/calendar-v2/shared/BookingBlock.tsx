@@ -100,6 +100,9 @@ export default function BookingBlock({
             }}
             onClick={onClick}
         >
+            {/* Background overlay to hide grid lines */}
+            <div className="absolute inset-0 bg-background rounded -z-10" />
+
             {isCompact ? (
                 // Compact view for short bookings
                 <div className="flex items-center justify-between h-full gap-2">
@@ -130,10 +133,10 @@ export default function BookingBlock({
                             {styles.icon}
                         </span>
                     </div>
-                    <p className="text-text-main text-xs font-bold truncate">
+                    <p className="text-text-main text-[10px] sm:text-xs font-bold truncate">
                         {(booking as any).customer?.name || 'Khách hàng'}
                     </p>
-                    <p className="text-text-secondary text-[11px] font-medium truncate">
+                    <p className="text-text-secondary text-[9px] sm:text-[11px] font-medium truncate">
                         {pickupTime} - {returnTimeStr}
                     </p>
 

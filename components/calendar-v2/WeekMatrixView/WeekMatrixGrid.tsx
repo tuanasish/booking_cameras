@@ -95,7 +95,7 @@ export default function WeekMatrixGrid({
             <div className="overflow-x-auto overflow-y-hidden custom-scrollbar bg-surface border-b border-border">
                 <div className="flex min-w-[800px] sm:min-w-full">
                     {/* Camera column header - STICKY */}
-                    <div className="w-40 sm:w-48 shrink-0 p-4 border-r border-border font-bold text-[10px] sm:text-xs text-text-secondary uppercase tracking-wider bg-surface sticky left-0 z-10">
+                    <div className="w-24 sm:w-48 shrink-0 p-3 sm:p-4 border-r border-border font-bold text-[9px] sm:text-xs text-text-secondary uppercase tracking-wider bg-surface sticky left-0 z-20">
                         Thiết bị
                     </div>
 
@@ -140,11 +140,11 @@ export default function WeekMatrixGrid({
                     {cameras.map((camera) => (
                         <div key={camera.id} className="flex border-b border-border hover:bg-surface/50 transition-colors group">
                             {/* Camera Name Column - STICKY */}
-                            <div className="w-40 sm:w-48 shrink-0 p-3 sm:p-4 border-r border-border bg-surface/80 backdrop-blur-sm sticky left-0 z-10">
-                                <div className="font-semibold text-xs sm:text-sm text-text-main truncate group-hover:text-primary transition-colors">
+                            <div className="w-24 sm:w-48 shrink-0 p-2 sm:p-4 border-r border-border bg-surface/90 backdrop-blur-md sticky left-0 z-20 shadow-sm">
+                                <div className="font-semibold text-[10px] sm:text-sm text-text-main truncate group-hover:text-primary transition-colors leading-tight">
                                     {camera.name}
                                 </div>
-                                <div className="text-[10px] text-text-secondary mt-1">SL: {camera.quantity}</div>
+                                <div className="text-[8px] sm:text-[10px] text-text-secondary mt-0.5 sm:mt-1">SL: {camera.quantity}</div>
                             </div>
 
                             {/* Day Cells */}
@@ -223,16 +223,16 @@ export default function WeekMatrixGrid({
             </div>
 
             {/* Legend Footer */}
-            <div className="flex items-center gap-6 px-6 py-3 border-t border-border bg-surface text-xs font-medium text-text-secondary shadow-sm">
-                <span className="text-text-main font-bold uppercase tracking-wider text-[10px]">Chú thích:</span>
-                <span className="flex items-center gap-2">
-                    <span className="size-2.5 rounded-full bg-teal-500 shadow-sm shadow-teal-500/30"></span> Đã thanh toán
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 border-t border-border bg-surface text-[10px] sm:text-xs font-medium text-text-secondary shadow-sm">
+                <span className="text-text-main font-bold uppercase tracking-wider text-[9px] sm:text-[10px] w-full sm:w-auto">Chú thích:</span>
+                <span className="flex items-center gap-1.5">
+                    <span className="size-2 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/30"></span> Đã thanh toán
                 </span>
-                <span className="flex items-center gap-2">
-                    <span className="size-2.5 rounded-full bg-amber-500 shadow-sm shadow-amber-500/30"></span> Đã cọc
+                <span className="flex items-center gap-1.5">
+                    <span className="size-2 rounded-full bg-amber-500 shadow-sm shadow-amber-500/30"></span> Đã cọc
                 </span>
-                <span className="flex items-center gap-2">
-                    <span className="size-2.5 rounded-full bg-red-500 shadow-sm shadow-red-500/30"></span> Chưa cọc
+                <span className="flex items-center gap-1.5">
+                    <span className="size-2 rounded-full bg-red-500 shadow-sm shadow-red-500/30"></span> Chưa cọc
                 </span>
             </div>
         </div>

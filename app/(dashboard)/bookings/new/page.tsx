@@ -49,16 +49,24 @@ export default function NewBookingPage() {
   useEffect(() => {
     // Calculate total rental fee when cameras or time changes
     if (formData.selectedCameras.length > 0 && formData.pickupTime && formData.returnTime) {
-      const total = formData.selectedCameras.reduce((sum, item) => {
-        const price = calculateRentalPrice(
+      let total = 0;
+      let extraTotal = 0;
+
+      formData.selectedCameras.forEach((item) => {
+        const priceBreakdown = calculateRentalPrice(
           item.camera,
           formData.pickupTime,
           formData.returnTime,
           settings?.late_fee_divisor || 5
         );
-        return sum + price * item.quantity;
-      }, 0);
-      updateFormData({ totalRentalFee: total });
+        total += priceBreakdown.total * item.quantity;
+        extraTotal += priceBreakdown.extraPrice * item.quantity;
+      });
+
+      updateFormData({
+        totalRentalFee: total,
+        extraPriceTotal: extraTotal
+      });
     }
   }, [formData.selectedCameras, formData.pickupTime, formData.returnTime, settings]);
 
@@ -147,14 +155,14 @@ export default function NewBookingPage() {
               formData.pickupTime,
               formData.returnTime,
               settings?.late_fee_divisor || 5
-            ),
+            ).total,
             subtotal:
               calculateRentalPrice(
                 item.camera,
                 formData.pickupTime,
                 formData.returnTime,
                 settings?.late_fee_divisor || 5
-              ) * item.quantity,
+              ).total * item.quantity,
           })),
           booking_accessories: [
             ...(formData.hasTripod

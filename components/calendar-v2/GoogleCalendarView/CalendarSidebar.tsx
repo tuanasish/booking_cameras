@@ -12,6 +12,8 @@ interface CalendarSidebarProps {
     cameras: Camera[];
     selectedCameraIds: string[];
     onCameraToggle: (cameraId: string) => void;
+    onCameraClick?: (cameraId: string) => void;
+    onClose?: () => void;
     onCreateBooking: () => void;
 }
 
@@ -22,6 +24,8 @@ export default function CalendarSidebar({
     cameras,
     selectedCameraIds,
     onCameraToggle,
+    onCameraClick,
+    onClose,
     onCreateBooking,
 }: CalendarSidebarProps) {
     // Generate mini calendar days
@@ -40,7 +44,17 @@ export default function CalendarSidebar({
     const weekDays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
     return (
-        <aside className="w-64 flex flex-col flex-shrink-0 border-r border-border bg-surface overflow-y-auto pt-4 pb-10 hidden lg:flex">
+        <aside className="w-64 flex flex-col flex-shrink-0 bg-surface overflow-y-auto h-full relative">
+            {/* Header for mobile - Close button */}
+            <div className="flex md:hidden items-center justify-between px-4 py-3 border-b border-border mb-4 bg-surface-hover sticky top-0 z-10">
+                <span className="font-bold text-text-main uppercase text-xs tracking-widest">Bộ lọc</span>
+                <button
+                    onClick={onClose}
+                    className="size-8 flex items-center justify-center rounded-lg hover:bg-surface text-text-secondary active:scale-95 transition-all"
+                >
+                    <span className="material-symbols-outlined text-lg">close</span>
+                </button>
+            </div>
             {/* Create Button */}
             <div className="px-4 mb-6">
                 <button
@@ -133,11 +147,15 @@ export default function CalendarSidebar({
                                 />
                                 <span
                                     className={clsx(
-                                        'text-sm truncate flex-1 transition-colors',
+                                        'text-sm truncate flex-1 transition-colors cursor-pointer',
                                         selectedCameraIds.includes(camera.id)
-                                            ? 'text-text-main group-hover/item:text-text-main'
+                                            ? 'text-text-main group-hover/item:text-primary'
                                             : 'text-text-secondary group-hover/item:text-text-main'
                                     )}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        onCameraClick?.(camera.id);
+                                    }}
                                 >
                                     {camera.name}
                                     <span className="text-xs text-text-secondary ml-1">(SL: {camera.quantity})</span>
@@ -176,25 +194,6 @@ export default function CalendarSidebar({
                         </label>
                     </div>
                 </details>
-            </div>
-
-            {/* Legend */}
-            <div className="mt-auto px-4 pt-4">
-                <div className="bg-background/50 rounded-lg p-3 text-xs text-text-secondary border border-border">
-                    <p className="font-medium text-text-main mb-1">Chú thích</p>
-                    <div className="flex items-center gap-2 mb-1">
-                        <div className="size-2 rounded-full bg-red-400 shadow-sm shadow-red-400/20"></div>
-                        <span>Chưa cọc</span>
-                    </div>
-                    <div className="flex items-center gap-2 mb-1">
-                        <div className="size-2 rounded-full bg-yellow-400 shadow-sm shadow-yellow-400/20"></div>
-                        <span>Đã cọc</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <div className="size-2 rounded-full bg-teal-500 shadow-sm shadow-teal-500/20"></div>
-                        <span>Đã thanh toán</span>
-                    </div>
-                </div>
             </div>
         </aside>
     );

@@ -116,9 +116,9 @@ export default function ResourceColumn({
     return (
         <div
             className={clsx(
-                'border-r border-border/50 relative h-full group/column cursor-crosshair'
+                'border-r border-border/50 relative h-full group/column cursor-crosshair shrink-0',
+                isMultiUnit && showLanes ? 'w-60 sm:w-80' : 'w-32 sm:w-64'
             )}
-            style={{ width: `${columnWidth}px` }}
             onClick={handleEmptyClick}
         >
             {/* Lane Dividers */}

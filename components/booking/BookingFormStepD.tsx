@@ -18,6 +18,7 @@ interface BookingFormStepDProps {
   discountPercent: number;
   discountReason: string;
   finalFee: number; // P
+  extraPriceTotal: number;
   createdBy: string;
   errors: Record<string, string>;
   onUpdate: (updates: {
@@ -31,6 +32,7 @@ interface BookingFormStepDProps {
     discountPercent?: number;
     discountReason?: string;
     finalFee?: number;
+    extraPriceTotal?: number;
     createdBy?: string;
   }) => void;
 }
@@ -55,6 +57,7 @@ export default function BookingFormStepD({
   discountPercent,
   discountReason,
   finalFee,
+  extraPriceTotal,
   createdBy,
   errors,
   onUpdate,
@@ -73,12 +76,12 @@ export default function BookingFormStepD({
   useEffect(() => {
     // Auto-calculate final fee when discount changes
     if (hasDiscount && discountPercent > 0) {
-      const newFinalFee = calculateFinalFee(totalRentalFee, discountPercent);
+      const newFinalFee = calculateFinalFee(totalRentalFee, discountPercent, extraPriceTotal);
       onUpdate({ finalFee: newFinalFee });
     } else {
       onUpdate({ finalFee: totalRentalFee });
     }
-  }, [hasDiscount, discountPercent, totalRentalFee]);
+  }, [hasDiscount, discountPercent, totalRentalFee, extraPriceTotal]);
 
   useEffect(() => {
     // Set default deposit amount
@@ -358,7 +361,7 @@ export default function BookingFormStepD({
           {hasDiscount && discountPercent > 0 && (
             <>
               <div className="flex items-center justify-between text-sm">
-                <span className="text-text-secondary">Chiết khấu ({discountPercent}%):</span>
+                <span className="text-text-secondary">Chiết khấu ({discountPercent}% trên {(totalRentalFee - (extraPriceTotal || 0)).toLocaleString('vi-VN')}đ):</span>
                 <span className="text-red-400 font-medium">
                   -{(totalRentalFee - finalFee).toLocaleString('vi-VN')}đ
                 </span>

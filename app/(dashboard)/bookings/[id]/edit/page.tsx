@@ -45,17 +45,25 @@ export default function EditBookingPage({ params }: { params: { id: string } }) 
     useEffect(() => {
         // Calculate total rental fee when cameras or time changes
         if (formData.selectedCameras.length > 0 && formData.pickupTime && formData.returnTime) {
-            const total = formData.selectedCameras.reduce((sum, item) => {
-                const price = calculateRentalPrice(
+            let total = 0;
+            let extraTotal = 0;
+
+            formData.selectedCameras.forEach((item) => {
+                const priceBreakdown = calculateRentalPrice(
                     item.camera,
                     formData.pickupTime,
                     formData.returnTime,
                     settings?.late_fee_divisor || 5
                 );
-                return sum + price * item.quantity;
-            }, 0);
-            if (total !== formData.totalRentalFee) {
-                updateFormData({ totalRentalFee: total });
+                total += priceBreakdown.total * item.quantity;
+                extraTotal += priceBreakdown.extraPrice * item.quantity;
+            });
+
+            if (total !== formData.totalRentalFee || extraTotal !== formData.extraPriceTotal) {
+                updateFormData({
+                    totalRentalFee: total,
+                    extraPriceTotal: extraTotal
+                });
             }
         }
     }, [formData.selectedCameras, formData.pickupTime, formData.returnTime, settings]);
