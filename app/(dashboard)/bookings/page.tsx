@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
+import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
 import Link from 'next/link';
 
@@ -32,6 +33,7 @@ interface Booking {
 }
 
 export default function BookingsPage() {
+  const router = useRouter();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -101,6 +103,42 @@ export default function BookingsPage() {
   const handleRowClick = (booking: Booking) => {
     setSelectedBooking(booking);
     setIsDrawerOpen(true);
+  };
+
+  const handleEdit = (booking: any) => {
+    router.push(`/bookings/${booking.id}/edit`);
+  };
+
+  const handleCancel = async (bookingId: string) => {
+    if (!confirm('Bạn có chắc chắn muốn hủy đơn hàng này?')) return;
+
+    try {
+      const response = await fetch(`/api/bookings/${bookingId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ payment_status: 'cancelled' }),
+      });
+
+      if (response.ok) {
+        alert('Đã hủy đơn hàng');
+        fetchBookings();
+        setIsDrawerOpen(false);
+      } else {
+        const err = await response.json();
+        alert(`Lỗi: ${err.error}`);
+      }
+    } catch (error) {
+      console.error('Error cancelling booking:', error);
+      alert('Đã có lỗi xảy ra');
+    }
+  };
+
+  const handlePickup = (bookingId: string) => {
+    router.push(`/tasks/pickup?bookingId=${bookingId}`);
+  };
+
+  const handleReturn = (bookingId: string) => {
+    router.push(`/tasks/return?bookingId=${bookingId}`);
   };
 
   return (
@@ -204,7 +242,7 @@ export default function BookingsPage() {
                           inbox_customize
                         </span>
                         <div className="space-y-1">
-                          <p className="text-white font-bold">Không tìm thấy đơn thuê nào</p>
+                          <p className="text-text-main font-bold">Không tìm thấy đơn thuê nào</p>
                           <p className="text-xs text-text-secondary">
                             Thử thay đổi bộ lọc hoặc tạo đơn mới.
                           </p>
@@ -221,7 +259,7 @@ export default function BookingsPage() {
                     >
                       <td className="px-6 py-4">
                         <div className="flex flex-col gap-1">
-                          <span className="text-sm font-bold text-white group-hover:text-primary transition-colors">
+                          <span className="text-sm font-bold text-text-main group-hover:text-primary transition-colors">
                             {booking.customer?.name}
                           </span>
                           <span className="text-xs text-text-secondary flex items-center gap-1">
@@ -235,9 +273,9 @@ export default function BookingsPage() {
                           {booking.booking_items.map((item) => (
                             <div
                               key={item.id}
-                              className="px-2 py-0.5 rounded bg-input-dark border border-border-dark text-[10px] text-text-secondary"
+                              className="px-2 py-0.5 rounded bg-surface border border-border text-[10px] text-text-secondary shadow-sm"
                             >
-                              <span className="font-bold text-white mr-1">{item.quantity}x</span>
+                              <span className="font-bold text-text-main mr-1">{item.quantity}x</span>
                               {item.camera.name}
                             </div>
                           ))}
@@ -249,7 +287,7 @@ export default function BookingsPage() {
                             <span className="px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-500 text-[10px] font-bold uppercase">
                               Nhận
                             </span>
-                            <span className="text-xs text-white">
+                            <span className="text-xs text-text-main">
                               {format(new Date(booking.pickup_time), 'HH:mm dd/MM', { locale: vi })}
                             </span>
                           </div>
@@ -257,14 +295,14 @@ export default function BookingsPage() {
                             <span className="px-1.5 py-0.5 rounded bg-rose-500/10 text-rose-500 text-[10px] font-bold uppercase">
                               Trả
                             </span>
-                            <span className="text-xs text-white">
+                            <span className="text-xs text-text-main">
                               {format(new Date(booking.return_time), 'HH:mm dd/MM', { locale: vi })}
                             </span>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <span className="text-sm font-bold text-white">
+                        <span className="text-sm font-bold text-text-main">
                           {booking.final_fee.toLocaleString('vi-VN')}đ
                         </span>
                       </td>
@@ -288,8 +326,14 @@ export default function BookingsPage() {
           isOpen={isDrawerOpen}
           onClose={() => setIsDrawerOpen(false)}
           booking={selectedBooking as any}
+          onEdit={handleEdit}
+          onCancel={handleCancel}
+          onPickup={handlePickup}
+          onReturn={handleReturn}
         />
       )}
     </div>
   );
 }
+
+

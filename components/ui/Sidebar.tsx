@@ -7,6 +7,8 @@ import { useRouter } from 'next/navigation';
 import { useSidebar } from '@/lib/context/SidebarContext';
 import clsx from 'clsx';
 import ThemeToggle from './ThemeToggle';
+import Image from 'next/image';
+import { useTheme } from '@/lib/context/ThemeContext';
 
 interface NavItem {
   href: string;
@@ -36,6 +38,7 @@ export default function Sidebar() {
   const { userRole, userName, signOut } = useAuth();
   const router = useRouter();
   const { isCollapsed, toggleSidebar } = useSidebar();
+  const { theme } = useTheme();
 
   const handleSignOut = async () => {
     await signOut();
@@ -57,14 +60,14 @@ export default function Sidebar() {
       <div className="flex h-16 items-center justify-between px-4 border-b border-border">
         {!isCollapsed && (
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center size-8 rounded-lg bg-primary/20 text-primary">
-              <span className="material-symbols-outlined text-2xl">photo_camera</span>
-            </div>
-            <div className="flex flex-col text-text-main">
-              <h1 className="text-base font-bold leading-none tracking-tight">Kantra</h1>
-              <span className="text-xs text-text-secondary font-medium mt-1">
-                Operations
-              </span>
+            <div className="relative h-8 w-28">
+              <Image
+                src={theme === 'dark' ? '/logo/darklogo.png' : '/logo/lightlogo.png'}
+                alt="Kantra Camera"
+                fill
+                className="object-contain"
+                priority
+              />
             </div>
           </div>
         )}
@@ -185,3 +188,5 @@ export default function Sidebar() {
     </aside>
   );
 }
+
+

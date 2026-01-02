@@ -128,11 +128,11 @@ export default function PickupTasksPage() {
         }
         fetchTasks();
       } else {
-        alert('Lỗi khi xác nhận giao máy');
+        alert('Lỗi khi xác nhận nhận máy');
       }
     } catch (error) {
       console.error('Error confirming pickup:', error);
-      alert('Lỗi khi xác nhận giao máy');
+      alert('Lỗi khi xác nhận nhận máy');
     } finally {
       setProcessingTask(null);
     }
@@ -464,15 +464,15 @@ function TaskCard({
               </>
             ) : (
               <>
-                <span className="material-symbols-outlined text-[18px]">token</span>
-                XÁC NHẬN GIAO MÁY
+                <span className="material-symbols-outlined text-[18px]">check_circle</span>
+                XÁC NHẬN NHẬN MÁY
               </>
             )}
           </button>
         ) : (
           <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 font-bold text-xs uppercase tracking-widest">
             <span className="material-symbols-outlined text-[18px]">check_circle</span>
-            Đã bàn giao
+            Đã nhận máy
           </div>
         )}
 

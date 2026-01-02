@@ -60,9 +60,33 @@ export default function BookingDetailsPage({ params }: { params: { id: string } 
     }
   };
 
+  const handleCancel = async () => {
+    if (!booking) return;
+    if (!confirm('Bạn có chắc chắn muốn hủy đơn hàng này?')) return;
+
+    try {
+      const response = await fetch(`/api/bookings/${booking.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ payment_status: 'cancelled' }),
+      });
+
+      if (response.ok) {
+        alert('Đã hủy đơn hàng');
+        fetchBooking();
+      } else {
+        const err = await response.json();
+        alert(`Lỗi: ${err.error}`);
+      }
+    } catch (error) {
+      console.error('Error cancelling booking:', error);
+      alert('Đã có lỗi xảy ra');
+    }
+  };
+
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-full bg-[#111318]">
+      <div className="flex items-center justify-center h-full bg-background text-text-main">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
@@ -78,6 +102,12 @@ export default function BookingDetailsPage({ params }: { params: { id: string } 
 
   const getStatusBadge = () => {
     switch (booking.payment_status) {
+      case 'cancelled':
+        return (
+          <span className="flex items-center justify-center rounded-full bg-slate-500/10 border border-slate-500/20 px-3 py-1">
+            <p className="text-slate-400 text-xs font-bold uppercase">Đã hủy</p>
+          </span>
+        );
       case 'pending':
         return (
           <span className="flex items-center justify-center rounded-full bg-red-500/10 border border-red-500/20 px-3 py-1">
@@ -102,6 +132,7 @@ export default function BookingDetailsPage({ params }: { params: { id: string } 
   };
 
   const getActivityBadge = () => {
+    if (booking.payment_status === 'cancelled') return null;
     if (isReturnCompleted) {
       return (
         <span className="flex items-center justify-center rounded-full bg-slate-500/10 border border-slate-500/20 px-3 py-1">
@@ -118,24 +149,25 @@ export default function BookingDetailsPage({ params }: { params: { id: string } 
     }
     return (
       <span className="flex items-center justify-center rounded-full bg-orange-500/10 border border-orange-500/20 px-3 py-1">
-        <p className="text-orange-400 text-xs font-bold uppercase">Chờ giao</p>
+        <p className="text-orange-400 text-xs font-bold uppercase">Chờ nhận</p>
       </span>
     );
   };
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-[#111318]">
+    <div className="flex h-full flex-col overflow-hidden bg-background">
       {/* Header */}
-      <header className="flex h-16 items-center justify-between border-b border-border-dark bg-[#111318] px-6 shrink-0">
+      <header className="flex h-16 items-center justify-between border-b border-border bg-surface px-6 shrink-0">
         <div className="flex items-center gap-4">
           <button
-            onClick={() => router.back()}
-            className="p-2 hover:bg-[#282e39] rounded text-[#9da6b9] hover:text-white transition-colors"
+            onClick={() => router.push('/calendar')}
+            className="mr-2 p-2 hover:bg-surface-hover rounded text-text-secondary hover:text-text-main transition-colors"
+            title="Về lịch chính"
           >
-            <span className="material-symbols-outlined">arrow_back</span>
+            <span className="material-symbols-outlined">calendar_today</span>
           </button>
           <div className="flex items-center gap-3">
-            <h1 className="text-xl font-bold text-white uppercase">
+            <h1 className="text-xl font-bold text-text-main uppercase">
               Booking {booking.id.slice(0, 8)}
             </h1>
             <div className="flex gap-2">
@@ -145,12 +177,30 @@ export default function BookingDetailsPage({ params }: { params: { id: string } 
           </div>
         </div>
         <div className="flex items-center gap-3">
+          {booking.payment_status !== 'cancelled' && (
+            <>
+              <button
+                onClick={handleCancel}
+                className="flex items-center gap-2 rounded-lg bg-red-500/10 border border-red-500/20 px-4 py-2 text-sm font-bold text-red-500 hover:bg-red-500/20 transition-all"
+              >
+                <span className="material-symbols-outlined text-[20px]">block</span>
+                <span>Hủy đơn</span>
+              </button>
+              <button
+                onClick={() => router.push(`/bookings/${booking.id}/edit`)}
+                className="flex items-center gap-2 rounded-lg bg-surface border border-border px-4 py-2 text-sm font-bold text-text-main shadow-sm hover:bg-surface-hover transition-all"
+              >
+                <span className="material-symbols-outlined text-[20px]">edit</span>
+                <span>Chỉnh sửa</span>
+              </button>
+            </>
+          )}
           <button
-            onClick={() => router.push(`/bookings/${booking.id}/edit`)}
-            className="flex items-center gap-2 rounded-lg bg-[#282e39] border border-border-dark px-4 py-2 text-sm font-bold text-white hover:bg-[#343b49] transition-all"
+            onClick={() => router.push('/calendar')}
+            className="flex items-center gap-2 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-bold text-white shadow-md shadow-emerald-500/20 hover:bg-emerald-600 transition-all"
           >
-            <span className="material-symbols-outlined text-[20px]">edit</span>
-            <span>Chỉnh sửa</span>
+            <span className="material-symbols-outlined text-[20px]">check</span>
+            <span>Xong & Về lịch</span>
           </button>
         </div>
       </header>
@@ -160,22 +210,27 @@ export default function BookingDetailsPage({ params }: { params: { id: string } 
         <div className="max-w-4xl mx-auto space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Customer Info */}
-            <section className="bg-[#1a1f29] rounded-xl border border-border-dark p-6">
-              <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <section className="bg-surface rounded-xl border border-border p-6 shadow-sm">
+              <h2 className="text-lg font-bold text-text-main mb-4 flex items-center gap-2">
                 <span className="material-symbols-outlined text-primary">person</span>
                 Thông tin khách hàng
               </h2>
               <div className="space-y-4">
                 <div>
-                  <label className="text-xs text-[#9da6b9] uppercase tracking-wider font-semibold">Tên khách hàng</label>
-                  <p className="text-white font-medium text-lg">{booking.customer.name}</p>
+                  <label className="text-xs text-text-secondary uppercase tracking-wider font-semibold">Tên khách hàng</label>
+                  <p className="text-text-main font-medium text-lg">{booking.customer.name}</p>
                 </div>
                 <div>
-                  <label className="text-xs text-[#9da6b9] uppercase tracking-wider font-semibold">Số điện thoại</label>
-                  <p className="text-white font-medium text-lg">{booking.customer.phone}</p>
+                  <label className="text-xs text-text-secondary uppercase tracking-wider font-semibold">Số điện thoại</label>
+                  <p className="text-text-main font-medium text-lg">{booking.customer.phone}</p>
+                  {booking.customer.phone_2 && (
+                    <p className="text-text-main font-medium text-lg border-t border-border mt-1 pt-1">
+                      {booking.customer.phone_2}
+                    </p>
+                  )}
                 </div>
                 <div>
-                  <label className="text-xs text-[#9da6b9] uppercase tracking-wider font-semibold mb-2 block">Kênh liên hệ</label>
+                  <label className="text-xs text-text-secondary uppercase tracking-wider font-semibold mb-2 block">Kênh liên hệ</label>
                   <div className="flex flex-wrap gap-2">
                     {booking.customer.platforms?.map((platform) => (
                       <span
@@ -191,28 +246,28 @@ export default function BookingDetailsPage({ params }: { params: { id: string } 
             </section>
 
             {/* Equipment Info */}
-            <section className="bg-[#1a1f29] rounded-xl border border-border-dark p-6">
-              <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <section className="bg-surface rounded-xl border border-border p-6 shadow-sm">
+              <h2 className="text-lg font-bold text-text-main mb-4 flex items-center gap-2">
                 <span className="material-symbols-outlined text-primary">camera</span>
                 Thiết bị thuê
               </h2>
               <div className="space-y-4">
                 {booking.booking_items?.map((item, index) => (
-                  <div key={index} className="flex justify-between items-center p-3 rounded-lg bg-[#111318] border border-border-dark">
+                  <div key={index} className="flex justify-between items-center p-3 rounded-lg bg-background border border-border">
                     <div>
-                      <p className="text-white font-medium">{item.camera.name}</p>
-                      <p className="text-xs text-[#9da6b9]">Số lượng: {item.quantity}</p>
+                      <p className="text-text-main font-medium">{item.camera.name}</p>
+                      <p className="text-xs text-text-secondary">Số lượng: {item.quantity}</p>
                     </div>
-                    <p className="text-white font-bold">{formatCurrency(item.subtotal)}</p>
+                    <p className="text-text-main font-bold">{formatCurrency(item.subtotal)}</p>
                   </div>
                 ))}
 
                 {booking.booking_accessories && booking.booking_accessories.length > 0 && (
                   <div className="pt-2">
-                    <label className="text-xs text-[#9da6b9] uppercase tracking-wider font-semibold mb-2 block">Phụ kiện kèm theo</label>
+                    <label className="text-xs text-text-secondary uppercase tracking-wider font-semibold mb-2 block">Phụ kiện kèm theo</label>
                     <div className="flex flex-wrap gap-2">
                       {booking.booking_accessories.map((acc, index) => (
-                        <span key={index} className="px-2 py-1 rounded bg-[#111318] border border-border-dark text-white text-xs">
+                        <span key={index} className="px-2 py-1 rounded bg-background border border-border text-text-main text-xs">
                           {acc.accessory_type === 'tripod' ? 'Tripod' : acc.accessory_type === 'reflector' ? 'Hắt sáng' : acc.name}
                         </span>
                       ))}
@@ -225,46 +280,46 @@ export default function BookingDetailsPage({ params }: { params: { id: string } 
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Schedule */}
-            <section className="bg-[#1a1f29] rounded-xl border border-border-dark p-6">
-              <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <section className="bg-surface rounded-xl border border-border p-6 shadow-sm">
+              <h2 className="text-lg font-bold text-text-main mb-4 flex items-center gap-2">
                 <span className="material-symbols-outlined text-primary">schedule</span>
                 Lịch trình
               </h2>
               <div className="space-y-4">
-                <div className={clsx('p-4 rounded-lg border', isPickupCompleted ? 'bg-emerald-500/5 border-emerald-500/20' : 'bg-[#111318] border-border-dark')}>
+                <div className={clsx('p-4 rounded-lg border', isPickupCompleted ? 'bg-emerald-500/5 border-emerald-500/20' : 'bg-background border-border')}>
                   <div className="flex justify-between mb-2">
-                    <span className="text-xs font-bold uppercase text-[#9da6b9]">Nhận máy</span>
-                    {isPickupCompleted && <span className="text-xs font-bold text-emerald-500">ĐÃ GIAO</span>}
+                    <span className="text-xs font-bold uppercase text-text-secondary">Nhận máy</span>
+                    {isPickupCompleted && <span className="text-xs font-bold text-emerald-500">ĐÃ NHẬN</span>}
                   </div>
-                  <p className="text-white font-bold text-lg">
+                  <p className="text-text-main font-bold text-lg">
                     {format(new Date(booking.pickup_time), 'HH:mm, dd MMMM yyyy', { locale: vi })}
                   </p>
-                  {pickupTask?.location && <p className="text-sm text-[#9da6b9] mt-1">{pickupTask.location}</p>}
+                  {pickupTask?.location && <p className="text-sm text-text-secondary mt-1">{pickupTask.location}</p>}
                 </div>
 
-                <div className={clsx('p-4 rounded-lg border', isReturnCompleted ? 'bg-emerald-500/5 border-emerald-500/20' : 'bg-[#111318] border-border-dark')}>
+                <div className={clsx('p-4 rounded-lg border', isReturnCompleted ? 'bg-emerald-500/5 border-emerald-500/20' : 'bg-background border-border')}>
                   <div className="flex justify-between mb-2">
-                    <span className="text-xs font-bold uppercase text-[#9da6b9]">Trả máy</span>
+                    <span className="text-xs font-bold uppercase text-text-secondary">Trả máy</span>
                     {isReturnCompleted && <span className="text-xs font-bold text-emerald-500">ĐÃ THU</span>}
                   </div>
-                  <p className="text-white font-bold text-lg">
+                  <p className="text-text-main font-bold text-lg">
                     {format(new Date(booking.return_time), 'HH:mm, dd MMMM yyyy', { locale: vi })}
                   </p>
-                  {returnTask?.location && <p className="text-sm text-[#9da6b9] mt-1">{returnTask.location}</p>}
+                  {returnTask?.location && <p className="text-sm text-text-secondary mt-1">{returnTask.location}</p>}
                 </div>
               </div>
             </section>
 
             {/* Payment Summary */}
-            <section className="bg-[#1a1f29] rounded-xl border border-border-dark p-6 flex flex-col">
-              <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <section className="bg-surface rounded-xl border border-border p-6 shadow-sm flex flex-col">
+              <h2 className="text-lg font-bold text-text-main mb-4 flex items-center gap-2">
                 <span className="material-symbols-outlined text-primary">payments</span>
                 Thanh toán
               </h2>
               <div className="space-y-3 flex-1">
-                <div className="flex justify-between text-[#9da6b9]">
+                <div className="flex justify-between text-text-secondary">
                   <span>Phí thuê gốc:</span>
-                  <span className="text-white">{formatCurrency(booking.total_rental_fee)}</span>
+                  <span className="text-text-main">{formatCurrency(booking.total_rental_fee)}</span>
                 </div>
                 {booking.discount_percent > 0 && (
                   <div className="flex justify-between text-red-400">
@@ -272,14 +327,14 @@ export default function BookingDetailsPage({ params }: { params: { id: string } 
                     <span>-{formatCurrency(booking.total_rental_fee - booking.final_fee)}</span>
                   </div>
                 )}
-                <div className="flex justify-between font-bold text-white pt-2 border-t border-border-dark">
+                <div className="flex justify-between font-bold text-text-main pt-2 border-t border-border">
                   <span>Thành tiền:</span>
                   <span>{formatCurrency(booking.final_fee)}</span>
                 </div>
                 {totalDeliveryFee > 0 && (
-                  <div className="flex justify-between text-[#9da6b9]">
+                  <div className="flex justify-between text-text-secondary">
                     <span>Phí giao:</span>
-                    <span className="text-white">{formatCurrency(totalDeliveryFee)}</span>
+                    <span className="text-text-main">{formatCurrency(totalDeliveryFee)}</span>
                   </div>
                 )}
                 {booking.late_fee > 0 && (
@@ -291,13 +346,13 @@ export default function BookingDetailsPage({ params }: { params: { id: string } 
               </div>
               <div className="mt-6 pt-4 border-t border-primary/20 bg-primary/5 -mx-6 -mb-6 p-6 rounded-b-xl">
                 <div className="flex justify-between items-center">
-                  <span className="text-white font-bold">TỔNG CỘNG:</span>
+                  <span className="text-text-main font-bold">TỔNG CỘNG:</span>
                   <span className="text-2xl font-bold text-primary">
                     {formatCurrency(booking.final_fee + totalDeliveryFee + booking.late_fee)}
                   </span>
                 </div>
-                <div className="flex justify-between items-center mt-2 pt-2 border-t border-border-dark text-sm">
-                  <span className="text-[#9da6b9]">ĐÃ CỌC:</span>
+                <div className="flex justify-between items-center mt-2 pt-2 border-t border-border text-sm">
+                  <span className="text-text-secondary">ĐÃ CỌC:</span>
                   <span className="text-yellow-500 font-bold">
                     {booking.deposit_type === 'cccd' ? 'CCCD' : formatCurrency(booking.deposit_amount)}
                   </span>

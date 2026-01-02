@@ -131,10 +131,10 @@ export default function BookingFormStepD({
   };
 
   return (
-    <section className="bg-surface-dark rounded-xl border border-border-dark overflow-hidden">
-      <div className="p-4 border-b border-border-dark bg-input-dark/50 flex justify-between items-center">
-        <h3 className="text-base font-bold text-white flex items-center gap-2">
-          <span className="flex items-center justify-center size-6 rounded bg-surface-dark border border-border-dark text-xs text-white">
+    <section className="bg-surface rounded-xl border border-border overflow-hidden shadow-sm">
+      <div className="p-4 border-b border-border bg-surface/50 flex justify-between items-center">
+        <h3 className="text-base font-bold text-text-main flex items-center gap-2">
+          <span className="flex items-center justify-center size-6 rounded bg-surface border border-border text-xs text-text-main">
             D
           </span>
           Thanh toán & Giao máy
@@ -153,8 +153,8 @@ export default function BookingFormStepD({
               className={clsx(
                 'p-3 rounded-lg border text-sm font-medium transition-all',
                 depositType === 'none'
-                  ? 'border-red-500 bg-red-500/10 text-red-400 ring-1 ring-red-500'
-                  : 'border-border-dark bg-input-dark text-text-secondary hover:border-[#3b4354] hover:text-white'
+                  ? 'border-red-500 bg-red-500/10 text-red-500 ring-1 ring-red-500'
+                  : 'border-border bg-surface text-text-secondary hover:border-primary/40 hover:text-text-main'
               )}
             >
               Chưa cọc
@@ -164,8 +164,8 @@ export default function BookingFormStepD({
               className={clsx(
                 'p-3 rounded-lg border text-sm font-medium transition-all',
                 depositType === 'default'
-                  ? 'border-yellow-500 bg-yellow-500/10 text-yellow-400 ring-1 ring-yellow-500'
-                  : 'border-border-dark bg-input-dark text-text-secondary hover:border-[#3b4354] hover:text-white'
+                  ? 'border-yellow-500 bg-yellow-500/10 text-yellow-600 ring-1 ring-yellow-500'
+                  : 'border-border bg-surface text-text-secondary hover:border-primary/40 hover:text-text-main'
               )}
             >
               Cọc {settings.defaultDeposit.toLocaleString('vi-VN')}đ
@@ -175,8 +175,8 @@ export default function BookingFormStepD({
               className={clsx(
                 'p-3 rounded-lg border text-sm font-medium transition-all',
                 depositType === 'custom'
-                  ? 'border-yellow-500 bg-yellow-500/10 text-yellow-400 ring-1 ring-yellow-500'
-                  : 'border-border-dark bg-input-dark text-text-secondary hover:border-[#3b4354] hover:text-white'
+                  ? 'border-yellow-500 bg-yellow-500/10 text-yellow-600 ring-1 ring-yellow-500'
+                  : 'border-border bg-surface text-text-secondary hover:border-primary/40 hover:text-text-main'
               )}
             >
               Cọc khác
@@ -219,9 +219,9 @@ export default function BookingFormStepD({
                 onChange={(e) =>
                   handleDepositTypeChange(e.target.checked ? 'cccd' : 'none')
                 }
-                className="rounded border-[#3b4354] bg-[#1e232e] text-primary focus:ring-0 focus:ring-offset-0"
+                className="rounded border-border bg-surface text-primary focus:ring-0 focus:ring-offset-0"
               />
-              <span className="text-sm text-white">Cọc CCCD vật lý</span>
+              <span className="text-sm text-text-main">Cọc CCCD vật lý</span>
             </label>
 
             <label className="flex items-center gap-2 cursor-pointer">
@@ -229,9 +229,9 @@ export default function BookingFormStepD({
                 type="checkbox"
                 checked={hasVNeID}
                 onChange={(e) => onUpdate({ hasVNeID: e.target.checked })}
-                className="rounded border-[#3b4354] bg-[#1e232e] text-primary focus:ring-0 focus:ring-offset-0"
+                className="rounded border-border bg-surface text-primary focus:ring-0 focus:ring-offset-0"
               />
-              <span className="text-sm text-white">Khách có VNeID (không cần giữ CCCD)</span>
+              <span className="text-sm text-text-main">Khách có VNeID (không cần giữ CCCD)</span>
             </label>
           </div>
 
@@ -239,7 +239,7 @@ export default function BookingFormStepD({
             <div className="mt-2 p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
               <div className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-yellow-500 text-[18px]">info</span>
-                <span className="text-sm text-yellow-400">
+                <span className="text-sm text-yellow-600 font-medium">
                   Trạng thái: {depositType === 'cccd' ? 'Cọc CCCD' : 'Đã cọc'} ({depositAmount > 0 ? depositAmount.toLocaleString('vi-VN') + 'đ' : 'CCCD'})
                 </span>
               </div>
@@ -269,7 +269,7 @@ export default function BookingFormStepD({
         </div>
 
         {/* Discount Section */}
-        <div className="flex flex-col gap-4 pt-4 border-t border-border-dark">
+        <div className="flex flex-col gap-4 pt-4 border-t border-border">
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium text-text-secondary">Chiết khấu</span>
             <label className="flex items-center gap-2 cursor-pointer">
@@ -277,9 +277,9 @@ export default function BookingFormStepD({
                 type="checkbox"
                 checked={hasDiscount}
                 onChange={(e) => onUpdate({ hasDiscount: e.target.checked })}
-                className="rounded border-[#3b4354] bg-[#1e232e] text-primary focus:ring-0 focus:ring-offset-0"
+                className="rounded border-border bg-surface text-primary focus:ring-0 focus:ring-offset-0"
               />
-              <span className="text-sm text-white">Có chiết khấu</span>
+              <span className="text-sm text-text-main">Có chiết khấu</span>
             </label>
           </div>
 
@@ -295,7 +295,7 @@ export default function BookingFormStepD({
                   max="100"
                   value={discountPercent.toString()}
                   onChange={(e) => onUpdate({ discountPercent: parseInt(e.target.value) || 0 })}
-                  className="w-full bg-input-dark border border-border-dark rounded-lg py-2 px-3 text-white focus:ring-1 focus:ring-primary focus:border-primary placeholder:text-text-secondary/50"
+                  className="w-full bg-surface border border-border rounded-lg py-2 px-3 text-text-main focus:ring-1 focus:ring-primary focus:border-primary placeholder:text-text-secondary/50"
                   placeholder="Nhập %"
                 />
               </div>
@@ -307,7 +307,7 @@ export default function BookingFormStepD({
                 <select
                   value={discountReason}
                   onChange={(e) => onUpdate({ discountReason: e.target.value })}
-                  className="w-full bg-input-dark border border-border-dark rounded-lg py-2 px-3 text-white focus:ring-1 focus:ring-primary focus:border-primary"
+                  className="w-full bg-surface border border-border rounded-lg py-2 px-3 text-text-main focus:ring-1 focus:ring-primary focus:border-primary"
                 >
                   <option value="">Chọn lý do</option>
                   {discountReasons.map((reason) => (
@@ -322,14 +322,14 @@ export default function BookingFormStepD({
         </div>
 
         {/* Employee Selection */}
-        <div className="flex flex-col gap-2 pt-4 border-t border-border-dark">
+        <div className="flex flex-col gap-2 pt-4 border-t border-border">
           <label className="text-sm font-medium text-text-secondary">
             Nhân viên lên lịch <span className="text-red-500">*</span>
           </label>
           <select
             value={createdBy}
             onChange={(e) => onUpdate({ createdBy: e.target.value })}
-            className="w-full bg-input-dark border border-border-dark rounded-lg py-2 px-3 text-white focus:ring-1 focus:ring-primary focus:border-primary"
+            className="w-full bg-surface border border-border rounded-lg py-2 px-3 text-text-main focus:ring-1 focus:ring-primary focus:border-primary"
           >
             <option value="">Chọn nhân viên</option>
             {employees.map((emp) => (
@@ -347,10 +347,10 @@ export default function BookingFormStepD({
         </div>
 
         {/* Summary */}
-        <div className="p-4 rounded-lg bg-[#1e232e] border border-border-dark space-y-3">
+        <div className="p-4 rounded-lg bg-surface border border-border space-y-3 shadow-inner">
           <div className="flex items-center justify-between text-sm">
             <span className="text-text-secondary">Phí thuê gốc (S):</span>
-            <span className="text-white font-medium">
+            <span className="text-text-main font-medium">
               {totalRentalFee.toLocaleString('vi-VN')}đ
             </span>
           </div>
@@ -363,9 +363,9 @@ export default function BookingFormStepD({
                   -{(totalRentalFee - finalFee).toLocaleString('vi-VN')}đ
                 </span>
               </div>
-              <div className="flex items-center justify-between text-sm pt-2 border-t border-border-dark">
+              <div className="flex items-center justify-between text-sm pt-2 border-t border-border">
                 <span className="text-text-secondary">Phí sau chiết khấu (P):</span>
-                <span className="text-white font-bold">
+                <span className="text-text-main font-bold">
                   {finalFee.toLocaleString('vi-VN')}đ
                 </span>
               </div>
@@ -375,14 +375,14 @@ export default function BookingFormStepD({
           {deliveryFee > 0 && (
             <div className="flex items-center justify-between text-sm">
               <span className="text-text-secondary">Phí giao máy:</span>
-              <span className="text-white font-medium">
+              <span className="text-text-main font-medium">
                 {deliveryFee.toLocaleString('vi-VN')}đ
               </span>
             </div>
           )}
 
-          <div className="flex items-center justify-between text-base pt-2 border-t border-border-dark">
-            <span className="text-white font-bold">Tổng thanh toán:</span>
+          <div className="flex items-center justify-between text-base pt-2 border-t border-border">
+            <span className="text-text-main font-bold">Tổng thanh toán:</span>
             <span className="text-primary font-bold text-lg">
               {(finalFee + deliveryFee).toLocaleString('vi-VN')}đ
             </span>

@@ -62,10 +62,10 @@ export default function BookingFormStepB({
   };
 
   return (
-    <section className="bg-surface-dark rounded-xl border border-border-dark overflow-hidden">
-      <div className="p-4 border-b border-border-dark bg-input-dark/50 flex justify-between items-center">
-        <h3 className="text-base font-bold text-white flex items-center gap-2">
-          <span className="flex items-center justify-center size-6 rounded bg-surface-dark border border-border-dark text-xs text-white">
+    <section className="bg-surface rounded-xl border border-border overflow-hidden shadow-sm">
+      <div className="p-4 border-b border-border bg-surface/50 flex justify-between items-center">
+        <h3 className="text-base font-bold text-text-main flex items-center gap-2">
+          <span className="flex items-center justify-center size-6 rounded bg-surface border border-border text-xs text-text-main">
             B
           </span>
           Thời gian thuê
@@ -82,7 +82,7 @@ export default function BookingFormStepB({
               type="datetime-local"
               value={formatDateTimeLocal(pickupTime)}
               onChange={(e) => handleDateTimeChange('pickupTime', e.target.value)}
-              className="w-full bg-input-dark border border-border-dark rounded-lg py-3 px-4 text-white focus:ring-1 focus:ring-primary focus:border-primary placeholder:text-text-secondary/50 [color-scheme:dark]"
+              className="w-full bg-surface border border-border rounded-lg py-3 px-4 text-text-main focus:ring-1 focus:ring-primary focus:border-primary placeholder:text-text-secondary/50"
             />
             {errors.pickupTime && (
               <p className="text-xs text-red-400 flex items-center gap-1">
@@ -100,7 +100,7 @@ export default function BookingFormStepB({
               type="datetime-local"
               value={formatDateTimeLocal(returnTime)}
               onChange={(e) => handleDateTimeChange('returnTime', e.target.value)}
-              className="w-full bg-input-dark border border-border-dark rounded-lg py-3 px-4 text-white focus:ring-1 focus:ring-primary focus:border-primary placeholder:text-text-secondary/50 [color-scheme:dark]"
+              className="w-full bg-surface border border-border rounded-lg py-3 px-4 text-text-main focus:ring-1 focus:ring-primary focus:border-primary placeholder:text-text-secondary/50"
             />
             {errors.returnTime && (
               <p className="text-xs text-red-400 flex items-center gap-1">
@@ -114,7 +114,7 @@ export default function BookingFormStepB({
         {rentalDuration && (
           <div className="flex items-center justify-between p-3 rounded-lg bg-primary/5 border border-primary/10">
             <span className="text-sm text-text-secondary">Thời gian thuê dự kiến:</span>
-            <span className="text-sm font-bold text-white">
+            <span className="text-sm font-bold text-text-main">
               {rentalDuration.days > 0 && `${rentalDuration.days} ngày `}
               {rentalDuration.hours} giờ
             </span>
@@ -124,5 +124,7 @@ export default function BookingFormStepB({
     </section>
   );
 }
+
+
 
 

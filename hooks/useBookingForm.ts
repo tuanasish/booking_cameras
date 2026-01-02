@@ -5,6 +5,7 @@ export interface BookingFormData {
   // Step A: Customer Info
   customerName: string;
   customerPhone: string;
+  customerPhone2: string;
   platforms: string[]; // Max 2
 
   // Step B: Time
@@ -41,6 +42,7 @@ export function useBookingForm() {
   const [formData, setFormData] = useState<BookingFormData>({
     customerName: '',
     customerPhone: '',
+    customerPhone2: '',
     platforms: [],
     pickupTime: '',
     returnTime: '',
@@ -162,6 +164,7 @@ export function useBookingForm() {
         setExistingCustomer(data.data[0]);
         updateFormData({
           customerName: data.data[0].name,
+          customerPhone2: data.data[0].phone_2 || '',
           platforms: data.data[0].platforms || [],
         });
         return data.data[0];

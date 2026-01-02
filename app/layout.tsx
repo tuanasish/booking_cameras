@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./fonts.css";
 import { AuthProvider } from "@/lib/auth/context";
 import { ThemeProvider } from "@/lib/context/ThemeContext";
 
 export const metadata: Metadata = {
   title: "Kantra Camera Booking",
   description: "Hệ thống quản lý booking cho thuê máy ảnh",
+  icons: {
+    icon: '/favicon.png',
+  },
 };
 
 export default function RootLayout({

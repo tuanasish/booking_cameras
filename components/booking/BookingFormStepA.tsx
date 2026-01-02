@@ -7,12 +7,14 @@ import clsx from 'clsx';
 interface BookingFormStepAProps {
   customerName: string;
   customerPhone: string;
+  customerPhone2: string;
   platforms: string[];
   errors: Record<string, string>;
-  existingCustomer: { name: string; platforms: string[] } | null;
+  existingCustomer: { name: string; phone_2?: string | null; platforms: string[] } | null;
   onUpdate: (updates: {
     customerName?: string;
     customerPhone?: string;
+    customerPhone2?: string;
     platforms?: string[];
   }) => void;
   onSearchCustomer: (phone: string) => Promise<void>;
@@ -29,6 +31,7 @@ const platformOptions = [
 export default function BookingFormStepA({
   customerName,
   customerPhone,
+  customerPhone2,
   platforms,
   errors,
   existingCustomer,
@@ -53,9 +56,9 @@ export default function BookingFormStepA({
   };
 
   return (
-    <section className="bg-surface-dark rounded-xl border border-border-dark overflow-hidden">
-      <div className="p-4 border-b border-border-dark bg-input-dark/50 flex justify-between items-center">
-        <h3 className="text-base font-bold text-white flex items-center gap-2">
+    <section className="bg-surface rounded-xl border border-border overflow-hidden shadow-sm">
+      <div className="p-4 border-b border-border bg-surface/50 flex justify-between items-center">
+        <h3 className="text-base font-bold text-text-main flex items-center gap-2">
           <span className="flex items-center justify-center size-6 rounded bg-primary text-xs text-white">
             A
           </span>
@@ -69,9 +72,16 @@ export default function BookingFormStepA({
         {existingCustomer && (
           <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-2">
             <span className="material-symbols-outlined text-emerald-500">check_circle</span>
-            <span className="text-sm text-emerald-500">
-              Đã tìm thấy khách hàng: {existingCustomer.name}
-            </span>
+            <div className="flex flex-col">
+              <span className="text-sm font-bold text-emerald-500">
+                Đã tìm thấy khách hàng: {existingCustomer.name}
+              </span>
+              {(existingCustomer.phone_2) && (
+                <span className="text-xs text-emerald-500/80">
+                  SĐT 2: {existingCustomer.phone_2}
+                </span>
+              )}
+            </div>
           </div>
         )}
 
@@ -85,15 +95,26 @@ export default function BookingFormStepA({
             placeholder="Nhập tên khách"
           />
 
-          <Input
-            label="Số điện thoại *"
-            icon="call"
-            type="tel"
-            value={customerPhone}
-            onChange={(e) => onUpdate({ customerPhone: e.target.value })}
-            error={errors.customerPhone}
-            placeholder="09xx xxx xxx"
-          />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Input
+              label="Số điện thoại 1 *"
+              icon="call"
+              type="tel"
+              value={customerPhone}
+              onChange={(e) => onUpdate({ customerPhone: e.target.value })}
+              error={errors.customerPhone}
+              placeholder="09xx xxx xxx"
+            />
+            <Input
+              label="Số điện thoại 2"
+              icon="call"
+              type="tel"
+              value={customerPhone2}
+              onChange={(e) => onUpdate({ customerPhone2: e.target.value })}
+              error={errors.customerPhone2}
+              placeholder="09xx xxx xxx (tùy chọn)"
+            />
+          </div>
         </div>
 
         <div className="flex flex-col gap-2">
@@ -128,7 +149,7 @@ export default function BookingFormStepA({
                       'flex items-center gap-2 px-4 py-2 rounded-lg border transition-all',
                       isSelected
                         ? 'border-primary bg-primary/10 text-primary ring-1 ring-primary'
-                        : 'border-border dark:border-border-dark bg-input dark:bg-input-dark text-text-secondary hover:bg-slate-100 dark:hover:bg-slate-800'
+                        : 'border-border bg-surface text-text-secondary hover:bg-surface-hover transition-colors'
                     )}
                   >
                     <span className="material-symbols-outlined text-[18px]">
@@ -148,5 +169,7 @@ export default function BookingFormStepA({
     </section>
   );
 }
+
+
 
 

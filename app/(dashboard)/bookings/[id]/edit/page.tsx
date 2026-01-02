@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useBookingForm } from '@/hooks/useBookingForm';
 import { Camera, Employee } from '@/lib/types/database';
 import BookingFormStepper from '@/components/booking/BookingFormStepper';
+import { calculateRentalPrice } from '@/lib/utils/booking';
 
 export default function EditBookingPage({ params }: { params: { id: string } }) {
     const router = useRouter();
@@ -22,10 +23,42 @@ export default function EditBookingPage({ params }: { params: { id: string } }) 
 
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
+    const [settings, setSettings] = useState<any>(null);
 
     useEffect(() => {
         fetchBookingAndPopulateForm();
+        fetchSettings();
     }, [params.id]);
+
+    const fetchSettings = async () => {
+        try {
+            const response = await fetch('/api/settings');
+            const data = await response.json();
+            if (data.data && data.data.length > 0) {
+                setSettings(data.data[0]);
+            }
+        } catch (error) {
+            console.error('Error fetching settings:', error);
+        }
+    };
+
+    useEffect(() => {
+        // Calculate total rental fee when cameras or time changes
+        if (formData.selectedCameras.length > 0 && formData.pickupTime && formData.returnTime) {
+            const total = formData.selectedCameras.reduce((sum, item) => {
+                const price = calculateRentalPrice(
+                    item.camera,
+                    formData.pickupTime,
+                    formData.returnTime,
+                    settings?.late_fee_divisor || 5
+                );
+                return sum + price * item.quantity;
+            }, 0);
+            if (total !== formData.totalRentalFee) {
+                updateFormData({ totalRentalFee: total });
+            }
+        }
+    }, [formData.selectedCameras, formData.pickupTime, formData.returnTime, settings]);
 
     const fetchBookingAndPopulateForm = async () => {
         try {
@@ -39,6 +72,7 @@ export default function EditBookingPage({ params }: { params: { id: string } }) 
                 updateFormData({
                     customerName: b.customer.name,
                     customerPhone: b.customer.phone,
+                    customerPhone2: b.customer.phone_2 || '',
                     platforms: b.customer.platforms || [],
                     pickupTime: new Date(b.pickup_time).toISOString().slice(0, 16),
                     returnTime: new Date(b.return_time).toISOString().slice(0, 16),
@@ -120,22 +154,22 @@ export default function EditBookingPage({ params }: { params: { id: string } }) 
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center h-full bg-[#111318]">
+            <div className="flex items-center justify-center h-full bg-background text-text-main">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
             </div>
         );
     }
 
     return (
-        <div className="flex h-full flex-col overflow-hidden bg-[#111318]">
-            <header className="flex h-16 items-center border-b border-border-dark bg-[#111318] px-6 shrink-0">
+        <div className="flex h-full flex-col overflow-hidden bg-background">
+            <header className="flex h-16 items-center border-b border-border bg-surface px-6 shrink-0">
                 <button
                     onClick={() => router.back()}
-                    className="mr-4 p-2 hover:bg-[#282e39] rounded text-[#9da6b9] hover:text-white transition-colors"
+                    className="mr-4 p-2 hover:bg-surface-hover rounded text-text-secondary hover:text-text-main transition-colors"
                 >
                     <span className="material-symbols-outlined">arrow_back</span>
                 </button>
-                <h1 className="text-xl font-bold text-white uppercase">Chỉnh sửa Booking</h1>
+                <h1 className="text-xl font-bold text-text-main uppercase">Chỉnh sửa Booking</h1>
             </header>
 
             <div className="flex-1 overflow-y-auto p-6">

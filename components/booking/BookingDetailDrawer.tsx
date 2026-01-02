@@ -110,7 +110,7 @@ export default function BookingDetailDrawer({
     }
     return (
       <span className="flex items-center justify-center rounded-full bg-orange-500/10 border border-orange-500/20 px-2.5 py-0.5">
-        <p className="text-orange-400 text-[10px] sm:text-xs font-semibold uppercase tracking-wide">Chờ giao</p>
+        <p className="text-orange-400 text-[10px] sm:text-xs font-semibold uppercase tracking-wide">Chờ nhận</p>
       </span>
     );
   };
@@ -181,7 +181,7 @@ export default function BookingDetailDrawer({
               {isPickupCompleted ? 'check_circle' : 'inventory_2'}
             </span>
             <span className="text-[10px] font-bold uppercase tracking-widest leading-none">
-              {isPickupCompleted ? 'Đã giao' : 'Bàn giao'}
+              {isPickupCompleted ? 'Đã nhận' : 'Bàn giao'}
             </span>
           </button>
 
@@ -223,7 +223,14 @@ export default function BookingDetailDrawer({
                 </div>
                 <div>
                   <h4 className="text-text-main font-bold sm:text-lg leading-none">{booking.customer.name}</h4>
-                  <p className="text-sm text-text-secondary font-medium mt-1.5">{booking.customer.phone}</p>
+                  <p className="text-sm text-text-secondary font-medium mt-1.5">
+                    {booking.customer.phone}
+                    {booking.customer.phone_2 && (
+                      <span className="block mt-0.5 pt-0.5 border-t border-border/50">
+                        {booking.customer.phone_2}
+                      </span>
+                    )}
+                  </p>
                 </div>
               </div>
               <div className="flex gap-1.5">
@@ -392,10 +399,16 @@ export default function BookingDetailDrawer({
         <div className="sticky bottom-0 bg-surface/80 backdrop-blur-xl border-t border-border px-4 sm:px-6 py-4 flex gap-3 shadow-[0_-10px_40px_rgba(0,0,0,0.1)]">
           <button
             onClick={() => onCancel?.(booking.id)}
-            className="flex-1 flex items-center justify-center gap-2 py-3.5 sm:py-4 rounded-xl border border-red-500/20 text-red-500 font-bold text-[11px] uppercase tracking-widest hover:bg-red-500/5 transition-all active:scale-95"
+            disabled={booking.payment_status === 'cancelled'}
+            className={clsx(
+              "flex-1 flex items-center justify-center gap-2 py-3.5 sm:py-4 rounded-xl border font-bold text-[11px] uppercase tracking-widest transition-all active:scale-95",
+              booking.payment_status === 'cancelled'
+                ? "bg-slate-500/10 border-slate-500/20 text-slate-400 cursor-not-allowed"
+                : "border-red-500/20 text-red-500 hover:bg-red-500/5"
+            )}
           >
             <span className="material-symbols-outlined text-[20px]">block</span>
-            <span className="hidden xs:inline">Hủy đơn</span>
+            <span className="hidden xs:inline">{booking.payment_status === 'cancelled' ? 'Đã hủy' : 'Hủy đơn'}</span>
           </button>
           <button
             onClick={() => onEdit?.(booking)}
@@ -409,3 +422,5 @@ export default function BookingDetailDrawer({
     </div>
   );
 }
+
+

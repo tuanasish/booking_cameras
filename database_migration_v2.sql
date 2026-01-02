@@ -19,3 +19,5 @@ ADD COLUMN IF NOT EXISTS has_vneid BOOLEAN DEFAULT false;
 
 
 
+
+

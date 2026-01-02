@@ -6,6 +6,8 @@ import KantraCalendar from '@/components/calendar-v2/KantraCalendar';
 import BookingDetailDrawer from '@/components/booking/BookingDetailDrawer';
 import { Camera, Booking } from '@/lib/types/database';
 import { format } from 'date-fns';
+import Image from 'next/image';
+import { useTheme } from '@/lib/context/ThemeContext';
 
 export default function CalendarPage() {
   const router = useRouter();
@@ -14,6 +16,7 @@ export default function CalendarPage() {
   const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedBooking, setSelectedBooking] = useState<any | null>(null);
+  const { theme } = useTheme();
 
   useEffect(() => {
     fetchData();
@@ -72,14 +75,21 @@ export default function CalendarPage() {
 
     try {
       const response = await fetch(`/api/bookings/${bookingId}`, {
-        method: 'DELETE',
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ payment_status: 'cancelled' }),
       });
       if (response.ok) {
+        alert('Đã hủy booking');
         fetchData();
         setSelectedBooking(null);
+      } else {
+        const err = await response.json();
+        alert(`Lỗi: ${err.error}`);
       }
     } catch (error) {
       console.error('Error canceling booking:', error);
+      alert('Đã có lỗi xảy ra');
     }
   };
 
@@ -117,12 +127,7 @@ export default function CalendarPage() {
     <div className="flex h-full flex-col overflow-hidden bg-background font-sans">
       {/* Header */}
       <header className="flex h-14 sm:h-16 items-center justify-between border-b border-border bg-surface px-4 sm:px-6 shrink-0 shadow-sm z-30">
-        <div className="flex items-center gap-2 sm:gap-4">
-          <div className="size-7 sm:size-8 flex items-center justify-center bg-primary rounded-lg text-white shadow-lg shadow-primary/30">
-            <span className="material-symbols-outlined text-lg sm:text-xl">photo_camera</span>
-          </div>
-          <h2 className="text-text-main text-sm sm:text-lg font-bold leading-tight tracking-tight">Kantra</h2>
-        </div>
+        <h1 className="text-xl font-bold text-text-main">Lịch Booking</h1>
         <div className="flex items-center gap-2 sm:gap-3">
           <button
             onClick={() => router.push('/bookings/new')}

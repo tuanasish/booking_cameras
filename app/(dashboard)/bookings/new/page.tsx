@@ -28,17 +28,39 @@ export default function NewBookingPage() {
   const [loading, setLoading] = useState(false);
   const [availableCameras, setAvailableCameras] = useState<any[]>([]);
   const [submitting, setSubmitting] = useState(false);
+  const [settings, setSettings] = useState<any>(null);
+
+  useEffect(() => {
+    fetchSettings();
+  }, []);
+
+  const fetchSettings = async () => {
+    try {
+      const response = await fetch('/api/settings');
+      const data = await response.json();
+      if (data.data && data.data.length > 0) {
+        setSettings(data.data[0]);
+      }
+    } catch (error) {
+      console.error('Error fetching settings:', error);
+    }
+  };
 
   useEffect(() => {
     // Calculate total rental fee when cameras or time changes
     if (formData.selectedCameras.length > 0 && formData.pickupTime && formData.returnTime) {
       const total = formData.selectedCameras.reduce((sum, item) => {
-        const price = calculateRentalPrice(item.camera, formData.pickupTime, formData.returnTime);
+        const price = calculateRentalPrice(
+          item.camera,
+          formData.pickupTime,
+          formData.returnTime,
+          settings?.late_fee_divisor || 5
+        );
         return sum + price * item.quantity;
       }, 0);
       updateFormData({ totalRentalFee: total });
     }
-  }, [formData.selectedCameras, formData.pickupTime, formData.returnTime]);
+  }, [formData.selectedCameras, formData.pickupTime, formData.returnTime, settings]);
 
   const checkAvailability = async (pickupTime: string, returnTime: string) => {
     if (!pickupTime || !returnTime) return;
@@ -123,13 +145,15 @@ export default function NewBookingPage() {
             unit_price: calculateRentalPrice(
               item.camera,
               formData.pickupTime,
-              formData.returnTime
+              formData.returnTime,
+              settings?.late_fee_divisor || 5
             ),
             subtotal:
               calculateRentalPrice(
                 item.camera,
                 formData.pickupTime,
-                formData.returnTime
+                formData.returnTime,
+                settings?.late_fee_divisor || 5
               ) * item.quantity,
           })),
           booking_accessories: [
@@ -182,17 +206,17 @@ export default function NewBookingPage() {
   };
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-[#111318]">
+    <div className="flex h-full flex-col overflow-hidden bg-background">
       {/* Header */}
-      <header className="flex h-16 items-center justify-between border-b border-border-dark bg-[#111318] px-6 shrink-0">
+      <header className="flex h-16 items-center justify-between border-b border-border bg-surface px-6 shrink-0">
         <div className="flex items-center gap-4">
           <button
             onClick={() => router.back()}
-            className="p-2 hover:bg-[#282e39] rounded text-[#9da6b9] hover:text-white transition-colors"
+            className="p-2 hover:bg-surface-hover rounded-xl text-text-secondary hover:text-text-main transition-all active:scale-95"
           >
             <span className="material-symbols-outlined">arrow_back</span>
           </button>
-          <h1 className="text-xl font-bold text-white">Tạo Booking Mới</h1>
+          <h1 className="text-xl font-bold text-text-main">Tạo Booking Mới</h1>
         </div>
       </header>
 

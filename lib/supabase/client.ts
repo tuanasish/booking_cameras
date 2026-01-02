@@ -9,3 +9,5 @@ export const supabase = (supabaseUrl && supabaseAnonKey)
   : createClient('https://placeholder-url.supabase.co', 'placeholder-key');
 
 
+
+

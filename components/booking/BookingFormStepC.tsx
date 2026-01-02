@@ -202,7 +202,7 @@ export default function BookingFormStepC({
 
   if (loading) {
     return (
-      <section className="bg-surface-dark rounded-xl border border-border-dark overflow-hidden">
+      <section className="bg-surface rounded-xl border border-border overflow-hidden">
         <div className="p-6 flex items-center justify-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
         </div>
@@ -211,10 +211,10 @@ export default function BookingFormStepC({
   }
 
   return (
-    <section className="bg-surface-dark rounded-xl border border-border-dark overflow-hidden">
-      <div className="p-4 border-b border-border-dark bg-input-dark/50 flex justify-between items-center">
-        <h3 className="text-base font-bold text-white flex items-center gap-2">
-          <span className="flex items-center justify-center size-6 rounded bg-surface-dark border border-border-dark text-xs text-white">
+    <section className="bg-surface rounded-xl border border-border overflow-hidden shadow-sm">
+      <div className="p-4 border-b border-border bg-surface/50 flex justify-between items-center">
+        <h3 className="text-base font-bold text-text-main flex items-center gap-2">
+          <span className="flex items-center justify-center size-6 rounded bg-surface border border-border text-xs text-text-main">
             C
           </span>
           Thiết bị thuê
@@ -237,7 +237,7 @@ export default function BookingFormStepC({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {cameras.length === 0 ? (
-              <div className="col-span-2 p-8 text-center border border-dashed border-border-dark rounded-lg">
+              <div className="col-span-2 p-8 text-center border border-dashed border-border rounded-lg">
                 <p className="text-text-secondary">Đang tải danh sách máy ảnh hoặc không có máy ảnh nào...</p>
               </div>
             ) : (
@@ -265,8 +265,8 @@ export default function BookingFormStepC({
                         isSelected
                           ? 'border-primary bg-primary/10 ring-1 ring-primary'
                           : isOutOfStock
-                            ? 'border-border-dark bg-input-dark/30 opacity-50 cursor-not-allowed'
-                            : 'border-border-dark bg-input-dark hover:border-[#3b4354] hover:bg-[#282e39]'
+                            ? 'border-border bg-surface/40 opacity-50 cursor-not-allowed'
+                            : 'border-border bg-surface hover:border-primary/40 hover:bg-surface-hover shadow-sm'
                       )}
                       onClick={() => !isOutOfStock && handleCameraToggle(camera)}
                     >
@@ -278,7 +278,7 @@ export default function BookingFormStepC({
 
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex-1">
-                          <h4 className="text-sm font-bold text-white">{camera.name}</h4>
+                          <h4 className="text-sm font-bold text-text-main">{camera.name}</h4>
                           {camera.model_line && (
                             <p className="text-xs text-text-secondary mt-1">{camera.model_line}</p>
                           )}
@@ -303,11 +303,11 @@ export default function BookingFormStepC({
                                 handleQuantityChange(camera.id, selectedQty - 1);
                               }}
                               disabled={selectedQty <= 1}
-                              className="size-6 rounded border border-border-dark bg-input-dark text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#282e39]"
+                              className="size-6 rounded border border-border bg-surface text-text-main disabled:opacity-50 disabled:cursor-not-allowed hover:bg-surface-hover"
                             >
                               <span className="material-symbols-outlined text-[16px]">remove</span>
                             </button>
-                            <span className="text-sm font-bold text-white w-6 text-center">
+                            <span className="text-sm font-bold text-text-main w-6 text-center">
                               {selectedQty}
                             </span>
                             <button
@@ -316,7 +316,7 @@ export default function BookingFormStepC({
                                 handleQuantityChange(camera.id, selectedQty + 1);
                               }}
                               disabled={selectedQty >= availableQty}
-                              className="size-6 rounded border border-border-dark bg-input-dark text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#282e39]"
+                              className="size-6 rounded border border-border bg-surface text-text-main disabled:opacity-50 disabled:cursor-not-allowed hover:bg-surface-hover"
                             >
                               <span className="material-symbols-outlined text-[16px]">add</span>
                             </button>
@@ -325,10 +325,10 @@ export default function BookingFormStepC({
                       </div>
 
                       {isSelected && pickupTime && returnTime && (
-                        <div className="mt-3 pt-3 border-t border-border-dark">
+                        <div className="mt-3 pt-3 border-t border-border">
                           <div className="flex items-center justify-between text-xs">
                             <span className="text-text-secondary">Giá thuê:</span>
-                            <span className="text-white font-bold">
+                            <span className="text-text-main font-bold">
                               {calculateRentalPrice(camera, pickupTime, returnTime).toLocaleString('vi-VN')}đ
                             </span>
                           </div>
@@ -350,20 +350,20 @@ export default function BookingFormStepC({
         </div>
 
         {/* Accessories */}
-        <div className="flex flex-col gap-4 pt-4 border-t border-border-dark">
+        <div className="flex flex-col gap-4 pt-4 border-t border-border">
           <span className="text-sm font-medium text-text-secondary">Phụ kiện</span>
 
           <div className="flex flex-col gap-3">
-            <label className="flex items-center gap-3 p-3 rounded-lg border border-border-dark bg-input-dark hover:bg-[#282e39] cursor-pointer transition-colors">
+            <label className="flex items-center gap-3 p-3 rounded-lg border border-border bg-surface hover:bg-surface-hover cursor-pointer transition-all shadow-sm">
               <input
                 type="checkbox"
                 checked={hasTripod}
                 onChange={(e) => onUpdate({ hasTripod: e.target.checked })}
-                className="rounded border-[#3b4354] bg-[#1e232e] text-primary focus:ring-0 focus:ring-offset-0"
+                className="rounded border-border bg-surface text-primary focus:ring-0 focus:ring-offset-0"
                 disabled={tripodAvailability.available === 0}
               />
               <span className="material-symbols-outlined text-[20px] text-text-secondary">tripod</span>
-              <span className="text-sm text-white flex-1">
+              <span className="text-sm text-text-main flex-1">
                 Tripod
                 {tripodAvailability.available !== null && (
                   <span className="ml-2 text-xs text-text-secondary">
@@ -378,16 +378,16 @@ export default function BookingFormStepC({
               )}
             </label>
 
-            <label className="flex items-center gap-3 p-3 rounded-lg border border-border-dark bg-input-dark hover:bg-[#282e39] cursor-pointer transition-colors">
+            <label className="flex items-center gap-3 p-3 rounded-lg border border-border bg-surface hover:bg-surface-hover cursor-pointer transition-all shadow-sm">
               <input
                 type="checkbox"
                 checked={hasReflector}
                 onChange={(e) => onUpdate({ hasReflector: e.target.checked })}
-                className="rounded border-[#3b4354] bg-[#1e232e] text-primary focus:ring-0 focus:ring-offset-0"
+                className="rounded border-border bg-surface text-primary focus:ring-0 focus:ring-offset-0"
                 disabled={reflectorAvailability.available === 0}
               />
               <span className="material-symbols-outlined text-[20px] text-text-secondary">light_mode</span>
-              <span className="text-sm text-white flex-1">
+              <span className="text-sm text-text-main flex-1">
                 Hắt sáng
                 {reflectorAvailability.available !== null && (
                   <span className="ml-2 text-xs text-text-secondary">
@@ -412,7 +412,7 @@ export default function BookingFormStepC({
               onChange={(e) => onUpdate({ otherAccessories: e.target.value })}
               placeholder="Nhập phụ kiện khác..."
               rows={2}
-              className="w-full bg-input-dark border border-border-dark rounded-lg py-2 px-3 text-white text-sm focus:ring-1 focus:ring-primary focus:border-primary placeholder:text-text-secondary/50 resize-none"
+              className="w-full bg-surface border border-border rounded-lg py-2 px-3 text-text-main text-sm focus:ring-1 focus:ring-primary focus:border-primary placeholder:text-text-secondary/50 resize-none"
             />
           </div>
         </div>
@@ -422,7 +422,7 @@ export default function BookingFormStepC({
           <div className="p-4 rounded-lg bg-primary/5 border border-primary/10">
             <div className="flex items-center justify-between">
               <span className="text-sm text-text-secondary">Tổng phí thuê (S):</span>
-              <span className="text-lg font-bold text-white">
+              <span className="text-lg font-bold text-text-main">
                 {calculateSubtotal().toLocaleString('vi-VN')}đ
               </span>
             </div>

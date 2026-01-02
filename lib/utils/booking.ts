@@ -7,28 +7,46 @@ import { getHoursBetween, getRentalType } from './date';
 export function calculateRentalPrice(
   camera: Camera,
   pickupTime: Date | string,
-  returnTime: Date | string
+  returnTime: Date | string,
+  lateFeeDivisor: number = 5
 ): number {
   const hours = getHoursBetween(pickupTime, returnTime);
-  const type = getRentalType(hours);
 
-  // Nếu thuê <= 6 giờ: dùng giá 6h
-  if (type === '6h') {
+  // Rule 0: Minimum charge is the 6h package
+  if (hours <= 6) {
     return camera.price_6h;
   }
 
-  // Thuê trên 6h tính là theo ngày
-  // Ngày 1: giá price_24h
-  // Từ ngày 2 trở đi: giảm 50.000 so với ngày đầu
-  const days = Math.max(1, Math.ceil(hours / 24));
-  const firstDayPrice = camera.price_24h ?? (camera.price_6h * 1.5); // Fallback if no 24h price
-  const additionalDayPrice = firstDayPrice - 50000;
+  // Rule 1: Additional hours beyond full days
+  const fullDays = Math.floor(hours / 24);
+  const extraHours = hours % 24;
 
-  if (days === 1) {
-    return firstDayPrice;
+  const getBaseDailyPrice = (numDays: number) => {
+    if (numDays <= 0) return 0;
+    const firstDayPrice = camera.price_24h ?? (camera.price_6h * 1.5);
+    const additionalDayPrice = firstDayPrice - 50000;
+
+    if (numDays === 1) return firstDayPrice;
+    return firstDayPrice + (additionalDayPrice * (numDays - 1));
+  };
+
+  const day1Price = camera.price_24h ?? (camera.price_6h * 1.5);
+
+  if (fullDays === 0) {
+    // We already know hours > 6 since we passed the first check
+    // If > 6 and < 24 -> Price for 1 day
+    return day1Price;
   }
 
-  return firstDayPrice + additionalDayPrice * (days - 1);
+  // If we have full days
+  if (extraHours === 0) {
+    return getBaseDailyPrice(fullDays);
+  }
+
+  // New Rule: if extra > 0, calculate granular price
+  // base price for full days + (day1Price / divisor) * extra hours
+  const extraPrice = Math.round((day1Price / lateFeeDivisor) * extraHours);
+  return getBaseDailyPrice(fullDays) + extraPrice;
 }
 
 /**

@@ -52,8 +52,8 @@ export default function BookingFormStepper({
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
       {/* Stepper Sidebar */}
       <div className="lg:col-span-1">
-        <div className="bg-surface-dark rounded-xl border border-border-dark p-6 shadow-lg">
-          <h3 className="text-lg font-bold mb-6 px-2 text-white">Tiến trình</h3>
+        <div className="bg-surface rounded-xl border border-border p-6 shadow-lg">
+          <h3 className="text-lg font-bold mb-6 px-2 text-text-main">Tiến trình</h3>
           <div className="flex flex-col gap-0">
             {steps.map((step, index) => {
               const isActive = step.id === currentStep;
@@ -65,7 +65,7 @@ export default function BookingFormStepper({
                     <div
                       className={clsx(
                         'step-connector absolute left-[15px] top-[35px] bottom-[-15px] w-[2px] z-0',
-                        isCompleted || isActive ? 'bg-primary/30' : 'bg-border-dark'
+                        isCompleted || isActive ? 'bg-primary/30' : 'bg-border'
                       )}
                     />
                   )}
@@ -76,7 +76,7 @@ export default function BookingFormStepper({
                         ? 'bg-primary text-white shadow-[0_0_0_4px_rgba(19,91,236,0.2)]'
                         : isCompleted
                           ? 'bg-primary/20 text-primary border-2 border-primary'
-                          : 'bg-surface-dark border-2 border-border-dark text-text-secondary'
+                          : 'bg-surface border-2 border-border text-text-secondary'
                     )}
                   >
                     {isCompleted ? (
@@ -90,10 +90,10 @@ export default function BookingFormStepper({
                       className={clsx(
                         'text-sm leading-none mb-1',
                         isActive
-                          ? 'font-bold text-white'
+                          ? 'font-bold text-text-main'
                           : isCompleted
                             ? 'font-medium text-text-secondary'
-                            : 'font-medium text-text-secondary/60'
+                            : 'font-medium text-text-secondary/40'
                       )}
                     >
                       {step.label}
@@ -111,7 +111,7 @@ export default function BookingFormStepper({
               );
             })}
           </div>
-          <div className="mt-6 bg-primary/10 rounded-xl border border-primary/20 p-4">
+          <div className="mt-6 bg-primary/5 rounded-xl border border-primary/10 p-4">
             <div className="flex items-center gap-2 text-primary mb-2">
               <span className="material-symbols-outlined">info</span>
               <span className="text-sm font-bold">Lưu ý vận hành</span>
@@ -153,6 +153,7 @@ export default function BookingFormStepper({
           <BookingFormStepA
             customerName={formData.customerName}
             customerPhone={formData.customerPhone}
+            customerPhone2={formData.customerPhone2}
             platforms={formData.platforms}
             errors={errors}
             existingCustomer={existingCustomer}
@@ -181,15 +182,15 @@ export default function BookingFormStepper({
         )}
 
         {/* Navigation Buttons */}
-        <div className="flex items-center justify-between pt-6 border-t border-border-dark">
+        <div className="flex items-center justify-between pt-6 border-t border-border">
           <button
             onClick={onBack}
             disabled={currentStep === 'A'}
             className={clsx(
               'flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all',
               currentStep === 'A'
-                ? 'opacity-50 cursor-not-allowed'
-                : 'bg-input-dark border border-border-dark text-white hover:bg-[#282e39]'
+                ? 'opacity-50 cursor-not-allowed text-text-secondary'
+                : 'bg-surface border border-border text-text-main hover:bg-surface-hover hover:border-primary/30 active:scale-95'
             )}
           >
             <span className="material-symbols-outlined text-[18px]">chevron_left</span>
@@ -233,5 +234,7 @@ export default function BookingFormStepper({
     </div>
   );
 }
+
+
 
 

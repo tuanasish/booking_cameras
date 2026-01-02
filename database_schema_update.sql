@@ -13,3 +13,5 @@ SET total_delivery_fee = COALESCE((
 ), 0);
 
 
+
+

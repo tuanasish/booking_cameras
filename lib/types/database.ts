@@ -150,6 +150,7 @@ export interface Database {
           id: string
           name: string
           phone: string
+          phone_2: string | null
           platforms: string[] | null
           created_at: string | null
         }
@@ -157,6 +158,7 @@ export interface Database {
           id?: string
           name: string
           phone: string
+          phone_2?: string | null
           platforms?: string[] | null
           created_at?: string | null
         }
@@ -164,6 +166,7 @@ export interface Database {
           id?: string
           name?: string
           phone?: string
+          phone_2?: string | null
           platforms?: string[] | null
           created_at?: string | null
         }
