@@ -250,7 +250,7 @@ export default function BookingFormStepD({
         {/* Delivery Location & Fee */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Input
-            label="Địa điểm giao máy *"
+            label="Địa điểm giao máy"
             icon="location_on"
             value={deliveryLocation}
             onChange={(e) => onUpdate({ deliveryLocation: e.target.value })}

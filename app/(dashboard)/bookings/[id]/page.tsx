@@ -292,7 +292,7 @@ export default function BookingDetailsPage({ params }: { params: { id: string } 
               <div className="mt-6 pt-4 border-t border-primary/20 bg-primary/5 -mx-6 -mb-6 p-6 rounded-b-xl">
                 <div className="flex justify-between items-center">
                   <span className="text-white font-bold">TỔNG CỘNG:</span>
-                  <span className="text-2xl font-black text-primary">
+                  <span className="text-2xl font-bold text-primary">
                     {formatCurrency(booking.final_fee + totalDeliveryFee + booking.late_fee)}
                   </span>
                 </div>

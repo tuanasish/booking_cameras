@@ -116,27 +116,27 @@ export default function CalendarPage() {
   return (
     <div className="flex h-full flex-col overflow-hidden bg-background font-sans">
       {/* Header */}
-      <header className="flex h-16 items-center justify-between border-b border-border bg-surface px-6 shrink-0 shadow-sm z-30">
-        <div className="flex items-center gap-4">
-          <div className="size-8 flex items-center justify-center bg-primary rounded-lg text-white shadow-lg shadow-primary/30">
-            <span className="material-symbols-outlined text-xl">photo_camera</span>
+      <header className="flex h-14 sm:h-16 items-center justify-between border-b border-border bg-surface px-4 sm:px-6 shrink-0 shadow-sm z-30">
+        <div className="flex items-center gap-2 sm:gap-4">
+          <div className="size-7 sm:size-8 flex items-center justify-center bg-primary rounded-lg text-white shadow-lg shadow-primary/30">
+            <span className="material-symbols-outlined text-lg sm:text-xl">photo_camera</span>
           </div>
-          <h2 className="text-text-main text-lg font-bold leading-tight tracking-tight">Kantra Admin</h2>
+          <h2 className="text-text-main text-sm sm:text-lg font-bold leading-tight tracking-tight">Kantra</h2>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <button
             onClick={() => router.push('/bookings/new')}
-            className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-bold text-white shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-[0.98]"
+            className="flex items-center gap-2 rounded-lg bg-primary px-3 sm:px-4 py-1.5 sm:py-2 text-[11px] sm:text-sm font-bold text-white shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-[0.98]"
           >
-            <span className="material-symbols-outlined text-[20px]">add</span>
-            <span>Tạo Booking</span>
+            <span className="material-symbols-outlined text-[18px] sm:text-[20px]">add</span>
+            <span className="hidden xs:inline">Tạo Booking</span>
           </button>
-          <button className="flex size-9 items-center justify-center rounded-lg bg-surface border border-border text-text-secondary hover:bg-background hover:text-text-main transition-colors">
+          <button className="hidden sm:flex size-9 items-center justify-center rounded-lg bg-background border border-border text-text-secondary hover:bg-surface hover:text-text-main transition-colors">
             <span className="material-symbols-outlined text-[20px]">settings</span>
           </button>
-          <button className="flex size-9 items-center justify-center rounded-lg bg-surface border border-border text-text-secondary hover:bg-background hover:text-text-main transition-colors relative">
-            <span className="material-symbols-outlined text-[20px]">notifications</span>
-            <span className="absolute top-2 right-2 size-2 bg-red-500 rounded-full border-2 border-surface"></span>
+          <button className="flex size-8 sm:size-9 items-center justify-center rounded-lg bg-background border border-border text-text-secondary hover:bg-surface hover:text-text-main transition-colors relative">
+            <span className="material-symbols-outlined text-[18px] sm:text-[20px]">notifications</span>
+            <span className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 size-1.5 sm:size-2 bg-red-500 rounded-full border-2 border-surface"></span>
           </button>
         </div>
       </header>

@@ -19,6 +19,11 @@ const config: Config = {
         input: "var(--input)",
         "text-secondary": "var(--text-secondary)",
         "text-main": "var(--text-main)",
+        // Dark mode specific (mapping to variables if they exist or brand colors)
+        "background-dark": "#0f172a",
+        "surface-dark": "#1a1f2e",
+        "border-dark": "#282e39",
+        "input-dark": "#111318",
       },
       fontFamily: {
         display: ["Inter", "sans-serif"],

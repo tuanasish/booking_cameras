@@ -115,9 +115,12 @@ export function useBookingForm() {
 
     // Step D remains Payment
     if (step === 'D') {
+      // Delivery location is now optional
+      /* 
       if (!formData.deliveryLocation.trim()) {
         newErrors.deliveryLocation = 'Địa điểm giao máy là bắt buộc';
       }
+      */
       if (!formData.createdBy) {
         newErrors.createdBy = 'Vui lòng chọn nhân viên lên lịch';
       }

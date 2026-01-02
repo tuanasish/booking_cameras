@@ -112,50 +112,50 @@ export default function ReturnTasksPage() {
   return (
     <div className="flex h-full flex-col bg-background">
       {/* Header */}
-      <header className="flex h-16 items-center justify-between border-b border-border bg-surface px-6 shrink-0">
+      <header className="flex flex-col sm:flex-row h-auto sm:h-16 items-start sm:items-center justify-between border-b border-border bg-surface px-4 sm:px-6 py-4 sm:py-0 shrink-0 gap-4 sm:gap-0">
         <div className="flex items-center gap-3">
-          <h1 className="text-xl font-bold text-text-main">Danh sách tác vụ trả máy</h1>
-          <div className="flex items-center gap-2 px-2 py-1 rounded-md bg-rose-500/10 border border-rose-500/20">
-            <span className="text-[11px] font-bold text-rose-500 uppercase tracking-wider">
-              {tasks.length} Task
+          <h1 className="text-lg sm:text-xl font-bold text-text-main tracking-tight">TRẢ MÁY</h1>
+          <div className="flex items-center gap-2 px-2 py-0.5 rounded bg-rose-500/10 border border-rose-500/20">
+            <span className="text-[10px] sm:text-[11px] font-black text-rose-500 uppercase tracking-tighter">
+              {tasks.length} ĐƠN
             </span>
           </div>
         </div>
 
         {/* Date Selector */}
-        <div className="flex items-center gap-3 bg-background p-1 rounded-lg border border-border">
+        <div className="flex items-center gap-2 bg-background p-1 rounded-xl border border-border w-full sm:w-auto shadow-sm">
           <button
             onClick={() => handleDateChange(-1)}
-            className="p-1.5 hover:bg-surface rounded-md text-text-secondary hover:text-text-main transition-all"
+            className="p-1.5 hover:bg-surface rounded-lg text-text-secondary hover:text-text-main transition-all active:scale-90"
           >
-            <span className="material-symbols-outlined text-[18px]">chevron_left</span>
+            <span className="material-symbols-outlined text-[20px]">chevron_left</span>
           </button>
 
-          <div className="flex items-center gap-2 px-2">
+          <div className="flex-1 flex items-center justify-center gap-2 px-2">
             <input
               type="date"
               value={format(selectedDate, 'yyyy-MM-dd')}
               onChange={(e) => setSelectedDate(new Date(e.target.value))}
-              className="bg-transparent border-none p-0 text-sm font-bold text-text-main focus:ring-0 w-[110px] outline-none"
+              className="bg-transparent border-none p-0 text-xs sm:text-sm font-bold text-text-main focus:ring-0 w-[100px] sm:w-[110px] outline-none text-center"
             />
             <button
               onClick={() => setSelectedDate(new Date())}
               className={clsx(
-                'px-2 py-0.5 text-[10px] font-bold rounded uppercase transition-all',
+                'px-2 py-1 text-[9px] font-black rounded-lg uppercase transition-all tracking-tighter',
                 isToday(selectedDate)
                   ? 'bg-primary text-white'
                   : 'bg-surface text-text-secondary hover:text-text-main'
               )}
             >
-              Hôm nay
+              HÔM NAY
             </button>
           </div>
 
           <button
             onClick={() => handleDateChange(1)}
-            className="p-1.5 hover:bg-surface rounded-md text-text-secondary hover:text-text-main transition-all"
+            className="p-1.5 hover:bg-surface rounded-lg text-text-secondary hover:text-text-main transition-all active:scale-90"
           >
-            <span className="material-symbols-outlined text-[18px]">chevron_right</span>
+            <span className="material-symbols-outlined text-[20px]">chevron_right</span>
           </button>
         </div>
       </header>

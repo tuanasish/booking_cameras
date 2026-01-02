@@ -131,7 +131,7 @@ export default function LoginPage() {
           <div className="mb-4 flex items-center justify-center h-16 w-16 rounded-2xl bg-gradient-to-br from-primary to-blue-600 shadow-lg shadow-primary/20">
             <span className="material-symbols-outlined text-white text-[32px]">photo_camera</span>
           </div>
-          <h1 className="text-3xl md:text-4xl font-black tracking-tight mb-2 text-text-main">
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-2 text-text-main">
             Kantra Camera
           </h1>
           <p className="text-text-secondary text-base md:text-lg font-normal">

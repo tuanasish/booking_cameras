@@ -132,74 +132,58 @@ export default function DashboardPage() {
   return (
     <div className="flex h-full flex-col overflow-hidden bg-background">
       {/* Header */}
-      <header className="flex h-16 items-center justify-between border-b border-border bg-surface px-6 shrink-0">
+      <header className="flex h-16 items-center justify-between border-b border-border bg-surface px-4 sm:px-6 shrink-0 shadow-sm">
         <div>
-          <h1 className="text-xl font-bold text-text-main">Dashboard Doanh thu</h1>
-          <p className="text-sm text-text-secondary mt-1">Theo dõi dòng tiền và hiệu suất cho thuê thiết bị</p>
+          <h1 className="text-lg sm:text-xl font-bold text-text-main tracking-tight uppercase">Dashboard</h1>
+          <p className="hidden sm:block text-[11px] text-text-secondary font-medium mt-0.5">Hiệu suất kinh doanh & dòng tiền</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="material-symbols-outlined text-primary text-[20px]">analytics</span>
+          <span className="text-[10px] font-black text-primary uppercase tracking-widest">{format(new Date(), 'dd/MM/yyyy')}</span>
         </div>
       </header>
 
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-7xl mx-auto p-6">
           {/* Filters */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-            <div className="flex flex-col gap-1">
-              <h2 className="text-2xl font-bold text-text-main">Tổng quan hiệu quả</h2>
-            </div>
-            <div className="flex flex-wrap items-center gap-3">
-              <div className="flex bg-surface p-1 rounded-xl border border-border">
-                <button
-                  onClick={() => setDateRange('today')}
-                  className={clsx(
-                    'px-3 py-1.5 rounded-lg text-sm font-medium transition-colors',
-                    dateRange === 'today'
-                      ? 'bg-primary text-white'
-                      : 'text-slate-500 dark:text-[#9da6b9] hover:text-slate-900 dark:hover:text-white'
-                  )}
-                >
-                  Hôm nay
-                </button>
-                <button
-                  onClick={() => setDateRange('week')}
-                  className={clsx(
-                    'px-3 py-1.5 rounded-lg text-sm font-medium transition-colors',
-                    dateRange === 'week'
-                      ? 'bg-primary text-white'
-                      : 'text-slate-500 dark:text-[#9da6b9] hover:text-slate-900 dark:hover:text-white'
-                  )}
-                >
-                  Tuần này
-                </button>
-                <button
-                  onClick={() => setDateRange('month')}
-                  className={clsx(
-                    'px-3 py-1.5 rounded-lg text-sm font-medium transition-colors',
-                    dateRange === 'month'
-                      ? 'bg-primary text-white'
-                      : 'text-slate-500 dark:text-[#9da6b9] hover:text-slate-900 dark:hover:text-white'
-                  )}
-                >
-                  Tháng này
-                </button>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-text-main tracking-tighter">
+              Báo cáo <span className="text-primary">doanh thu</span>
+            </h2>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+              <div className="flex bg-surface p-1 rounded-xl border border-border shadow-sm">
+                {['today', 'week', 'month'].map((range) => (
+                  <button
+                    key={range}
+                    onClick={() => setDateRange(range as DateRange)}
+                    className={clsx(
+                      'flex-1 px-3 py-2 rounded-lg text-[10px] sm:text-xs font-bold uppercase tracking-widest transition-all',
+                      dateRange === range
+                        ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                        : 'text-text-secondary hover:text-text-main hover:bg-background'
+                    )}
+                  >
+                    {range === 'today' ? 'Ngày' : range === 'week' ? 'Tuần' : 'Tháng'}
+                  </button>
+                ))}
                 <button
                   onClick={() => setDateRange('custom')}
                   className={clsx(
-                    'px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-1',
+                    'flex-1 px-3 py-2 rounded-lg text-[10px] sm:text-xs font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-1.5',
                     dateRange === 'custom'
-                      ? 'bg-primary text-white'
-                      : 'text-slate-500 dark:text-[#9da6b9] hover:text-slate-900 dark:hover:text-white'
+                      ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                      : 'text-text-secondary hover:text-text-main hover:bg-background'
                   )}
                 >
-                  <span className="material-symbols-outlined text-[16px]">calendar_month</span>
-                  Tùy chỉnh
+                  <span className="material-symbols-outlined text-[16px]">tune</span>
                 </button>
               </div>
               <button
                 onClick={handleExportCSV}
-                className="flex items-center gap-2 px-4 py-2 bg-surface border border-border hover:bg-surface-hover rounded-xl text-sm font-semibold text-text-main transition-colors"
+                className="flex items-center justify-center gap-2 px-6 py-3 bg-surface border border-border hover:border-primary/30 hover:bg-background rounded-xl text-[11px] font-bold uppercase tracking-widest text-text-main transition-all active:scale-95 shadow-sm"
               >
                 <span className="material-symbols-outlined text-[20px]">download</span>
-                Export CSV
+                <span>Export</span>
               </button>
             </div>
           </div>

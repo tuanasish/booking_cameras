@@ -104,53 +104,83 @@ export default function KantraCalendar({
     return (
         <div className="flex flex-col h-full overflow-hidden bg-background">
             {/* Header */}
-            <header className="flex items-center justify-between px-4 py-3 border-b border-border bg-surface shrink-0 z-20 shadow-sm">
-                <div className="flex items-center gap-4">
-                    {/* Sidebar Toggle */}
-                    <button
-                        onClick={() => setSidebarOpen(!sidebarOpen)}
-                        className="flex items-center justify-center size-9 rounded-lg bg-background border border-border text-text-secondary hover:text-text-main transition-colors"
-                        title={sidebarOpen ? 'Ẩn sidebar' : 'Hiện sidebar'}
-                    >
-                        <span className="material-symbols-outlined text-[20px]">
-                            {sidebarOpen ? 'menu_open' : 'menu'}
-                        </span>
-                    </button>
+            <header className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between px-4 py-3 gap-3 border-b border-border bg-surface shrink-0 z-20 shadow-sm">
+                <div className="flex items-center justify-between sm:justify-start gap-4">
+                    <div className="flex items-center gap-2">
+                        {/* Sidebar Toggle */}
+                        <button
+                            onClick={() => setSidebarOpen(!sidebarOpen)}
+                            className="flex items-center justify-center size-9 rounded-lg bg-background border border-border text-text-secondary hover:text-text-main transition-colors"
+                            title={sidebarOpen ? 'Ẩn sidebar' : 'Hiện sidebar'}
+                        >
+                            <span className="material-symbols-outlined text-[20px]">
+                                {sidebarOpen ? 'menu_open' : 'menu'}
+                            </span>
+                        </button>
 
-                    {/* Navigation */}
-                    <div className="flex items-center bg-background border border-border rounded-lg p-0.5">
-                        <button
-                            onClick={viewMode === 'day' ? handlePrevDay : handlePrevWeek}
-                            className="size-7 flex items-center justify-center rounded hover:bg-surface text-text-secondary hover:text-text-main transition-colors"
-                        >
-                            <span className="material-symbols-outlined text-sm">chevron_left</span>
-                        </button>
-                        <button
-                            onClick={handleToday}
-                            className="px-3 text-sm font-medium text-text-secondary hover:text-text-main transition-colors"
-                        >
-                            Hôm nay
-                        </button>
-                        <button
-                            onClick={viewMode === 'day' ? handleNextDay : handleNextWeek}
-                            className="size-7 flex items-center justify-center rounded hover:bg-surface text-text-secondary hover:text-text-main transition-colors"
-                        >
-                            <span className="material-symbols-outlined text-sm">chevron_right</span>
-                        </button>
+                        {/* Navigation */}
+                        <div className="flex items-center bg-background border border-border rounded-lg p-0.5">
+                            <button
+                                onClick={viewMode === 'day' ? handlePrevDay : handlePrevWeek}
+                                className="size-7 flex items-center justify-center rounded hover:bg-surface text-text-secondary hover:text-text-main transition-colors"
+                            >
+                                <span className="material-symbols-outlined text-sm">chevron_left</span>
+                            </button>
+                            <button
+                                onClick={handleToday}
+                                className="px-2 sm:px-3 text-xs sm:text-sm font-medium text-text-secondary hover:text-text-main transition-colors"
+                            >
+                                Nay
+                            </button>
+                            <button
+                                onClick={viewMode === 'day' ? handleNextDay : handleNextWeek}
+                                className="size-7 flex items-center justify-center rounded hover:bg-surface text-text-secondary hover:text-text-main transition-colors"
+                            >
+                                <span className="material-symbols-outlined text-sm">chevron_right</span>
+                            </button>
+                        </div>
                     </div>
 
-                    {/* Date Display */}
-                    <h2 className="text-xl font-medium text-text-main tracking-tight">
+                    {/* Date Display - Responsive font size */}
+                    <h2 className="text-sm sm:text-xl font-bold text-text-main tracking-tight truncate max-w-[150px] sm:max-w-none">
                         {viewMode === 'week'
-                            ? `${format(weekDays[0], 'd MMM', { locale: vi })} - ${format(weekDays[6], 'd MMM, yyyy', { locale: vi })}`
-                            : format(currentDate, 'd MMMM, yyyy', { locale: vi })
+                            ? `${format(weekDays[0], 'd/M')} - ${format(weekDays[6], 'd/M')}`
+                            : format(currentDate, 'd MMMM', { locale: vi })
                         }
                     </h2>
                 </div>
 
-                <div className="flex items-center gap-3">
-                    {/* Search */}
-                    <div className="hidden md:flex items-center relative">
+                <div className="flex items-center justify-between sm:justify-end gap-2">
+                    {/* View Mode Toggle */}
+                    <div className="flex flex-1 sm:flex-none p-1 bg-background border border-border rounded-lg">
+                        <button
+                            onClick={() => setViewMode('week')}
+                            className={clsx(
+                                'flex-1 sm:flex-none px-3 sm:px-4 py-1.5 text-[11px] sm:text-sm font-medium transition-colors flex items-center justify-center gap-1.5',
+                                viewMode === 'week'
+                                    ? 'text-white bg-primary rounded shadow-sm font-bold'
+                                    : 'text-text-secondary hover:text-text-main'
+                            )}
+                        >
+                            <span className="material-symbols-outlined text-[18px]">calendar_view_week</span>
+                            <span className="hidden xs:inline">Tuần</span>
+                        </button>
+                        <button
+                            onClick={() => setViewMode('day')}
+                            className={clsx(
+                                'flex-1 sm:flex-none px-3 sm:px-4 py-1.5 text-[11px] sm:text-sm font-medium transition-colors flex items-center justify-center gap-1.5',
+                                viewMode === 'day'
+                                    ? 'text-white bg-primary rounded shadow-sm font-bold'
+                                    : 'text-text-secondary hover:text-text-main'
+                            )}
+                        >
+                            <span className="material-symbols-outlined text-[18px]">view_column</span>
+                            <span className="hidden xs:inline">Ngày</span>
+                        </button>
+                    </div>
+
+                    {/* Search - Hidden on very small screens, shown in search bar if needed */}
+                    <div className="hidden lg:flex items-center relative">
                         <span className="material-symbols-outlined absolute left-2 text-text-secondary">search</span>
                         <input
                             type="text"
@@ -159,37 +189,9 @@ export default function KantraCalendar({
                         />
                     </div>
 
-                    {/* View Mode Toggle */}
-                    <div className="flex p-1 bg-background border border-border rounded-lg">
-                        <button
-                            onClick={() => setViewMode('week')}
-                            className={clsx(
-                                'px-4 py-1.5 text-sm font-medium transition-colors flex items-center gap-1.5',
-                                viewMode === 'week'
-                                    ? 'text-white bg-primary rounded shadow-sm font-bold'
-                                    : 'text-text-secondary hover:text-text-main'
-                            )}
-                        >
-                            <span className="material-symbols-outlined text-[18px]">calendar_view_week</span>
-                            Tuần
-                        </button>
-                        <button
-                            onClick={() => setViewMode('day')}
-                            className={clsx(
-                                'px-4 py-1.5 text-sm font-medium transition-colors flex items-center gap-1.5',
-                                viewMode === 'day'
-                                    ? 'text-white bg-primary rounded shadow-sm font-bold'
-                                    : 'text-text-secondary hover:text-text-main'
-                            )}
-                        >
-                            <span className="material-symbols-outlined text-[18px]">view_column</span>
-                            Ngày
-                        </button>
-                    </div>
-
-                    {/* Settings */}
-                    <button className="flex size-9 items-center justify-center rounded-lg bg-background border border-border text-text-secondary hover:text-text-main transition-colors">
-                        <span className="material-symbols-outlined text-[20px]">settings</span>
+                    {/* Settings/Refresh */}
+                    <button className="flex size-9 items-center justify-center rounded-lg bg-background border border-border text-text-secondary hover:text-text-main transition-colors shrink-0">
+                        <span className="material-symbols-outlined text-[20px]">refresh</span>
                     </button>
                 </div>
             </header>
@@ -199,22 +201,26 @@ export default function KantraCalendar({
                 {/* Collapsible Sidebar */}
                 <div
                     className={clsx(
-                        'flex flex-col border-r border-border bg-background transition-all duration-300',
-                        sidebarOpen ? 'w-64' : 'w-0 overflow-hidden'
+                        'flex flex-col border-r border-border bg-background transition-all duration-300 z-10',
+                        sidebarOpen ? 'w-64' : 'w-0 overflow-hidden',
+                        'absolute md:relative h-full md:h-auto shadow-xl md:shadow-none'
                     )}
                 >
-                    <CalendarSidebar
-                        currentDate={currentDate}
-                        selectedDate={selectedDate}
-                        onDateSelect={(date) => {
-                            setSelectedDate(date);
-                            setCurrentDate(date);
-                        }}
-                        cameras={cameras}
-                        selectedCameraIds={selectedCameraIds}
-                        onCameraToggle={handleCameraToggle}
-                        onCreateBooking={handleSidebarCreate}
-                    />
+                    <div className="w-64 flex flex-col h-full">
+                        <CalendarSidebar
+                            currentDate={currentDate}
+                            selectedDate={selectedDate}
+                            onDateSelect={(date) => {
+                                setSelectedDate(date);
+                                setCurrentDate(date);
+                                if (window.innerWidth < 768) setSidebarOpen(false);
+                            }}
+                            cameras={cameras}
+                            selectedCameraIds={selectedCameraIds}
+                            onCameraToggle={handleCameraToggle}
+                            onCreateBooking={handleSidebarCreate}
+                        />
+                    </div>
                 </div>
 
                 {/* Calendar Grid */}

@@ -128,7 +128,7 @@ export default function BookingFormStepA({
                       'flex items-center gap-2 px-4 py-2 rounded-lg border transition-all',
                       isSelected
                         ? 'border-primary bg-primary/10 text-primary ring-1 ring-primary'
-                        : 'border-border-dark bg-input-dark text-text-secondary hover:bg-border-dark'
+                        : 'border-border dark:border-border-dark bg-input dark:bg-input-dark text-text-secondary hover:bg-slate-100 dark:hover:bg-slate-800'
                     )}
                   >
                     <span className="material-symbols-outlined text-[18px]">

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth/context';
 import { SidebarProvider } from '@/lib/context/SidebarContext';
 import Sidebar from '@/components/ui/Sidebar';
+import MobileNav from '@/components/ui/MobileNav';
 
 export default function DashboardLayout({
   children,
@@ -37,11 +38,12 @@ export default function DashboardLayout({
 
   return (
     <SidebarProvider>
-      <div className="flex h-screen w-full overflow-hidden">
+      <div className="flex h-screen w-full overflow-hidden bg-background">
         <Sidebar />
-        <main className="flex h-full flex-1 flex-col overflow-hidden bg-[#f6f6f8] dark:bg-[#101622] relative">
+        <main className="flex h-full flex-1 flex-col overflow-hidden relative pb-16 md:pb-0">
           {children}
         </main>
+        <MobileNav />
       </div>
     </SidebarProvider>
   );

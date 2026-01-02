@@ -92,128 +92,134 @@ export default function WeekMatrixGrid({
     return (
         <div className="flex flex-col flex-1 overflow-hidden bg-background">
             {/* Header Row - Days */}
-            <div className="flex border-b border-border bg-surface shrink-0">
-                {/* Camera column header */}
-                <div className="w-48 shrink-0 p-4 border-r border-border font-bold text-sm text-text-secondary uppercase tracking-wider">
-                    Thiết bị
-                </div>
+            <div className="overflow-x-auto overflow-y-hidden custom-scrollbar bg-surface border-b border-border">
+                <div className="flex min-w-[800px] sm:min-w-full">
+                    {/* Camera column header - STICKY */}
+                    <div className="w-40 sm:w-48 shrink-0 p-4 border-r border-border font-bold text-[10px] sm:text-xs text-text-secondary uppercase tracking-wider bg-surface sticky left-0 z-10">
+                        Thiết bị
+                    </div>
 
-                {/* Day headers */}
-                <div className="flex-1 grid grid-cols-7 divide-x divide-border">
-                    {weekDays.map((day) => {
-                        const isTodayDate = isToday(day);
-                        return (
-                            <div
-                                key={day.toISOString()}
-                                className={clsx(
-                                    'flex flex-col items-center justify-center py-2 transition-colors',
-                                    isTodayDate && 'bg-primary/5'
-                                )}
-                            >
-                                <span
+                    {/* Day headers */}
+                    <div className="flex-1 grid grid-cols-7 divide-x divide-border">
+                        {weekDays.map((day) => {
+                            const isTodayDate = isToday(day);
+                            return (
+                                <div
+                                    key={day.toISOString()}
                                     className={clsx(
-                                        'text-[10px] font-bold uppercase tracking-widest',
-                                        isTodayDate ? 'text-primary' : 'text-text-secondary'
+                                        'flex flex-col items-center justify-center py-2 transition-colors',
+                                        isTodayDate && 'bg-primary/5'
                                     )}
                                 >
-                                    {format(day, 'EEE', { locale: vi })}
-                                </span>
-                                <span
-                                    className={clsx(
-                                        'text-xl font-bold mt-0.5',
-                                        isTodayDate ? 'text-primary' : 'text-text-main'
-                                    )}
-                                >
-                                    {format(day, 'd')}
-                                </span>
-                            </div>
-                        );
-                    })}
+                                    <span
+                                        className={clsx(
+                                            'text-[9px] sm:text-[10px] font-bold uppercase tracking-widest',
+                                            isTodayDate ? 'text-primary' : 'text-text-secondary'
+                                        )}
+                                    >
+                                        {format(day, 'EEE', { locale: vi })}
+                                    </span>
+                                    <span
+                                        className={clsx(
+                                            'text-sm sm:text-xl font-bold mt-0.5',
+                                            isTodayDate ? 'text-primary' : 'text-text-main'
+                                        )}
+                                    >
+                                        {format(day, 'd')}
+                                    </span>
+                                </div>
+                            );
+                        })}
+                    </div>
                 </div>
             </div>
 
             {/* Scrollable Body - Camera Rows */}
-            <div className="flex-1 overflow-y-auto custom-scrollbar">
-                {cameras.map((camera) => (
-                    <div key={camera.id} className="flex border-b border-border hover:bg-surface/50 transition-colors group">
-                        {/* Camera Name Column */}
-                        <div className="w-48 shrink-0 p-4 border-r border-border bg-surface/30">
-                            <div className="font-semibold text-sm text-text-main truncate group-hover:text-primary transition-colors">{camera.name}</div>
-                            <div className="text-xs text-text-secondary mt-1">SL: {camera.quantity}</div>
-                        </div>
+            <div className="flex-1 overflow-auto custom-scrollbar">
+                <div className="min-w-[800px] sm:min-w-full">
+                    {cameras.map((camera) => (
+                        <div key={camera.id} className="flex border-b border-border hover:bg-surface/50 transition-colors group">
+                            {/* Camera Name Column - STICKY */}
+                            <div className="w-40 sm:w-48 shrink-0 p-3 sm:p-4 border-r border-border bg-surface/80 backdrop-blur-sm sticky left-0 z-10">
+                                <div className="font-semibold text-xs sm:text-sm text-text-main truncate group-hover:text-primary transition-colors">
+                                    {camera.name}
+                                </div>
+                                <div className="text-[10px] text-text-secondary mt-1">SL: {camera.quantity}</div>
+                            </div>
 
-                        {/* Day Cells */}
-                        <div className="flex-1 grid grid-cols-7 divide-x divide-border">
-                            {weekDays.map((day) => {
-                                const dayBookings = getBookingsForCameraDay(camera.id, day);
-                                const isTodayDate = isToday(day);
+                            {/* Day Cells */}
+                            <div className="flex-1 grid grid-cols-7 divide-x divide-border">
+                                {weekDays.map((day) => {
+                                    const dayBookings = getBookingsForCameraDay(camera.id, day);
+                                    const isTodayDate = isToday(day);
 
-                                return (
-                                    <div
-                                        key={day.toISOString()}
-                                        className={clsx(
-                                            'relative min-h-[70px] p-1.5 cursor-pointer hover:bg-primary/[0.02] transition-colors',
-                                            isTodayDate && 'bg-primary/[0.03]'
-                                        )}
-                                        onClick={() => {
-                                            if (dayBookings.length === 0) {
-                                                onCreateBooking?.(camera.id, day);
-                                            }
-                                        }}
-                                    >
-                                        {/* Booking bars */}
-                                        <div className="relative h-full">
-                                            {dayBookings.map((booking, idx) => {
-                                                const pos = getBarPosition(booking, day);
-                                                const customer = (booking as any).customer;
+                                    return (
+                                        <div
+                                            key={day.toISOString()}
+                                            className={clsx(
+                                                'relative min-h-[60px] sm:min-h-[70px] p-1 sm:p-1.5 cursor-pointer hover:bg-primary/[0.02] transition-colors',
+                                                isTodayDate && 'bg-primary/[0.03]'
+                                            )}
+                                            onClick={() => {
+                                                if (dayBookings.length === 0) {
+                                                    onCreateBooking?.(camera.id, day);
+                                                }
+                                            }}
+                                        >
+                                            {/* Booking bars */}
+                                            <div className="relative h-full">
+                                                {dayBookings.map((booking, idx) => {
+                                                    const pos = getBarPosition(booking, day);
+                                                    const customer = (booking as any).customer;
 
-                                                return (
-                                                    <div
-                                                        key={booking.id}
-                                                        className={clsx(
-                                                            'absolute h-6 rounded cursor-pointer hover:brightness-110 transition-all flex items-center px-1.5 overflow-hidden',
-                                                            getStatusColor(booking.payment_status)
-                                                        )}
-                                                        style={{
-                                                            left: pos.left,
-                                                            width: pos.width,
-                                                            top: `${idx * 28 + 2}px`,
-                                                        }}
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            onBookingClick?.(booking);
-                                                        }}
-                                                        title={`${customer?.name || 'Khách'} - ${format(new Date(booking.pickup_time), 'HH:mm')} → ${format(new Date(booking.return_time), 'HH:mm')}`}
-                                                    >
-                                                        <span className="text-[10px] font-semibold text-black truncate">
-                                                            {customer?.name || 'Khách'}
-                                                        </span>
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
-
-                                        {/* Empty state indicator */}
-                                        {dayBookings.length === 0 && (
-                                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <div className="size-8 rounded-full bg-primary/10 flex items-center justify-center">
-                                                    <span className="material-symbols-outlined text-primary text-lg">add</span>
-                                                </div>
+                                                    return (
+                                                        <div
+                                                            key={booking.id}
+                                                            className={clsx(
+                                                                'absolute h-5 sm:h-6 rounded cursor-pointer hover:brightness-110 transition-all flex items-center px-1.5 overflow-hidden shadow-sm',
+                                                                getStatusColor(booking.payment_status)
+                                                            )}
+                                                            style={{
+                                                                left: pos.left,
+                                                                width: pos.width,
+                                                                top: `${idx * (isTodayDate ? 26 : 24) + 2}px`,
+                                                            }}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                onBookingClick?.(booking);
+                                                            }}
+                                                            title={`${customer?.name || 'Khách'} - ${format(new Date(booking.pickup_time), 'HH:mm')} → ${format(new Date(booking.return_time), 'HH:mm')}`}
+                                                        >
+                                                            <span className="text-[9px] sm:text-[10px] font-bold text-black truncate leading-none">
+                                                                {customer?.name || 'Khách'}
+                                                            </span>
+                                                        </div>
+                                                    );
+                                                })}
                                             </div>
-                                        )}
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
-                ))}
 
-                {/* Empty state if no cameras */}
-                {cameras.length === 0 && (
-                    <div className="flex items-center justify-center h-40 text-slate-500">
-                        Không có thiết bị nào
-                    </div>
-                )}
+                                            {/* Empty state indicator */}
+                                            {dayBookings.length === 0 && (
+                                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <div className="size-6 sm:size-8 rounded-full bg-primary/10 flex items-center justify-center">
+                                                        <span className="material-symbols-outlined text-primary text-base sm:text-lg text-primary/40">add</span>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    ))}
+
+                    {/* Empty state if no cameras */}
+                    {cameras.length === 0 && (
+                        <div className="flex items-center justify-center h-40 text-slate-500">
+                            Không có thiết bị nào
+                        </div>
+                    )}
+                </div>
             </div>
 
             {/* Legend Footer */}

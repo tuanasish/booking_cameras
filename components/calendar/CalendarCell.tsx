@@ -153,7 +153,7 @@ export default function CalendarCell({
               ? 'bg-emerald-500/30 border border-emerald-400'
               : 'bg-emerald-500/20 border border-emerald-500/50'
           )}>
-            <span className="text-lg font-black text-emerald-400">{availableCount}</span>
+            <span className="text-lg font-bold text-emerald-400">{availableCount}</span>
             <span className="text-[10px] font-bold text-emerald-400 uppercase">Trống</span>
           </div>
         )}
