@@ -31,7 +31,7 @@ export default function KantraCalendar({
     onBookingClick,
     onCreateBooking,
 }: KantraCalendarProps) {
-    const [viewMode, setViewMode] = useState<ViewMode>('week');
+    const [viewMode, setViewMode] = useState<ViewMode>('day');
     const [currentDate, setCurrentDate] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [selectedCameraIds, setSelectedCameraIds] = useState<string[]>(
@@ -181,11 +181,13 @@ export default function KantraCalendar({
 
                     {/* Search - Hidden on very small screens, shown in search bar if needed */}
                     <div className="hidden lg:flex items-center relative">
-                        <span className="material-symbols-outlined absolute left-2 text-text-secondary">search</span>
+                        <div className="absolute left-3 inset-y-0 flex items-center text-text-secondary pointer-events-none">
+                            <span className="material-symbols-outlined text-[20px] translate-y-[0.5px]">search</span>
+                        </div>
                         <input
                             type="text"
                             placeholder="Tìm kiếm"
-                            className="pl-9 pr-4 py-2 bg-background rounded-lg text-sm border border-border focus:ring-1 focus:ring-primary outline-none placeholder-text-secondary text-text-main w-48 transition-all"
+                            className="pl-10 pr-4 py-2 bg-background rounded-lg text-sm border border-border focus:ring-1 focus:ring-primary outline-none placeholder-text-secondary text-text-main w-48 transition-all"
                         />
                     </div>
 

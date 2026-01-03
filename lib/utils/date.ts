@@ -67,4 +67,42 @@ export function getRentalType(hours: number): '6h' | '24h' {
   if (hours <= 6) return '6h';
   return '24h';
 }
+/**
+ * Parse chuỗi nhập nhanh thành đối tượng Date
+ * Hỗ trợ: "03 01 2026 20 30", "030120262030", "03/01/2026 20:30"
+ */
+export function parseQuickDateTime(input: string): Date | null {
+  // Loại bỏ tất cả ký tự không phải số
+  const digits = input.replace(/\D/g, '');
 
+  // Mong đợi ít nhất 8 chữ số (ddMMyyyy)
+  if (digits.length < 8) return null;
+
+  const day = parseInt(digits.slice(0, 2));
+  const month = parseInt(digits.slice(2, 4)) - 1; // Month is 0-indexed
+  const year = parseInt(digits.slice(4, 8));
+
+  // Mặc định giờ/phút nếu không nhập
+  let hour = 0;
+  let minute = 0;
+
+  if (digits.length >= 10) {
+    hour = parseInt(digits.slice(8, 10));
+  }
+
+  if (digits.length >= 12) {
+    minute = parseInt(digits.slice(10, 12));
+  }
+
+  const date = new Date(year, month, day, hour, minute);
+
+  // Kiểm tra tính hợp lệ của ngày
+  if (isNaN(date.getTime()) ||
+    date.getFullYear() !== year ||
+    date.getMonth() !== month ||
+    date.getDate() !== day) {
+    return null;
+  }
+
+  return date;
+}

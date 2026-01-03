@@ -75,12 +75,15 @@ export default function RecoveryPage() {
 
   const handleMemoryCardCodeChange = async (taskId: string, code: string) => {
     try {
-      await fetch(`/api/recovery-tasks/${taskId}`, {
+      const response = await fetch(`/api/recovery-tasks/${taskId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ memory_card_code: code }),
       });
-      fetchTasks();
+      if (response.ok) {
+        // Only fetch if successfully saved to keep sync
+        fetchTasks();
+      }
     } catch (error) {
       console.error('Error updating memory card code:', error);
     }
@@ -300,12 +303,9 @@ export default function RecoveryPage() {
                             </div>
                           </td>
                           <td className="px-4 py-4">
-                            <input
-                              type="text"
-                              value={task.memory_card_code || ''}
-                              onChange={(e) => handleMemoryCardCodeChange(task.id, e.target.value)}
-                              placeholder="Nhập mã thẻ nhớ"
-                              className="w-32 px-2 py-1 text-sm bg-background border border-border rounded text-text-main placeholder-text-secondary focus:ring-1 focus:ring-primary focus:border-primary outline-none"
+                            <MemoryCardInput
+                              initialCode={task.memory_card_code || ''}
+                              onSave={(code) => handleMemoryCardCodeChange(task.id, code)}
                             />
                           </td>
                           <td className="px-4 py-4">
@@ -396,5 +396,42 @@ export default function RecoveryPage() {
         </div>
       </div>
     </div>
+  );
+}
+interface MemoryCardInputProps {
+  initialCode: string;
+  onSave: (code: string) => void;
+}
+
+function MemoryCardInput({ initialCode, onSave }: MemoryCardInputProps) {
+  const [value, setValue] = useState(initialCode);
+
+  // Sync with prop if it changes externally
+  useEffect(() => {
+    setValue(initialCode);
+  }, [initialCode]);
+
+  const handleBlur = () => {
+    if (value !== initialCode) {
+      onSave(value);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      (e.target as HTMLInputElement).blur();
+    }
+  };
+
+  return (
+    <input
+      type="text"
+      value={value}
+      onChange={(e) => setValue(e.target.value)}
+      onBlur={handleBlur}
+      onKeyDown={handleKeyDown}
+      placeholder="Nhập mã thẻ nhớ"
+      className="w-32 px-2 py-1 text-sm bg-background border border-border rounded text-text-main placeholder-text-secondary focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all"
+    />
   );
 }

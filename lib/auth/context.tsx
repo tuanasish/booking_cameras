@@ -17,7 +17,7 @@ const AuthContext = createContext<AuthContextType>({
   userRole: null,
   userName: null,
   loading: true,
-  signOut: async () => {},
+  signOut: async () => { },
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -27,13 +27,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check for admin session in localStorage
-    const adminData = localStorage.getItem('user');
-    if (adminData) {
+    // Check for session in localStorage (Admin or Employee)
+    const storedUserData = localStorage.getItem('user');
+    if (storedUserData) {
       try {
-        const parsed = JSON.parse(adminData);
-        if (parsed.role === 'admin') {
-          setUserRole('admin');
+        const parsed = JSON.parse(storedUserData);
+        if (parsed.role === 'admin' || parsed.role === 'employee') {
+          setUserRole(parsed.role as 'admin' | 'employee');
           setUserName(parsed.name);
           setLoading(false);
           return;
@@ -111,6 +111,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 }
 
 export const useAuth = () => useContext(AuthContext);
+
 
 
 

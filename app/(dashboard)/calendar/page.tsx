@@ -101,12 +101,24 @@ export default function CalendarPage() {
     router.push(`/tasks/return?bookingId=${bookingId}`);
   };
 
-  const handleCreateBooking = (cameraId: string, date: Date, hour?: number) => {
+  const handleCreateBooking = (
+    cameraId: string,
+    date: Date,
+    hour?: number,
+    pickupTime?: Date,
+    returnTime?: Date
+  ) => {
     const dateStr = format(date, 'yyyy-MM-dd');
     let url = `/bookings/new?cameraId=${cameraId}&date=${dateStr}`;
-    if (hour !== undefined) {
+
+    if (pickupTime && returnTime) {
+      // Drag selection - pass full time range
+      url += `&pickupTime=${pickupTime.toISOString()}&returnTime=${returnTime.toISOString()}`;
+    } else if (hour !== undefined) {
+      // Single click - pass hour only
       url += `&hour=${hour.toString().padStart(2, '0')}`;
     }
+
     router.push(url);
   };
 

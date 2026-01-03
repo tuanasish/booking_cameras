@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useBookingForm } from '@/hooks/useBookingForm';
 import BookingFormStepper from '@/components/booking/BookingFormStepper';
 import BookingFormStepA from '@/components/booking/BookingFormStepA';
@@ -13,6 +13,7 @@ import clsx from 'clsx';
 
 export default function NewBookingPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const {
     currentStep,
     formData,
@@ -33,6 +34,82 @@ export default function NewBookingPage() {
   useEffect(() => {
     fetchSettings();
   }, []);
+
+  // Read URL parameters and pre-fill form - only once on mount
+  const hasProcessedParams = useRef(false);
+
+  useEffect(() => {
+    if (hasProcessedParams.current) return;
+
+    const cameraId = searchParams.get('cameraId');
+    const pickupTimeParam = searchParams.get('pickupTime');
+    const returnTimeParam = searchParams.get('returnTime');
+    const dateParam = searchParams.get('date');
+    const hourParam = searchParams.get('hour');
+
+    // Chatbot params
+    const customerPhoneParam = searchParams.get('customerPhone');
+    const depositAmountParam = searchParams.get('depositAmount');
+
+    // Handle drag selection or chatbot (pickupTime + returnTime)
+    if (pickupTimeParam && returnTimeParam) {
+      const updates: any = {
+        pickupTime: pickupTimeParam,
+        returnTime: returnTimeParam,
+      };
+
+      // If from chatbot, also set customer phone and deposit
+      if (customerPhoneParam) {
+        updates.customerPhone = customerPhoneParam;
+      }
+      if (depositAmountParam) {
+        const deposit = parseInt(depositAmountParam);
+        if (deposit > 0) {
+          updates.depositType = 'custom';
+          updates.depositAmount = deposit;
+        }
+      }
+
+      updateFormData(updates);
+      hasProcessedParams.current = true;
+
+      // If phone provided, search for existing customer
+      if (customerPhoneParam) {
+        searchCustomer(customerPhoneParam);
+      }
+    }
+    // Handle single click (date + hour)
+    else if (dateParam && hourParam) {
+      const pickup = new Date(`${dateParam}T${hourParam}:00:00`);
+      const returnTime = new Date(pickup);
+      returnTime.setHours(pickup.getHours() + 6); // Default 6 hours
+
+      updateFormData({
+        pickupTime: pickup.toISOString(),
+        returnTime: returnTime.toISOString(),
+      });
+      hasProcessedParams.current = true;
+    }
+  }, [searchParams]);
+
+  // Pre-select camera when available cameras load
+  useEffect(() => {
+    if (availableCameras.length === 0) return;
+
+    const cameraId = searchParams.get('cameraId');
+    if (cameraId && !formData.selectedCameras.some(c => c.cameraId === cameraId)) {
+      const camera = availableCameras.find((c: any) => c.id === cameraId);
+      if (camera) {
+        updateFormData({
+          selectedCameras: [{
+            cameraId: camera.id,
+            camera: camera,
+            quantity: 1,
+          }],
+        });
+      }
+    }
+  }, [availableCameras]);
 
   const fetchSettings = async () => {
     try {
@@ -70,7 +147,7 @@ export default function NewBookingPage() {
     }
   }, [formData.selectedCameras, formData.pickupTime, formData.returnTime, settings]);
 
-  const checkAvailability = async (pickupTime: string, returnTime: string) => {
+  const checkAvailability = useCallback(async (pickupTime: string, returnTime: string) => {
     if (!pickupTime || !returnTime) return;
 
     try {
@@ -84,7 +161,7 @@ export default function NewBookingPage() {
     } catch (error) {
       console.error('Error checking availability:', error);
     }
-  };
+  }, []);
 
   const handleSubmit = async () => {
     if (!validateStep('D')) {

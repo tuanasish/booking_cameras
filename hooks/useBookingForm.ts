@@ -75,11 +75,11 @@ export function useBookingForm() {
     setErrors({});
   };
 
-  const validateStep = (step: 'A' | 'B' | 'C' | 'D'): boolean => {
+  const validateStep = (step: 'A' | 'B' | 'C' | 'D' | 'all'): boolean => {
     const newErrors: Record<string, string> = {};
 
-    // Step A is now Time
-    if (step === 'A') {
+    // Step A: Time
+    if (step === 'A' || step === 'all') {
       if (!formData.pickupTime) {
         newErrors.pickupTime = 'Thời gian nhận máy là bắt buộc';
       }
@@ -91,19 +91,25 @@ export function useBookingForm() {
         const returnTime = new Date(formData.returnTime);
         if (returnTime <= pickup) {
           newErrors.returnTime = 'Thời gian trả phải sau thời gian nhận';
+        } else {
+          const diffMs = returnTime.getTime() - pickup.getTime();
+          const diffHours = diffMs / (1000 * 60 * 60);
+          if (diffHours < 4) {
+            newErrors.returnTime = 'Thời gian thuê tối thiểu phải là 4 tiếng';
+          }
         }
       }
     }
 
-    // Step B is now Equipment
-    if (step === 'B') {
+    // Step B: Equipment
+    if (step === 'B' || step === 'all') {
       if (formData.selectedCameras.length === 0) {
         newErrors.cameras = 'Vui lòng chọn ít nhất một máy ảnh';
       }
     }
 
-    // Step C is now Customer Info
-    if (step === 'C') {
+    // Step C: Customer Info
+    if (step === 'C' || step === 'all') {
       if (!formData.customerName.trim()) {
         newErrors.customerName = 'Tên khách hàng là bắt buộc';
       }
@@ -112,24 +118,18 @@ export function useBookingForm() {
       } else if (!/^[0-9]{10,11}$/.test(formData.customerPhone.replace(/\D/g, ''))) {
         newErrors.customerPhone = 'Số điện thoại không hợp lệ';
       }
-      if (formData.platforms.length > 2) {
-        newErrors.platforms = 'Chỉ được chọn tối đa 2 kênh liên hệ';
+      if (formData.platforms.length === 0) {
+        newErrors.platforms = 'Vui lòng chọn ít nhất một nền tảng';
       }
     }
 
-    // Step D remains Payment
-    if (step === 'D') {
-      // Delivery location is now optional
-      /* 
-      if (!formData.deliveryLocation.trim()) {
-        newErrors.deliveryLocation = 'Địa điểm giao máy là bắt buộc';
+    // Step D: Payment
+    if (step === 'D' || step === 'all') {
+      if (formData.depositType === 'cccd' && !formData.cccdName.trim()) {
+        newErrors.cccdName = 'Tên trên CCCD là bắt buộc khi cọc bằng CCCD';
       }
-      */
       if (!formData.createdBy) {
-        newErrors.createdBy = 'Vui lòng chọn nhân viên lên lịch';
-      }
-      if (formData.depositType === 'cccd' && !formData.hasVNeID && !formData.cccdName.trim()) {
-        newErrors.cccdName = 'Vui lòng nhập tên trên CCCD';
+        newErrors.createdBy = 'Vui lòng chọn nhân viên tạo đơn';
       }
       if (formData.depositType === 'custom' && formData.depositAmount <= 0) {
         newErrors.depositAmount = 'Vui lòng nhập số tiền cọc';

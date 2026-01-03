@@ -115,14 +115,16 @@ export default function CalendarSidebar({
 
             {/* Search */}
             <div className="px-4 mb-4">
-                <div className="relative">
-                    <span className="material-symbols-outlined absolute left-3 top-2.5 text-text-secondary text-[20px]">
-                        person_search
-                    </span>
+                <div className="relative flex items-center">
+                    <div className="absolute left-3 inset-y-0 flex items-center text-text-secondary pointer-events-none">
+                        <span className="material-symbols-outlined text-[20px] translate-y-[0.5px]">
+                            person_search
+                        </span>
+                    </div>
                     <input
                         type="text"
                         placeholder="Tìm khách hàng / Booking ID"
-                        className="pl-10 pr-3 py-2 w-full bg-background rounded border border-border focus:border-primary focus:ring-0 text-xs transition-colors placeholder-text-secondary text-text-main outline-none"
+                        className="pl-10 pr-3 py-2 w-full bg-background rounded border border-border focus:border-primary focus:ring-0 text-xs transition-colors placeholder-text-secondary text-text-main outline-none flex items-center"
                     />
                 </div>
             </div>

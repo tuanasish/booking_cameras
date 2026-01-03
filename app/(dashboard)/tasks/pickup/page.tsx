@@ -138,6 +138,38 @@ export default function PickupTasksPage() {
     }
   };
 
+  const handleUndoPickup = async (taskId: string) => {
+    if (processingTask) return;
+
+    if (!confirm('Bạn có chắc muốn hoàn tác? Task sẽ chuyển về trạng thái chưa hoàn thành.')) {
+      return;
+    }
+
+    setProcessingTask(taskId);
+    try {
+      const response = await fetch(`/api/tasks/${taskId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          completed_at: null,
+          staff_id: null,
+        }),
+      });
+
+      if (response.ok) {
+        alert('Đã hoàn tác thành công');
+        fetchTasks();
+      } else {
+        alert('Lỗi khi hoàn tác');
+      }
+    } catch (error) {
+      console.error('Error undoing pickup:', error);
+      alert('Lỗi khi hoàn tác');
+    } finally {
+      setProcessingTask(null);
+    }
+  };
+
   const handleDateChange = (days: number) => {
     const newDate = new Date(selectedDate);
     newDate.setDate(newDate.getDate() + days);
@@ -151,7 +183,7 @@ export default function PickupTasksPage() {
   return (
     <div className="flex h-full flex-col bg-background">
       {/* Header */}
-      <header className="flex flex-col sm:flex-row h-auto sm:h-16 items-start sm:items-center justify-between border-b border-border bg-surface px-4 sm:px-6 py-4 sm:py-0 shrink-0 gap-4 sm:gap-0">
+      <header className="flex flex-col sm:flex-row h-auto sm:h-16 items-center justify-between border-b border-border bg-surface px-4 sm:px-6 py-4 sm:py-0 shrink-0 gap-4">
         <div className="flex items-center gap-3">
           <h1 className="text-lg sm:text-xl font-bold text-text-main tracking-tight">NHẬN MÁY</h1>
           <div className="flex items-center gap-2 px-2 py-0.5 rounded bg-primary/10 border border-primary/20">
@@ -161,22 +193,25 @@ export default function PickupTasksPage() {
           </div>
         </div>
 
-        {/* Date Selector */}
-        <div className="flex items-center gap-2 bg-background p-1 rounded-xl border border-border w-full sm:w-auto shadow-sm">
+        {/* Date Selector - Centered */}
+        <div className="flex items-center gap-2 bg-background p-1 rounded-xl border border-border shadow-sm">
           <button
             onClick={() => handleDateChange(-1)}
-            className="p-1.5 hover:bg-surface rounded-lg text-text-secondary hover:text-text-main transition-all active:scale-90"
+            className="p-2 hover:bg-surface rounded-lg text-primary hover:text-blue-600 transition-all active:scale-90"
           >
-            <span className="material-symbols-outlined text-[20px]">chevron_left</span>
+            <span className="material-symbols-outlined text-[24px]">chevron_left</span>
           </button>
 
-          <div className="flex-1 flex items-center justify-center gap-2 px-2">
-            <input
-              type="date"
-              value={format(selectedDate, 'yyyy-MM-dd')}
-              onChange={(e) => setSelectedDate(new Date(e.target.value))}
-              className="bg-transparent border-none p-0 text-xs sm:text-sm font-bold text-text-main focus:ring-0 w-[100px] sm:w-[110px] outline-none text-center"
-            />
+          <div className="flex items-center justify-center gap-2 px-2">
+            <div className="relative flex items-center gap-2">
+              <span className="material-symbols-outlined text-primary text-[20px]">calendar_today</span>
+              <input
+                type="date"
+                value={format(selectedDate, 'yyyy-MM-dd')}
+                onChange={(e) => setSelectedDate(new Date(e.target.value))}
+                className="bg-transparent border-none p-0 text-xs sm:text-sm font-bold text-text-main focus:ring-0 w-[100px] sm:w-[110px] outline-none text-center [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+              />
+            </div>
             <button
               onClick={() => setSelectedDate(new Date())}
               className={clsx(
@@ -192,11 +227,14 @@ export default function PickupTasksPage() {
 
           <button
             onClick={() => handleDateChange(1)}
-            className="p-1.5 hover:bg-surface rounded-lg text-text-secondary hover:text-text-main transition-all active:scale-90"
+            className="p-2 hover:bg-surface rounded-lg text-primary hover:text-blue-600 transition-all active:scale-90"
           >
-            <span className="material-symbols-outlined text-[20px]">chevron_right</span>
+            <span className="material-symbols-outlined text-[24px]">chevron_right</span>
           </button>
         </div>
+
+        {/* Spacer for alignment on desktop */}
+        <div className="hidden sm:block w-[120px]"></div>
       </header>
 
       <div className="flex-1 overflow-y-auto p-6">
@@ -313,7 +351,13 @@ export default function PickupTasksPage() {
                   </div>
                   <div className="space-y-4">
                     {completedTasks.map((task) => (
-                      <TaskCard key={task.id} task={task} isCompleted />
+                      <TaskCard
+                        key={task.id}
+                        task={task}
+                        isCompleted
+                        onUndo={() => handleUndoPickup(task.id)}
+                        processing={processingTask === task.id}
+                      />
                     ))}
                   </div>
                 </div>
@@ -331,12 +375,14 @@ function TaskCard({
   isOverdue = false,
   isCompleted = false,
   onConfirm,
+  onUndo,
   processing = false,
 }: {
   task: PickupTask;
   isOverdue?: boolean;
   isCompleted?: boolean;
   onConfirm?: () => void;
+  onUndo?: () => void;
   processing?: boolean;
 }) {
   const router = useRouter();
@@ -351,137 +397,165 @@ function TaskCard({
   return (
     <div
       className={clsx(
-        'group bg-surface rounded-xl border p-5 transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 shadow-sm',
+        'group bg-surface rounded-xl border p-5 transition-all flex flex-col gap-4 shadow-sm',
         isOverdue && 'border-red-500/30 hover:border-red-500/50 hover:bg-red-500/5',
-        isCompleted && 'opacity-60 grayscale-[0.2] border-border',
+        isCompleted && 'border-emerald-500/30 bg-emerald-500/5',
         !isCompleted && !isOverdue && 'border-border hover:border-primary/50 hover:bg-primary/5'
       )}
     >
-      <div className="flex-1 space-y-4 w-full">
-        {/* Top: Customer & Platform */}
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-4">
-            <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20">
-              <span className="material-symbols-outlined text-primary text-[20px]">person_check</span>
-            </div>
-            <div>
-              <h3 className="text-sm font-bold text-text-main group-hover:text-primary transition-colors">
-                {task.booking.customer.name}
-              </h3>
-              <p className="text-[11px] text-text-secondary mt-0.5">{task.booking.customer.phone}</p>
-            </div>
-          </div>
-
-          <div className="flex gap-1.5">
-            {task.booking.customer.platforms?.map((p) => (
-              <span
-                key={p}
-                title={p}
-                className="size-7 rounded bg-background border border-border flex items-center justify-center text-text-secondary"
-              >
-                <span className="material-symbols-outlined text-[16px]">
-                  {platformIcons[p] || 'link'}
-                </span>
-              </span>
-            ))}
-          </div>
+      {/* Completion Status Badge - Prominent at top */}
+      {isCompleted && (
+        <div className="flex items-center justify-center gap-3 py-3 px-4 rounded-lg bg-emerald-500/10 border-2 border-emerald-500/30">
+          <span className="material-symbols-outlined text-emerald-500 text-[32px]">check_circle</span>
+          <span className="text-emerald-500 font-black text-lg uppercase tracking-wider">Đã nhận máy</span>
         </div>
+      )}
 
-        {/* Mid: Equipment */}
-        <div className="flex flex-wrap gap-2">
-          {task.booking.booking_items?.map((item, idx) => (
-            <div
-              key={idx}
-              className="px-2 py-1 rounded bg-background border border-border text-[10px] text-text-secondary flex items-center gap-1.5"
-            >
-              <span className="font-bold text-text-main tracking-widest">{item.quantity}x</span>
-              {item.camera.name}
-            </div>
-          ))}
-          {task.booking.booking_accessories && task.booking.booking_accessories.length > 0 && (
-            task.booking.booking_accessories.map((acc, idx) => (
-              <div key={idx} className="px-2 py-1 rounded bg-amber-500/10 border border-amber-500/20 text-[10px] text-amber-500">
-                {acc.name || acc.accessory_type}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+        <div className="flex-1 space-y-4 w-full">
+          {/* Top: Customer & Platform */}
+          <div className="flex items-start justify-between">
+            <div className="flex items-center gap-4">
+              <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20">
+                <span className="material-symbols-outlined text-primary text-[20px]">person_check</span>
               </div>
-            ))
-          )}
-        </div>
+              <div>
+                <h3 className="text-sm font-bold text-text-main group-hover:text-primary transition-colors">
+                  {task.booking.customer.name}
+                </h3>
+                <p className="text-[11px] text-text-main/70 mt-0.5">{task.booking.customer.phone}</p>
+              </div>
+            </div>
 
-        {/* Bottom: Info Bar */}
-        <div className="flex flex-wrap items-center gap-y-3 gap-x-6 pt-1">
-          <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-primary text-[18px]">schedule</span>
-            <span className="text-xs font-bold text-text-main">{formatTime(task.due_at)}</span>
+            <div className="flex gap-1.5">
+              {task.booking.customer.platforms?.map((p) => (
+                <span
+                  key={p}
+                  title={p}
+                  className="size-7 rounded bg-background border border-border flex items-center justify-center text-text-secondary"
+                >
+                  <span className="material-symbols-outlined text-[16px]">
+                    {platformIcons[p] || 'link'}
+                  </span>
+                </span>
+              ))}
+            </div>
           </div>
 
-          {task.location && (
+          {/* Mid: Equipment */}
+          <div className="flex flex-wrap gap-2">
+            {task.booking.booking_items?.map((item, idx) => (
+              <div
+                key={idx}
+                className="px-2 py-1 rounded bg-background border border-border text-[10px] text-text-main/80 flex items-center gap-1.5"
+              >
+                <span className="font-bold text-text-main tracking-widest">{item.quantity}x</span>
+                {item.camera.name}
+              </div>
+            ))}
+            {task.booking.booking_accessories && task.booking.booking_accessories.length > 0 && (
+              task.booking.booking_accessories.map((acc, idx) => (
+                <div key={idx} className="px-2 py-1 rounded bg-amber-500/10 border border-amber-500/20 text-[10px] text-amber-500">
+                  {acc.name || acc.accessory_type}
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* Bottom: Info Bar */}
+          <div className="flex flex-wrap items-center gap-y-3 gap-x-6 pt-1">
             <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-text-secondary text-[18px]">location_on</span>
-              <span className="text-xs text-text-secondary">{task.location}</span>
+              <span className="material-symbols-outlined text-primary text-[18px]">schedule</span>
+              <span className="text-xs font-bold text-text-main">{formatTime(task.due_at)}</span>
             </div>
-          )}
 
-          {task.delivery_fee > 0 && (
-            <div className="flex items-center gap-2 text-primary font-bold">
-              <span className="material-symbols-outlined text-[18px]">local_shipping</span>
-              <span className="text-[11px]">{formatCurrency(task.delivery_fee)}</span>
-            </div>
-          )}
-
-          {task.booking.payment_status === 'pending' && (
-            <div className="flex items-center gap-2 px-2 py-1 rounded bg-rose-500/10 border border-rose-500/20">
-              <span className="text-[10px] font-bold text-rose-500 uppercase tracking-wider">Chưa cọc</span>
-            </div>
-          )}
-
-          {task.booking.deposit_type === 'cccd' && task.booking.cccd_name && (
-            <div className="flex items-center gap-2 px-2 py-1 rounded bg-amber-500/10 border border-amber-500/20">
-              <span className="material-symbols-outlined text-amber-500 text-[16px]">id_card</span>
-              <span className="text-[10px] font-bold text-amber-500">{task.booking.cccd_name}</span>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Right Column: CTA */}
-      <div className="flex flex-col items-stretch sm:items-end gap-3 w-full sm:w-auto shrink-0">
-        {!isCompleted ? (
-          <button
-            onClick={onConfirm}
-            disabled={processing}
-            className={clsx(
-              'px-6 py-2.5 rounded-lg text-xs font-bold transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2',
-              isOverdue
-                ? 'bg-rose-500 text-white hover:bg-rose-600 shadow-rose-500/10'
-                : 'bg-primary text-white hover:bg-blue-600 shadow-blue-500/10',
-              processing && 'opacity-50 cursor-wait'
+            {task.location && (
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-text-main/60 text-[18px]">location_on</span>
+                <span className="text-xs text-text-main/80">{task.location}</span>
+              </div>
             )}
-          >
-            {processing ? (
-              <>
-                <div className="animate-spin rounded-full h-3.5 w-3.5 border-b-2 border-white"></div>
-                <span>ĐANG XỬ LÝ...</span>
-              </>
-            ) : (
-              <>
-                <span className="material-symbols-outlined text-[18px]">check_circle</span>
-                XÁC NHẬN NHẬN MÁY
-              </>
+
+            {task.delivery_fee > 0 && (
+              <div className="flex items-center gap-2 text-primary font-bold">
+                <span className="material-symbols-outlined text-[18px]">local_shipping</span>
+                <span className="text-[11px]">{formatCurrency(task.delivery_fee)}</span>
+              </div>
             )}
-          </button>
-        ) : (
-          <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 font-bold text-xs uppercase tracking-widest">
-            <span className="material-symbols-outlined text-[18px]">check_circle</span>
-            Đã nhận máy
+
+            {task.booking.payment_status === 'pending' && (
+              <div className="flex items-center gap-2 px-2 py-1 rounded bg-rose-500/10 border border-rose-500/20">
+                <span className="text-[10px] font-bold text-rose-500 uppercase tracking-wider">Chưa cọc</span>
+              </div>
+            )}
+
+            {task.booking.deposit_type === 'cccd' && task.booking.cccd_name && (
+              <div className="flex items-center gap-2 px-2 py-1 rounded bg-amber-500/10 border border-amber-500/20">
+                <span className="material-symbols-outlined text-amber-500 text-[16px]">id_card</span>
+                <span className="text-[10px] font-bold text-amber-500">{task.booking.cccd_name}</span>
+              </div>
+            )}
           </div>
-        )}
+        </div>
 
-        <button
-          onClick={() => router.push(`/calendar?bookingId=${task.booking_id}`)}
-          className="px-6 py-2 rounded-lg border border-border bg-background text-text-secondary text-[11px] font-bold uppercase hover:bg-surface hover:text-text-main transition-all tracking-wider"
-        >
-          Chi tiết đơn
-        </button>
+        {/* Right Column: CTA */}
+        <div className="flex flex-col items-stretch sm:items-end gap-3 w-full sm:w-auto shrink-0">
+          {!isCompleted ? (
+            <button
+              onClick={onConfirm}
+              disabled={processing}
+              className={clsx(
+                'px-6 py-2.5 rounded-lg text-xs font-bold transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2',
+                isOverdue
+                  ? 'bg-rose-500 text-white hover:bg-rose-600 shadow-rose-500/10'
+                  : 'bg-primary text-white hover:bg-blue-600 shadow-blue-500/10',
+                processing && 'opacity-50 cursor-wait'
+              )}
+            >
+              {processing ? (
+                <>
+                  <div className="animate-spin rounded-full h-3.5 w-3.5 border-b-2 border-white"></div>
+                  <span>ĐANG XỬ LÝ...</span>
+                </>
+              ) : (
+                <>
+                  <span className="material-symbols-outlined text-[18px]">check_circle</span>
+                  XÁC NHẬN NHẬN MÁY
+                </>
+              )}
+            </button>
+          ) : (
+            <>
+              <button
+                onClick={onUndo}
+                disabled={processing}
+                className={clsx(
+                  'px-6 py-2.5 rounded-lg text-xs font-bold transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2 bg-amber-500 text-white hover:bg-amber-600',
+                  processing && 'opacity-50 cursor-wait'
+                )}
+              >
+                {processing ? (
+                  <>
+                    <div className="animate-spin rounded-full h-3.5 w-3.5 border-b-2 border-white"></div>
+                    <span>ĐANG XỬ LÝ...</span>
+                  </>
+                ) : (
+                  <>
+                    <span className="material-symbols-outlined text-[18px]">undo</span>
+                    HOÀN TÁC
+                  </>
+                )}
+              </button>
+            </>
+          )}
+
+          <button
+            onClick={() => router.push(`/bookings/${task.booking_id}`)}
+            className="px-6 py-2 rounded-lg border border-border bg-background text-text-secondary text-[11px] font-bold uppercase hover:bg-surface hover:text-text-main transition-all tracking-wider"
+          >
+            Chi tiết đơn
+          </button>
+        </div>
       </div>
     </div>
   );

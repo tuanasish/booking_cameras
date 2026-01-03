@@ -66,8 +66,8 @@ export function calculateRentalPrice(
   }
 
   // If extra > 0, calculate granular price
-  // base price for full days + (day1Price / divisor) * extra hours
-  const extraPrice = Math.round((day1Price / lateFeeDivisor) * extraHours);
+  // base price for full days + (camera.price_6h / divisor) * extra hours
+  const extraPrice = Math.round((camera.price_6h / lateFeeDivisor) * extraHours);
 
   return {
     total: basePrice + extraPrice,
@@ -151,3 +151,9 @@ export function getPaymentStatusBgColor(
   }
 }
 
+/**
+ * Làm tròn lên đến hàng nghìn
+ */
+export function roundUpToThousand(amount: number): number {
+  return Math.ceil(amount / 1000) * 1000;
+}

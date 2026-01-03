@@ -91,25 +91,20 @@ export default function LoginPage() {
         return;
       }
 
-      const { error: authError } = await supabase.auth.signInWithOtp({
-        email: employeeForm.email,
-        options: {
-          emailRedirectTo: `${window.location.origin}/calendar`,
-        },
-      });
-
-      if (authError) {
-        console.error('Auth error:', authError);
-        setEmployeeError(`Không thể gửi email: ${authError.message || 'Vui lòng thử lại'}`);
+      if (!employee) {
+        setEmployeeError('Email không tồn tại hoặc chưa được kích hoạt');
         return;
       }
 
-      localStorage.setItem('pendingEmployee', JSON.stringify({
-        email: employeeForm.email,
+      // Skip Supabase Auth OTP and store session directly in localStorage
+      localStorage.setItem('user', JSON.stringify({
+        id: employee.id,
         name: employee.name,
+        email: employee.email,
+        role: 'employee'
       }));
 
-      alert('Đã gửi link đăng nhập đến email của bạn. Vui lòng kiểm tra hộp thư.');
+      window.location.href = '/calendar';
     } catch (error: any) {
       console.error('Employee login exception:', error);
       setEmployeeError(`Đã xảy ra lỗi: ${error.message || 'Vui lòng thử lại'}`);
@@ -248,16 +243,16 @@ export default function LoginPage() {
               {activeTab === 'employee' && (
                 <div className="flex flex-col">
                   <p className="text-sm text-text-secondary mb-6 leading-relaxed">
-                    Nhập email công việc của bạn để nhận liên kết đăng nhập một lần (Magic Link). Không cần mật khẩu.
+                    Sử dụng email cá nhân được cấp quyền để truy cập hệ thống.
                   </p>
 
                   <form className="flex flex-col gap-5" onSubmit={handleEmployeeLogin}>
                     <label className="flex flex-col gap-2">
                       <span className="text-sm font-medium text-text-secondary">Email công việc</span>
-                      <div className="relative">
-                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary">
-                          <span className="material-symbols-outlined text-[20px]">mail</span>
-                        </span>
+                      <div className="relative group">
+                        <div className="absolute left-4 inset-y-0 flex items-center text-text-secondary pointer-events-none">
+                          <span className="material-symbols-outlined text-[20px] translate-y-[0.5px]">mail</span>
+                        </div>
                         <input
                           className="w-full h-12 rounded-lg bg-background border border-border focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-text-main placeholder:text-text-secondary/50 pl-11 pr-4 transition-colors outline-none"
                           placeholder="nhanvien@kantra.com"
@@ -273,9 +268,9 @@ export default function LoginPage() {
                           <span>{employeeError}</span>
                         </div>
                       )}
-                      <p className="text-[11px] text-text-secondary/60 flex items-start gap-1">
-                        <span className="material-symbols-outlined text-[14px]">info</span>
-                        Chỉ email đã được Admin cấp quyền mới có thể truy cập.
+                      <p className="text-[11px] text-text-secondary/60 flex items-center gap-1.5 mt-1.5">
+                        <span className="material-symbols-outlined text-[15px] translate-y-[0.5px]">info</span>
+                        <span>Chỉ email đã được Admin cấp quyền mới có thể truy cập.</span>
                       </p>
                     </label>
 
@@ -284,8 +279,8 @@ export default function LoginPage() {
                       disabled={employeeLoading}
                       className="w-full flex items-center justify-center h-12 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-bold transition-all shadow-lg shadow-emerald-500/25 disabled:opacity-50 disabled:cursor-not-allowed mt-2"
                     >
-                      <span className="mr-2">{employeeLoading ? 'Đang gửi...' : 'Gửi link đăng nhập'}</span>
-                      <span className="material-symbols-outlined text-[18px]">send</span>
+                      <span className="mr-2">{employeeLoading ? 'Đang xử lý...' : 'Đăng nhập'}</span>
+                      <span className="material-symbols-outlined text-[18px]">login</span>
                     </button>
                   </form>
                 </div>

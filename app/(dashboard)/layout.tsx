@@ -6,6 +6,7 @@ import { useAuth } from '@/lib/auth/context';
 import { SidebarProvider } from '@/lib/context/SidebarContext';
 import Sidebar from '@/components/ui/Sidebar';
 import MobileNav from '@/components/ui/MobileNav';
+import ChatbotWidget from '@/components/chatbot/ChatbotWidget';
 
 export default function DashboardLayout({
   children,
@@ -44,6 +45,7 @@ export default function DashboardLayout({
           {children}
         </main>
         <MobileNav />
+        <ChatbotWidget />
       </div>
     </SidebarProvider>
   );

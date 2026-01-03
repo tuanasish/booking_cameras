@@ -19,13 +19,14 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { href: '/dashboard', label: 'Dashboard', icon: 'pie_chart', adminOnly: true },
-  { href: '/calendar', label: 'Lịch Booking', icon: 'calendar_month' },
+  { href: '/dashboard', label: 'Tổng quan', icon: 'pie_chart', adminOnly: true },
+  { href: '/calendar', label: 'Lịch thuê', icon: 'calendar_month' },
   { href: '/bookings', label: 'Đơn thuê', icon: 'assignment' },
   { href: '/tasks/pickup', label: 'Nhận máy', icon: 'inventory_2' },
   { href: '/tasks/return', label: 'Trả máy', icon: 'inventory_2' },
-  { href: '/recovery', label: 'Recovery Tasks', icon: 'task' },
+  { href: '/recovery', label: 'Tải ảnh & Khôi phục', icon: 'task' },
   { href: '/customers', label: 'Khách hàng', icon: 'group' },
+  { href: '/bookings/trash', label: 'Thùng rác', icon: 'delete_outline' },
 ];
 
 const adminNavItems: NavItem[] = [
@@ -188,5 +189,6 @@ export default function Sidebar() {
     </aside>
   );
 }
+
 
 

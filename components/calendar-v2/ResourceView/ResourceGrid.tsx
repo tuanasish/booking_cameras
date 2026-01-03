@@ -1,7 +1,7 @@
 'use client';
 
 import { Camera, Booking } from '@/lib/types/database';
-import { useMemo } from 'react';
+import { useMemo, useState, useCallback, useRef, useEffect } from 'react';
 import ResourceColumn from './ResourceColumn';
 import ResourceHeader from './ResourceHeader';
 
@@ -22,7 +22,7 @@ interface ResourceGridProps {
     >;
     showLanes: boolean;
     onBookingClick?: (booking: Booking) => void;
-    onCreateBooking?: (cameraId: string, date: Date, hour?: number) => void;
+    onCreateBooking?: (cameraId: string, date: Date, hour?: number, pickupTime?: Date, returnTime?: Date) => void;
 }
 
 export default function ResourceGrid({
@@ -37,6 +37,27 @@ export default function ResourceGrid({
     const isToday = dateStr === new Date().toDateString();
     const totalHeight = (END_HOUR - START_HOUR) * HOUR_HEIGHT;
     const hours = Array.from({ length: END_HOUR - START_HOUR }, (_, i) => START_HOUR + i);
+
+    // Drag selection state
+    const [isDragging, setIsDragging] = useState(false);
+    const [dragStartMinutes, setDragStartMinutes] = useState<number | null>(null);
+    const [dragCurrentY, setDragCurrentY] = useState<number | null>(null);
+    const [currentScrollTop, setCurrentScrollTop] = useState(0);
+    const [selectedCameraId, setSelectedCameraId] = useState<string | null>(null);
+    const gridRef = useRef<HTMLDivElement>(null);
+    const scrollInterval = useRef<number | null>(null);
+
+    // Round time to nearest 30 minutes
+    const roundToNearestHalfHour = (minutes: number) => {
+        return Math.round(minutes / 30) * 30;
+    };
+
+    // Calculate time from Y position
+    const getTimeFromY = (y: number, containerTop: number, scrollTop: number) => {
+        const relativeY = y - containerTop + scrollTop;
+        const minutes = (relativeY / HOUR_HEIGHT) * 60;
+        return roundToNearestHalfHour(Math.max(0, Math.min(24 * 60, minutes)));
+    };
 
     // Get bookings for a specific camera on this date
     const getBookingsForCamera = (cameraId: string) => {
@@ -72,6 +93,119 @@ export default function ResourceGrid({
         ? ((now.getHours() - START_HOUR) * 60 + now.getMinutes()) * (HOUR_HEIGHT / 60)
         : -1;
 
+    // Mouse event handlers for drag selection
+    const handleMouseDown = useCallback((e: React.MouseEvent, cameraId: string) => {
+        if (!gridRef.current) return;
+        const rect = gridRef.current.getBoundingClientRect();
+        const y = e.clientY;
+        const startMins = getTimeFromY(y, rect.top, gridRef.current.scrollTop);
+
+        setIsDragging(true);
+        setDragStartMinutes(startMins);
+        setDragCurrentY(y);
+        setSelectedCameraId(cameraId);
+    }, [getTimeFromY]);
+
+    const handleMouseMove = useCallback((e: React.MouseEvent) => {
+        if (!isDragging || !gridRef.current) return;
+        setDragCurrentY(e.clientY);
+    }, [isDragging]);
+
+    const handleMouseUp = useCallback(() => {
+        if (!isDragging || dragStartMinutes === null || !dragCurrentY || !selectedCameraId || !gridRef.current) {
+            setIsDragging(false);
+            setDragStartMinutes(null);
+            setDragCurrentY(null);
+            setSelectedCameraId(null);
+            return;
+        }
+
+        const rect = gridRef.current.getBoundingClientRect();
+        const endMinutes = getTimeFromY(dragCurrentY, rect.top, gridRef.current.scrollTop);
+
+        // Ensure minimum 30 minutes selection
+        const minStart = Math.min(dragStartMinutes, endMinutes);
+        const maxEnd = Math.max(dragStartMinutes, endMinutes);
+
+        if (maxEnd - minStart >= 30) {
+            // Create booking with selected time range
+            const pickupDate = new Date(date);
+            pickupDate.setHours(Math.floor(minStart / 60), minStart % 60, 0, 0);
+
+            const returnDate = new Date(date);
+            returnDate.setHours(Math.floor(maxEnd / 60), maxEnd % 60, 0, 0);
+
+            // Call onCreateBooking with camera and full time range
+            if (onCreateBooking) {
+                onCreateBooking(selectedCameraId, pickupDate, Math.floor(minStart / 60), pickupDate, returnDate);
+            }
+        }
+
+        // Reset drag state
+        setIsDragging(false);
+        setDragStartMinutes(null);
+        setDragCurrentY(null);
+        setSelectedCameraId(null);
+    }, [isDragging, dragStartMinutes, dragCurrentY, selectedCameraId, date, onCreateBooking, getTimeFromY]);
+
+    // Autoscroll logic
+    useEffect(() => {
+        if (isDragging && gridRef.current) {
+            const container = gridRef.current;
+            const threshold = 80;
+            const maxScrollSpeed = 12;
+
+            const updateScroll = () => {
+                if (dragCurrentY === null) return;
+                const rect = container.getBoundingClientRect();
+                const distTop = dragCurrentY - rect.top;
+                const distBottom = rect.bottom - dragCurrentY;
+
+                let scrollDelta = 0;
+                if (distTop < threshold && distTop > -100) {
+                    scrollDelta = -maxScrollSpeed * (1 - Math.max(0, distTop) / threshold);
+                } else if (distBottom < threshold && distBottom > -100) {
+                    scrollDelta = maxScrollSpeed * (1 - Math.max(0, distBottom) / threshold);
+                }
+
+                if (scrollDelta !== 0) {
+                    container.scrollTop += scrollDelta;
+                    setCurrentScrollTop(container.scrollTop);
+                }
+                scrollInterval.current = requestAnimationFrame(updateScroll);
+            };
+
+            scrollInterval.current = requestAnimationFrame(updateScroll);
+        } else {
+            if (scrollInterval.current) cancelAnimationFrame(scrollInterval.current);
+        }
+
+        return () => {
+            if (scrollInterval.current) cancelAnimationFrame(scrollInterval.current);
+        };
+    }, [isDragging, dragCurrentY]);
+
+    // Sync scroll top on manual scroll
+    const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+        setCurrentScrollTop(e.currentTarget.scrollTop);
+    };
+
+    // Calculate selection overlay position
+    const selectionOverlay = useMemo(() => {
+        if (!isDragging || dragStartMinutes === null || !dragCurrentY || !gridRef.current) return null;
+
+        const rect = gridRef.current.getBoundingClientRect();
+        const endMinutes = getTimeFromY(dragCurrentY, rect.top, currentScrollTop);
+
+        const minStart = Math.min(dragStartMinutes, endMinutes);
+        const maxEnd = Math.max(dragStartMinutes, endMinutes);
+
+        const top = (minStart / 60) * HOUR_HEIGHT;
+        const height = ((maxEnd - minStart) / 60) * HOUR_HEIGHT;
+
+        return { top, height };
+    }, [isDragging, dragStartMinutes, dragCurrentY, currentScrollTop, getTimeFromY]);
+
     return (
         <div className="flex flex-col flex-1 overflow-hidden bg-background">
             {/* FIXED HEADER ROW - Camera names */}
@@ -98,7 +232,15 @@ export default function ResourceGrid({
             </div>
 
             {/* SINGLE SCROLLABLE BODY - Time + Columns scroll together */}
-            <div className="flex-1 overflow-auto custom-scrollbar" id="resource-grid-scroll">
+            <div
+                ref={gridRef}
+                className="flex-1 overflow-auto custom-scrollbar"
+                id="resource-grid-scroll"
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseUp}
+                onScroll={handleScroll}
+            >
                 <div className="flex min-w-max" style={{ minHeight: `${totalHeight}px` }}>
                     {/* Time Labels Column - STICKY LEFT */}
                     <div className="w-10 sm:w-16 shrink-0 sticky left-0 z-20 bg-surface/90 backdrop-blur-sm border-r border-border shadow-sm">
@@ -141,19 +283,32 @@ export default function ResourceGrid({
 
                         {/* Resource Columns */}
                         <div className="flex relative z-10" style={{ height: `${totalHeight}px` }}>
-                            {cameras.map((camera) => (
-                                <ResourceColumn
-                                    key={camera.id}
-                                    camera={camera}
-                                    date={date}
-                                    bookings={getBookingsForCamera(camera.id)}
-                                    showLanes={showLanes}
-                                    startHour={START_HOUR}
-                                    hourHeight={HOUR_HEIGHT}
-                                    totalHeight={totalHeight}
-                                    onBookingClick={onBookingClick}
-                                    onCreateBooking={onCreateBooking}
-                                />
+                            {cameras.map((camera, index) => (
+                                <div key={camera.id} className="relative">
+                                    <ResourceColumn
+                                        camera={camera}
+                                        date={date}
+                                        bookings={getBookingsForCamera(camera.id)}
+                                        showLanes={showLanes}
+                                        startHour={START_HOUR}
+                                        hourHeight={HOUR_HEIGHT}
+                                        totalHeight={totalHeight}
+                                        onBookingClick={onBookingClick}
+                                        onCreateBooking={onCreateBooking}
+                                        onMouseDown={(e) => handleMouseDown(e, camera.id)}
+                                    />
+
+                                    {/* Selection Overlay */}
+                                    {isDragging && selectedCameraId === camera.id && selectionOverlay && (
+                                        <div
+                                            className="absolute left-0 right-0 bg-primary/20 border-2 border-primary rounded-lg pointer-events-none z-40"
+                                            style={{
+                                                top: `${selectionOverlay.top}px`,
+                                                height: `${selectionOverlay.height}px`,
+                                            }}
+                                        />
+                                    )}
+                                </div>
                             ))}
                         </div>
                     </div>

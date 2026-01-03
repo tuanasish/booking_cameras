@@ -97,9 +97,50 @@ export async function PATCH(
       }
     }
 
+    // Separate customer fields from booking fields
+    const {
+      customer_name,
+      customer_phone_2,
+      platforms,
+      ...bookingUpdates
+    } = body;
+
+    // Handle customer updates if provided
+    if (customer_name || customer_phone_2 || platforms) {
+      const { data: booking } = await supabase
+        .from('bookings')
+        .select('customer_id')
+        .eq('id', bookingId)
+        .single();
+
+      if (booking?.customer_id) {
+        const customerUpdates: any = {};
+        if (customer_name) customerUpdates.name = customer_name;
+        if (customer_phone_2 !== undefined) customerUpdates.phone_2 = customer_phone_2;
+        if (platforms) customerUpdates.platforms = platforms;
+
+        const { error: customerError } = await supabase
+          .from('customers')
+          .update(customerUpdates)
+          .eq('id', booking.customer_id);
+
+        if (customerError) {
+          // If phone_2 is missing from DB, we log it and continue with other updates if possible
+          // or return a helpful error message.
+          if (customerError.message.includes('phone_2')) {
+            console.error('Database is missing phone_2 column in customers table.');
+            // Optionally proceed without phone_2 or tell the user.
+            // For now, we return the specific error to the user so they know they need to run SQL.
+            return NextResponse.json({ error: `Hệ thống thiếu cột phone_2 trong bảng customers. Vui lòng liên hệ kỹ thuật hoặc chạy SQL migration.` }, { status: 400 });
+          }
+          return NextResponse.json({ error: `Lỗi cập nhật khách hàng: ${customerError.message}` }, { status: 400 });
+        }
+      }
+    }
+
     const { data, error } = await supabase
       .from('bookings')
-      .update(body)
+      .update(bookingUpdates)
       .eq('id', bookingId)
       .select()
       .single();
@@ -116,6 +157,7 @@ export async function PATCH(
     );
   }
 }
+
 
 
 

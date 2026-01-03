@@ -75,8 +75,8 @@ export default function BookingsPage() {
 
   const getStatusBadge = (status: Booking['payment_status']) => {
     const styles = {
-      pending: 'bg-amber-500/10 text-amber-500 border-amber-500/20',
-      deposited: 'bg-blue-500/10 text-blue-500 border-blue-500/20',
+      pending: 'bg-red-500/10 text-red-500 border-red-500/20',
+      deposited: 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20',
       paid: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20',
       cancelled: 'bg-slate-500/10 text-slate-500 border-slate-500/20',
     };
@@ -288,7 +288,7 @@ export default function BookingsPage() {
                               Nhận
                             </span>
                             <span className="text-xs text-text-main">
-                              {format(new Date(booking.pickup_time), 'HH:mm dd/MM', { locale: vi })}
+                              {format(new Date(booking.pickup_time), 'HH:mm dd/MM/yyyy', { locale: vi })}
                             </span>
                           </div>
                           <div className="flex items-center gap-2">
@@ -296,7 +296,7 @@ export default function BookingsPage() {
                               Trả
                             </span>
                             <span className="text-xs text-text-main">
-                              {format(new Date(booking.return_time), 'HH:mm dd/MM', { locale: vi })}
+                              {format(new Date(booking.return_time), 'HH:mm dd/MM/yyyy', { locale: vi })}
                             </span>
                           </div>
                         </div>
@@ -335,5 +335,6 @@ export default function BookingsPage() {
     </div>
   );
 }
+
 
 

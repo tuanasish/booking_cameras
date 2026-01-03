@@ -121,7 +121,7 @@ export default function EditBookingPage({ params }: { params: { id: string } }) 
     };
 
     const handleUpdate = async () => {
-        if (!validateStep('D')) return;
+        if (!validateStep('all')) return;
 
         setSubmitting(true);
         try {
@@ -129,9 +129,7 @@ export default function EditBookingPage({ params }: { params: { id: string } }) 
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    // Note: Simplistic PATCH. In a real app, you might need to handle 
-                    // sub-records (items, accessories, tasks) updating too via deeper logic
-                    // or a dedicated update endpoint. Here we update the core fields.
+                    // Core fields
                     pickup_time: formData.pickupTime,
                     return_time: formData.returnTime,
                     deposit_type: formData.depositType,
@@ -142,6 +140,10 @@ export default function EditBookingPage({ params }: { params: { id: string } }) 
                     discount_reason: formData.discountReason,
                     final_fee: formData.finalFee,
                     payment_status: formData.depositType === 'none' ? 'pending' : 'deposited',
+                    // Customer fields
+                    customer_name: formData.customerName,
+                    customer_phone_2: formData.customerPhone2,
+                    platforms: formData.platforms,
                 }),
             });
 

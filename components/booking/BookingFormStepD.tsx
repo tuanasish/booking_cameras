@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import Input from '@/components/ui/Input';
+import { formatCurrency, formatDateTime } from '@/lib/utils/format';
 import { Employee } from '@/lib/types/database';
-import { calculateFinalFee } from '@/lib/utils/booking';
+import { calculateFinalFee, roundUpToThousand } from '@/lib/utils/booking';
 import clsx from 'clsx';
 
 interface BookingFormStepDProps {
@@ -11,6 +12,8 @@ interface BookingFormStepDProps {
   depositAmount: number;
   cccdName: string;
   hasVNeID: boolean;
+  pickupTime: string;
+  returnTime: string;
   deliveryLocation: string;
   deliveryFee: number;
   totalRentalFee: number; // S
@@ -58,6 +61,8 @@ export default function BookingFormStepD({
   discountReason,
   finalFee,
   extraPriceTotal,
+  pickupTime,
+  returnTime,
   createdBy,
   errors,
   onUpdate,
@@ -308,8 +313,15 @@ export default function BookingFormStepD({
                   Lý do chiết khấu
                 </label>
                 <select
-                  value={discountReason}
-                  onChange={(e) => onUpdate({ discountReason: e.target.value })}
+                  value={discountReasons.some(r => r.value === discountReason) ? discountReason : (discountReason ? 'other' : '')}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val === 'other') {
+                      onUpdate({ discountReason: 'Khác' });
+                    } else {
+                      onUpdate({ discountReason: val });
+                    }
+                  }}
                   className="w-full bg-surface border border-border rounded-lg py-2 px-3 text-text-main focus:ring-1 focus:ring-primary focus:border-primary"
                 >
                   <option value="">Chọn lý do</option>
@@ -319,6 +331,19 @@ export default function BookingFormStepD({
                     </option>
                   ))}
                 </select>
+
+                {/* Custom reason input */}
+                {(discountReason === 'other' || (!discountReasons.some(r => r.value === discountReason) && discountReason !== '')) && (
+                  <div className="mt-2 animate-in fade-in slide-in-from-top-1 duration-200">
+                    <Input
+                      placeholder="Nhập lý do chiết khấu khác..."
+                      value={discountReason === 'other' ? '' : discountReason}
+                      onChange={(e) => onUpdate({ discountReason: e.target.value })}
+                      icon="edit_note"
+                      autoFocus
+                    />
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -351,6 +376,17 @@ export default function BookingFormStepD({
 
         {/* Summary */}
         <div className="p-4 rounded-lg bg-surface border border-border space-y-3 shadow-inner">
+          <div className="flex flex-col gap-1 pb-2 border-b border-border">
+            <div className="flex items-center justify-between text-xs text-text-secondary">
+              <span>Bắt đầu (Pickup):</span>
+              <span className="font-medium text-text-main">{formatDateTime(pickupTime)}</span>
+            </div>
+            <div className="flex items-center justify-between text-xs text-text-secondary">
+              <span>Kết thúc (Return):</span>
+              <span className="font-medium text-text-main">{formatDateTime(returnTime)}</span>
+            </div>
+          </div>
+
           <div className="flex items-center justify-between text-sm">
             <span className="text-text-secondary">Phí thuê gốc (S):</span>
             <span className="text-text-main font-medium">
@@ -367,7 +403,7 @@ export default function BookingFormStepD({
                 </span>
               </div>
               <div className="flex items-center justify-between text-sm pt-2 border-t border-border">
-                <span className="text-text-secondary">Phí sau chiết khấu (P):</span>
+                <span className="text-text-secondary">Phí sau chiết khấu:</span>
                 <span className="text-text-main font-bold">
                   {finalFee.toLocaleString('vi-VN')}đ
                 </span>
@@ -379,7 +415,16 @@ export default function BookingFormStepD({
             <div className="flex items-center justify-between text-sm">
               <span className="text-text-secondary">Phí giao máy:</span>
               <span className="text-text-main font-medium">
-                {deliveryFee.toLocaleString('vi-VN')}đ
+                +{deliveryFee.toLocaleString('vi-VN')}đ
+              </span>
+            </div>
+          )}
+
+          {depositAmount > 0 && (
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-text-secondary">Tiền đã cọc:</span>
+              <span className="text-emerald-500 font-medium">
+                -{depositAmount.toLocaleString('vi-VN')}đ
               </span>
             </div>
           )}
@@ -387,7 +432,7 @@ export default function BookingFormStepD({
           <div className="flex items-center justify-between text-base pt-2 border-t border-border">
             <span className="text-text-main font-bold">Tổng thanh toán:</span>
             <span className="text-primary font-bold text-lg">
-              {(finalFee + deliveryFee).toLocaleString('vi-VN')}đ
+              {roundUpToThousand(Math.max(0, finalFee + deliveryFee - depositAmount)).toLocaleString('vi-VN')}đ
             </span>
           </div>
         </div>

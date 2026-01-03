@@ -21,6 +21,7 @@ interface ResourceColumnProps {
     totalHeight: number;
     onBookingClick?: (booking: Booking) => void;
     onCreateBooking?: (cameraId: string, date: Date, hour?: number) => void;
+    onMouseDown?: (e: React.MouseEvent) => void;
 }
 
 export default function ResourceColumn({
@@ -33,6 +34,7 @@ export default function ResourceColumn({
     totalHeight,
     onBookingClick,
     onCreateBooking,
+    onMouseDown,
 }: ResourceColumnProps) {
     const isMultiUnit = camera.quantity > 1;
     const laneCount = showLanes && isMultiUnit ? Math.min(camera.quantity, 3) : 1;
@@ -119,7 +121,7 @@ export default function ResourceColumn({
                 'border-r border-border/50 relative h-full group/column cursor-crosshair shrink-0',
                 isMultiUnit && showLanes ? 'w-60 sm:w-80' : 'w-32 sm:w-64'
             )}
-            onClick={handleEmptyClick}
+            onMouseDown={onMouseDown}
         >
             {/* Lane Dividers */}
             {laneCount > 1 && (
