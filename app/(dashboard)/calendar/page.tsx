@@ -46,8 +46,9 @@ export default function CalendarPage() {
       const endDate = new Date(now);
       endDate.setDate(endDate.getDate() + 30);
 
+      const calendarFields = 'id,pickup_time,return_time,payment_status,customer:customers(name,phone),booking_items(camera_id,quantity,camera:cameras(id,name))';
       const bookingsRes = await fetch(
-        `/api/bookings?startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}`
+        `/api/bookings?startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}&fields=${calendarFields}`
       );
       const bookingsData = await bookingsRes.json();
       setBookings(bookingsData.data || []);

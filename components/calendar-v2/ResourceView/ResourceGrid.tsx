@@ -59,33 +59,42 @@ export default function ResourceGrid({
         return roundToNearestHalfHour(Math.max(0, Math.min(24 * 60, minutes)));
     };
 
-    // Get bookings for a specific camera on this date
-    const getBookingsForCamera = (cameraId: string) => {
-        return bookings.filter((b) => {
-            const pickup = new Date(b.pickup_time);
-            const returnTime = new Date(b.return_time);
-            const bookingStart = new Date(pickup.toDateString());
-            const bookingEnd = new Date(returnTime.toDateString());
-            const currentDate = new Date(dateStr);
-            const overlapsDate = bookingStart <= currentDate && bookingEnd >= currentDate;
-            const includesCamera = b.booking_items?.some(
-                (item) => item.camera_id === cameraId || item.camera?.id === cameraId
-            );
-            return overlapsDate && includesCamera;
+    // Pre-calculate bookings map for all cameras to avoid O(N*M) filtering in render
+    const bookingsByCameraMap = useMemo(() => {
+        const map: Record<string, any[]> = {};
+        cameras.forEach(camera => {
+            map[camera.id] = bookings.filter((b) => {
+                const pickup = new Date(b.pickup_time);
+                const returnTime = new Date(b.return_time);
+                const bookingStart = new Date(pickup.toDateString());
+                const bookingEnd = new Date(returnTime.toDateString());
+                const currentDate = new Date(dateStr);
+                const overlapsDate = bookingStart <= currentDate && bookingEnd >= currentDate;
+                const includesCamera = b.booking_items?.some(
+                    (item) => item.camera_id === camera.id || item.camera?.id === camera.id
+                );
+                return overlapsDate && includesCamera;
+            });
         });
-    };
+        return map;
+    }, [bookings, cameras, dateStr]);
+
+    // Get bookings for a specific camera on this date
+    const getBookingsForCamera = useCallback((cameraId: string) => {
+        return bookingsByCameraMap[cameraId] || [];
+    }, [bookingsByCameraMap]);
 
     // Calculate usage for camera on this day
-    const getUsagePercent = (camera: Camera) => {
+    const getUsagePercent = useCallback((camera: Camera) => {
         const cameraBookings = getBookingsForCamera(camera.id);
         const bookedQty = cameraBookings.reduce((sum, b) => {
             const item = b.booking_items?.find(
-                (i) => i.camera_id === camera.id || i.camera?.id === camera.id
+                (item: any) => item.camera_id === camera.id || item.camera?.id === camera.id
             );
             return sum + (item?.quantity || 0);
         }, 0);
         return camera.quantity > 0 ? Math.min(100, (bookedQty / camera.quantity) * 100) : 0;
-    };
+    }, [getBookingsForCamera]);
 
     // Current time indicator position
     const now = new Date();

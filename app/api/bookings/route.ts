@@ -10,15 +10,17 @@ export async function GET(request: NextRequest) {
     const customerId = searchParams.get('customerId');
     const limit = searchParams.get('limit');
 
+    const fields = searchParams.get('fields') || `
+      *,
+      customer:customers(*),
+      booking_items(*, camera_id, camera:cameras(*)),
+      booking_accessories(*),
+      tasks(*)
+    `;
+
     let query = supabase
       .from('bookings')
-      .select(`
-        *,
-        customer:customers(*),
-        booking_items(*, camera_id, camera:cameras(*)),
-        booking_accessories(*),
-        tasks(*)
-      `)
+      .select(fields)
       .order('pickup_time', { ascending: false });
 
     if (customerId) {
@@ -41,7 +43,14 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ data });
+    return NextResponse.json(
+      { data },
+      {
+        headers: {
+          'Cache-Control': 'public, s-maxage=1, stale-while-revalidate=59',
+        },
+      }
+    );
   } catch (error) {
     return NextResponse.json(
       { error: 'Internal server error' },
@@ -63,45 +72,58 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check conflicts for each camera
+    // Check conflicts for all cameras in one batch RPC
     if (body.booking_items && body.booking_items.length > 0) {
-      for (const item of body.booking_items) {
-        const { data: availability, error: availError } = await supabase.rpc(
-          'check_camera_availability',
-          {
-            p_camera_id: item.camera_id,
-            p_pickup_time: body.pickup_time,
-            p_return_time: body.return_time,
-          }
-        );
-
-        if (availError) {
-          return NextResponse.json(
-            { error: `Error checking availability: ${availError.message}` },
-            { status: 500 }
-          );
+      const { data: batchAvailability, error: batchError } = await supabase.rpc(
+        'check_multiple_cameras_availability',
+        {
+          p_items: body.booking_items.map((item: any) => ({
+            camera_id: item.camera_id,
+            quantity: item.quantity
+          })),
+          p_pickup_time: body.pickup_time,
+          p_return_time: body.return_time
         }
+      );
 
-        // Get camera quantity
-        const { data: camera } = await supabase
-          .from('cameras')
-          .select('quantity, name')
-          .eq('id', item.camera_id)
-          .single();
-
-        if (!camera) {
-          return NextResponse.json(
-            { error: `Camera not found: ${item.camera_id}` },
-            { status: 400 }
-          );
-        }
-
-        const availableQty = availability ?? camera.quantity;
-        if (availableQty < item.quantity) {
-          return NextResponse.json(
+      // If RPC doesn't exist yet or fails, fallback to individual checks (Legacy)
+      if (batchError || !batchAvailability) {
+        console.warn('Batch RPC fails or not found, falling back to individual checks:', batchError?.message);
+        for (const item of body.booking_items) {
+          const { data: availability, error: availError } = await supabase.rpc(
+            'check_camera_availability',
             {
-              error: `Máy ${camera.name} chỉ còn ${availableQty} máy trong khoảng thời gian này. Bạn yêu cầu ${item.quantity} máy.`,
-            },
+              p_camera_id: item.camera_id,
+              p_pickup_time: body.pickup_time,
+              p_return_time: body.return_time,
+            }
+          );
+
+          const { data: camera } = await supabase
+            .from('cameras')
+            .select('quantity, name')
+            .eq('id', item.camera_id)
+            .single();
+
+          if (camera && (availability ?? camera.quantity) < item.quantity) {
+            return NextResponse.json(
+              { error: `Máy ${camera.name} chỉ còn ${availability ?? camera.quantity} máy trong khoảng thời gian này.` },
+              { status: 400 }
+            );
+          }
+        }
+      } else {
+        // Success case with batch RPC
+        const unavailable = batchAvailability.find((res: any) => !res.is_available);
+        if (unavailable) {
+          const { data: camera } = await supabase
+            .from('cameras')
+            .select('name')
+            .eq('id', unavailable.camera_id)
+            .single();
+
+          return NextResponse.json(
+            { error: `Máy ${camera?.name || 'yêu cầu'} chỉ còn ${unavailable.available_qty} máy trong khoảng thời gian này. Bạn yêu cầu ${unavailable.requested_qty} máy.` },
             { status: 400 }
           );
         }

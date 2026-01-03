@@ -3,7 +3,7 @@
 import { Camera, Booking } from '@/lib/types/database';
 import { format, isToday, isSameDay } from 'date-fns';
 import { vi } from 'date-fns/locale';
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 import clsx from 'clsx';
 
 interface WeekMatrixGridProps {
@@ -26,28 +26,40 @@ export default function WeekMatrixGrid({
     onBookingClick,
     onCreateBooking,
 }: WeekMatrixGridProps) {
-    // Get bookings for a specific camera on a specific day
-    const getBookingsForCameraDay = (cameraId: string, date: Date) => {
-        const dateStr = date.toDateString();
-        return bookings.filter((b) => {
-            // Check if booking contains this camera
-            const hasCamera = b.booking_items?.some(
-                (item) => item.camera_id === cameraId || item.camera?.id === cameraId
-            );
-            if (!hasCamera) return false;
+    // Pre-calculate bookings map to avoid O(C * D * B) filtering in render
+    const bookingsByCameraDayMap = useMemo(() => {
+        const map: Record<string, Record<string, any[]>> = {};
+        cameras.forEach(camera => {
+            map[camera.id] = {};
+            weekDays.forEach(day => {
+                const dateStr = day.toDateString();
+                map[camera.id][dateStr] = bookings.filter((b) => {
+                    // Check if booking contains this camera
+                    const hasCamera = b.booking_items?.some(
+                        (item) => item.camera_id === camera.id || item.camera?.id === camera.id
+                    );
+                    if (!hasCamera) return false;
 
-            // Check if booking spans this day
-            const pickup = new Date(b.pickup_time);
-            const returnTime = new Date(b.return_time);
-            const bookingStart = new Date(pickup.toDateString());
-            const bookingEnd = new Date(returnTime.toDateString());
-            const currentDate = new Date(dateStr);
-            return bookingStart <= currentDate && bookingEnd >= currentDate;
+                    // Check if booking spans this day
+                    const pickup = new Date(b.pickup_time);
+                    const returnTime = new Date(b.return_time);
+                    const bookingStart = new Date(pickup.toDateString());
+                    const bookingEnd = new Date(returnTime.toDateString());
+                    const currentDate = new Date(dateStr);
+                    return bookingStart <= currentDate && bookingEnd >= currentDate;
+                });
+            });
         });
-    };
+        return map;
+    }, [bookings, cameras, weekDays]);
+
+    // Get bookings for a specific camera on a specific day
+    const getBookingsForCameraDay = useCallback((cameraId: string, date: Date) => {
+        return bookingsByCameraDayMap[cameraId]?.[date.toDateString()] || [];
+    }, [bookingsByCameraDayMap]);
 
     // Get status color
-    const getStatusColor = (status: string) => {
+    const getStatusColor = useCallback((status: string) => {
         switch (status) {
             case 'paid':
                 return 'bg-emerald-500';
@@ -57,7 +69,7 @@ export default function WeekMatrixGrid({
             default:
                 return 'bg-red-500';
         }
-    };
+    }, []);
 
     // Calculate bar position within a cell (0-100%)
     const getBarPosition = (booking: Booking, date: Date) => {
@@ -168,7 +180,7 @@ export default function WeekMatrixGrid({
                                         >
                                             {/* Booking bars */}
                                             <div className="relative h-full">
-                                                {dayBookings.map((booking, idx) => {
+                                                {dayBookings.map((booking: any, idx: number) => {
                                                     const pos = getBarPosition(booking, day);
                                                     const customer = (booking as any).customer;
 
