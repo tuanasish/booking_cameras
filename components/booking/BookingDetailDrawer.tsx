@@ -266,12 +266,12 @@ export default function BookingDetailDrawer({
                     <div>
                       <p className="text-sm font-bold text-text-main group-hover:text-primary transition-colors underline-offset-4 group-hover:underline">{item.camera.name}</p>
                       <p className="text-[10px] text-text-secondary mt-1 font-medium">
-                        SL: {item.quantity} × {formatCurrency(item.unit_price)}
+                        SL: {item.quantity} × {formatCurrency(item.unit_price || 0)}
                       </p>
                     </div>
                   </div>
                   <div className="font-bold text-sm text-text-main">
-                    {formatCurrency(item.subtotal)}
+                    {formatCurrency(item.subtotal || 0)}
                   </div>
                 </div>
               ))}
@@ -333,7 +333,7 @@ export default function BookingDetailDrawer({
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm sm:text-base font-bold text-text-main">
                   <span>Tổng tiền thuê</span>
-                  <span>{formatCurrency(booking.total_rental_fee)}</span>
+                  <span>{formatCurrency(booking.total_rental_fee || 0)}</span>
                 </div>
                 {booking.discount_percent > 0 && (
                   <div className="flex items-center justify-between text-xs sm:text-sm font-bold text-red-500">
@@ -344,7 +344,7 @@ export default function BookingDetailDrawer({
                 {totalDeliveryFee > 0 && (
                   <div className="flex items-center justify-between text-xs sm:text-sm font-bold text-primary">
                     <span>Phí giao nhận</span>
-                    <span>{formatCurrency(totalDeliveryFee)}</span>
+                    <span>{formatCurrency(totalDeliveryFee || 0)}</span>
                   </div>
                 )}
               </div>
@@ -358,7 +358,7 @@ export default function BookingDetailDrawer({
                 </div>
                 <div className="text-right">
                   <p className="text-[10px] font-bold uppercase tracking-widest text-text-secondary mb-1">Cọc {booking.deposit_type === 'cccd' ? 'CCCD' : ''}</p>
-                  <p className="text-sm sm:text-base font-bold text-text-main">{booking.deposit_type === 'cccd' ? (booking.cccd_name || 'Đã giữ CCCD') : formatCurrency(booking.deposit_amount)}</p>
+                  <p className="text-sm sm:text-base font-bold text-text-main">{booking.deposit_type === 'cccd' ? (booking.cccd_name || 'Đã giữ CCCD') : formatCurrency(booking.deposit_amount || 0)}</p>
                 </div>
               </div>
             </div>
