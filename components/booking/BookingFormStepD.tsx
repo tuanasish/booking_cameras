@@ -317,7 +317,7 @@ export default function BookingFormStepD({
                   onChange={(e) => {
                     const val = e.target.value;
                     if (val === 'other') {
-                      onUpdate({ discountReason: 'Khác' });
+                      onUpdate({ discountReason: '' });
                     } else {
                       onUpdate({ discountReason: val });
                     }
@@ -333,11 +333,11 @@ export default function BookingFormStepD({
                 </select>
 
                 {/* Custom reason input */}
-                {(discountReason === 'other' || (!discountReasons.some(r => r.value === discountReason) && discountReason !== '')) && (
+                {!discountReasons.some(r => r.value === discountReason) && (
                   <div className="mt-2 animate-in fade-in slide-in-from-top-1 duration-200">
                     <Input
                       placeholder="Nhập lý do chiết khấu khác..."
-                      value={discountReason === 'other' ? '' : discountReason}
+                      value={discountReason}
                       onChange={(e) => onUpdate({ discountReason: e.target.value })}
                       icon="edit_note"
                       autoFocus
