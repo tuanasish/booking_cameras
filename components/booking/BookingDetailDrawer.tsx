@@ -338,7 +338,7 @@ export default function BookingDetailDrawer({
                 {booking.discount_percent > 0 && (
                   <div className="flex items-center justify-between text-xs sm:text-sm font-bold text-red-500">
                     <span>Giảm giá ({booking.discount_percent}%)</span>
-                    <span>-{formatCurrency(booking.total_rental_fee - booking.final_fee)}</span>
+                    <span>-{formatCurrency((booking.total_rental_fee || 0) - (booking.final_fee || 0))}</span>
                   </div>
                 )}
                 {totalDeliveryFee > 0 && (
@@ -354,7 +354,7 @@ export default function BookingDetailDrawer({
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs font-bold uppercase tracking-widest text-text-secondary">Tổng thanh toán</p>
-                  <p className="text-2xl sm:text-3xl font-bold text-primary tracking-tighter mt-1">{formatCurrency(booking.final_fee + totalDeliveryFee)}</p>
+                  <p className="text-2xl sm:text-3xl font-bold text-primary tracking-tighter mt-1">{formatCurrency((booking.final_fee || 0) + (totalDeliveryFee || 0))}</p>
                 </div>
                 <div className="text-right">
                   <p className="text-[10px] font-bold uppercase tracking-widest text-text-secondary mb-1">Cọc {booking.deposit_type === 'cccd' ? 'CCCD' : ''}</p>
