@@ -44,9 +44,9 @@ export default function CalendarSidebar({
     const weekDays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
     return (
-        <aside className="w-64 flex flex-col flex-shrink-0 bg-surface overflow-y-auto h-full relative">
+        <aside className="w-64 flex flex-col flex-shrink-0 bg-surface overflow-y-auto h-full relative pt-6">
             {/* Header for mobile - Close button */}
-            <div className="flex md:hidden items-center justify-between px-4 py-3 border-b border-border mb-4 bg-surface-hover sticky top-0 z-10">
+            <div className="flex md:hidden items-center justify-between px-4 py-3 border-b border-border mb-4 bg-surface-hover sticky top-0 z-20">
                 <span className="font-bold text-text-main uppercase text-xs tracking-widest">Bộ lọc</span>
                 <button
                     onClick={onClose}
@@ -59,7 +59,7 @@ export default function CalendarSidebar({
             <div className="px-4 mb-6">
                 <button
                     onClick={onCreateBooking}
-                    className="flex items-center gap-3 bg-background shadow-sm border border-border hover:border-primary/50 rounded-full px-4 py-3 min-w-[140px] transition-all group"
+                    className="flex items-center gap-3 bg-background shadow-sm border border-border hover:border-primary/50 rounded-full px-4 py-3 min-w-[140px] transition-all group w-full justify-center sm:justify-start"
                 >
                     <span className="material-symbols-outlined text-4xl text-primary">add</span>
                     <span className="font-medium text-sm text-text-main group-hover:text-primary transition-colors">Tạo mới</span>

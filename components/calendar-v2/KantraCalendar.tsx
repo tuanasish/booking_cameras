@@ -104,17 +104,20 @@ export default function KantraCalendar({
     return (
         <div className="flex flex-col h-full overflow-hidden bg-background">
             {/* Header */}
-            <header className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between px-4 py-3 gap-3 border-b border-border bg-surface shrink-0 z-20 shadow-sm">
+            <header className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between px-4 py-3 gap-3 border-b border-border bg-surface shrink-0 z-50 shadow-sm">
                 <div className="flex items-center justify-between sm:justify-start gap-4">
                     <div className="flex items-center gap-1.5 sm:gap-2">
                         {/* Sidebar Toggle */}
                         <button
                             onClick={() => setSidebarOpen(!sidebarOpen)}
-                            className="flex items-center justify-center size-9 rounded-lg bg-background border border-border text-text-secondary hover:text-text-main transition-all active:scale-95 shadow-sm"
+                            className={clsx(
+                                "flex items-center justify-center size-9 rounded-lg border transition-all active:scale-95 shadow-sm z-[60]",
+                                sidebarOpen ? "bg-primary border-primary text-white" : "bg-background border-border text-text-secondary hover:text-text-main"
+                            )}
                             title={sidebarOpen ? 'Ẩn sidebar' : 'Hiện sidebar'}
                         >
                             <span className="material-symbols-outlined text-[20px]">
-                                {sidebarOpen ? 'menu_open' : 'filter_list'}
+                                {sidebarOpen ? 'menu_open' : 'menu'}
                             </span>
                         </button>
 
@@ -211,10 +214,11 @@ export default function KantraCalendar({
                 {/* Collapsible Sidebar */}
                 <div
                     className={clsx(
-                        'flex flex-col border-r border-border bg-surface transition-all duration-300 z-40',
-                        sidebarOpen ? 'translate-x-0' : '-translate-x-full',
-                        'absolute md:relative md:translate-x-0 top-0 bottom-0 left-0 w-64 shadow-2xl md:shadow-none'
+                        'flex flex-col border-r border-border bg-surface transition-all duration-300 z-40 overflow-hidden shrink-0',
+                        sidebarOpen ? 'w-64 opacity-100' : 'w-0 opacity-0 pointer-events-none',
+                        'absolute md:relative top-0 bottom-0 left-0 shadow-2xl md:shadow-none h-full'
                     )}
+                    style={{ minWidth: 0 }}
                 >
                     <div className="w-64 flex flex-col h-full bg-surface">
                         <CalendarSidebar

@@ -37,8 +37,8 @@ export default function ResourceColumn({
     onMouseDown,
 }: ResourceColumnProps) {
     const isMultiUnit = camera.quantity > 1;
-    const laneCount = showLanes && isMultiUnit ? Math.min(camera.quantity, 3) : 1;
-    const columnWidth = isMultiUnit && showLanes ? 320 : 256;
+    const laneCount = showLanes && isMultiUnit ? camera.quantity : 1;
+    const columnWidth = isMultiUnit && showLanes ? Math.max(laneCount * 100, 120) : 200;
     const dateStr = date.toDateString();
 
     // Calculate position for a booking
@@ -118,9 +118,9 @@ export default function ResourceColumn({
     return (
         <div
             className={clsx(
-                'border-r border-border/50 relative h-full group/column cursor-crosshair shrink-0',
-                isMultiUnit && showLanes ? 'w-60 sm:w-80' : 'w-32 sm:w-64'
+                'border-r border-border/50 relative h-full group/column cursor-crosshair shrink-0 transition-all'
             )}
+            style={{ width: `${columnWidth}px`, minWidth: `${columnWidth}px` }}
             onMouseDown={onMouseDown}
         >
             {/* Lane Dividers */}

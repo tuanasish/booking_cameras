@@ -21,16 +21,21 @@ export default function ResourceHeader({
     };
 
     const isMultiUnit = camera.quantity > 1;
+    const laneCount = showLanes && isMultiUnit ? camera.quantity : 1;
     const lanes = showLanes && isMultiUnit
-        ? Array.from({ length: Math.min(camera.quantity, 3) }, (_, i) => String.fromCharCode(65 + i))
+        ? Array.from({ length: camera.quantity }, (_, i) => (i + 1).toString())
         : [];
 
     return (
         <div
             className={clsx(
-                'border-r border-border flex flex-col relative group shrink-0',
-                isMultiUnit && showLanes ? 'w-60 sm:w-80' : 'w-32 sm:w-64'
+                'border-r border-border flex flex-col relative group shrink-0 transition-all',
+                isMultiUnit && showLanes ? '' : ''
             )}
+            style={{
+                width: isMultiUnit && showLanes ? `${Math.max(laneCount * 100, 120)}px` : '200px',
+                minWidth: isMultiUnit && showLanes ? `${Math.max(laneCount * 100, 120)}px` : '200px'
+            }}
         >
             {/* Main Header */}
             <div className="p-4 bg-surface z-10 transition-colors group-hover:bg-background/20">

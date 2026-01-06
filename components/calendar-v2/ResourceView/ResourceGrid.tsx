@@ -53,13 +53,13 @@ export default function ResourceGrid({
     };
 
     // Calculate time from Y position
-    const getTimeFromY = (y: number, containerTop: number, scrollTop: number) => {
-        const relativeY = y - containerTop + scrollTop;
+    const getTimeFromY = (y: number, containerTop: number, scrollTop: number, headerHeight: number = 0) => {
+        const relativeY = y - containerTop + scrollTop - headerHeight;
         const minutes = (relativeY / HOUR_HEIGHT) * 60;
         return roundToNearestHalfHour(Math.max(0, Math.min(24 * 60, minutes)));
     };
 
-    // Pre-calculate bookings map for all cameras to avoid O(N*M) filtering in render
+    // Pre-calculate bookings map ... (unchanged)
     const bookingsByCameraMap = useMemo(() => {
         const map: Record<string, any[]> = {};
         cameras.forEach(camera => {
@@ -106,14 +106,16 @@ export default function ResourceGrid({
     const handleMouseDown = useCallback((e: React.MouseEvent, cameraId: string) => {
         if (!gridRef.current) return;
         const rect = gridRef.current.getBoundingClientRect();
+        const header = gridRef.current.querySelector('.sticky.top-0');
+        const headerHeight = header ? (header as HTMLElement).offsetHeight : 0;
         const y = e.clientY;
-        const startMins = getTimeFromY(y, rect.top, gridRef.current.scrollTop);
+        const startMins = getTimeFromY(y, rect.top, gridRef.current.scrollTop, headerHeight);
 
         setIsDragging(true);
         setDragStartMinutes(startMins);
         setDragCurrentY(y);
         setSelectedCameraId(cameraId);
-    }, [getTimeFromY]);
+    }, []);
 
     const handleMouseMove = useCallback((e: React.MouseEvent) => {
         if (!isDragging || !gridRef.current) return;
@@ -130,7 +132,9 @@ export default function ResourceGrid({
         }
 
         const rect = gridRef.current.getBoundingClientRect();
-        const endMinutes = getTimeFromY(dragCurrentY, rect.top, gridRef.current.scrollTop);
+        const header = gridRef.current.querySelector('.sticky.top-0');
+        const headerHeight = header ? (header as HTMLElement).offsetHeight : 0;
+        const endMinutes = getTimeFromY(dragCurrentY, rect.top, gridRef.current.scrollTop, headerHeight);
 
         // Ensure minimum 30 minutes selection
         const minStart = Math.min(dragStartMinutes, endMinutes);
@@ -155,7 +159,7 @@ export default function ResourceGrid({
         setDragStartMinutes(null);
         setDragCurrentY(null);
         setSelectedCameraId(null);
-    }, [isDragging, dragStartMinutes, dragCurrentY, selectedCameraId, date, onCreateBooking, getTimeFromY]);
+    }, [isDragging, dragStartMinutes, dragCurrentY, selectedCameraId, date, onCreateBooking]);
 
     // Autoscroll logic
     useEffect(() => {
@@ -204,7 +208,9 @@ export default function ResourceGrid({
         if (!isDragging || dragStartMinutes === null || !dragCurrentY || !gridRef.current) return null;
 
         const rect = gridRef.current.getBoundingClientRect();
-        const endMinutes = getTimeFromY(dragCurrentY, rect.top, currentScrollTop);
+        const header = gridRef.current.querySelector('.sticky.top-0');
+        const headerHeight = header ? (header as HTMLElement).offsetHeight : 0;
+        const endMinutes = getTimeFromY(dragCurrentY, rect.top, currentScrollTop, headerHeight);
 
         const minStart = Math.min(dragStartMinutes, endMinutes);
         const maxEnd = Math.max(dragStartMinutes, endMinutes);
@@ -213,112 +219,113 @@ export default function ResourceGrid({
         const height = ((maxEnd - minStart) / 60) * HOUR_HEIGHT;
 
         return { top, height };
-    }, [isDragging, dragStartMinutes, dragCurrentY, currentScrollTop, getTimeFromY]);
+    }, [isDragging, dragStartMinutes, dragCurrentY, currentScrollTop]);
 
     return (
-        <div className="flex flex-col flex-1 overflow-hidden bg-background">
-            {/* FIXED HEADER ROW - Camera names */}
-            <div className="flex shrink-0 border-b border-border bg-surface shadow-sm z-30 overflow-x-auto overflow-y-hidden custom-scrollbar no-scrollbar">
-                <div className="flex min-w-max">
-                    {/* Time column spacer - STICKY */}
-                    <div className="w-10 sm:w-16 shrink-0 border-r border-border bg-surface sticky left-0 z-40" />
-
-                    {/* Camera Headers */}
-                    <div className="flex">
-                        {cameras.map((camera) => (
-                            <ResourceHeader
-                                key={camera.id}
-                                camera={camera}
-                                usagePercent={getUsagePercent(camera)}
-                                showLanes={showLanes}
-                            />
-                        ))}
-                        <div className="w-10 sm:w-12 flex items-center justify-center border-r border-border shrink-0 hover:bg-background transition-colors cursor-pointer group">
-                            <span className="material-symbols-outlined text-text-secondary group-hover:text-primary">add</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* SINGLE SCROLLABLE BODY - Time + Columns scroll together */}
+        <div className="flex flex-col flex-1 overflow-hidden bg-background relative z-0">
+            {/* UNIFIED SCROLL CONTAINER */}
             <div
                 ref={gridRef}
-                className="flex-1 overflow-auto custom-scrollbar"
+                className="flex-1 overflow-auto custom-scrollbar no-scrollbar"
                 id="resource-grid-scroll"
                 onMouseMove={handleMouseMove}
                 onMouseUp={handleMouseUp}
                 onMouseLeave={handleMouseUp}
                 onScroll={handleScroll}
             >
-                <div className="flex min-w-max" style={{ minHeight: `${totalHeight}px` }}>
-                    {/* Time Labels Column - STICKY LEFT */}
-                    <div className="w-10 sm:w-16 shrink-0 sticky left-0 z-20 bg-surface/90 backdrop-blur-sm border-r border-border shadow-sm">
-                        {hours.map((hour) => (
-                            <div
-                                key={hour}
-                                className="text-right pr-1.5 sm:pr-3 text-[8px] sm:text-[10px] font-bold text-text-secondary py-1"
-                                style={{ height: `${HOUR_HEIGHT}px` }}
-                            >
-                                {`${hour.toString().padStart(2, '0')}:00`}
+                <div className="flex flex-col min-w-max">
+                    {/* STICKY HEADER ROW */}
+                    <div className="sticky top-0 z-10 flex border-b border-border bg-surface shadow-sm">
+                        {/* Corner spacer - STICKY TOP & LEFT */}
+                        <div className="w-10 sm:w-16 shrink-0 border-r border-border bg-surface sticky left-0 z-20" />
+
+                        {/* Camera Headers */}
+                        <div className="flex">
+                            {cameras.map((camera) => (
+                                <ResourceHeader
+                                    key={camera.id}
+                                    camera={camera}
+                                    usagePercent={getUsagePercent(camera)}
+                                    showLanes={showLanes}
+                                />
+                            ))}
+                            <div className="w-10 sm:w-12 flex items-center justify-center border-r border-border shrink-0 hover:bg-background transition-colors cursor-pointer group">
+                                <span className="material-symbols-outlined text-text-secondary group-hover:text-primary">add</span>
                             </div>
-                        ))}
+                        </div>
                     </div>
 
-                    {/* Grid Content - Time lines + Booking columns */}
-                    <div className="flex-1 relative">
-                        {/* Background Grid Lines */}
-                        <div className="absolute inset-0 pointer-events-none z-0">
+                    {/* GRID BODY */}
+                    <div className="flex relative" style={{ minHeight: `${totalHeight}px` }}>
+                        {/* Time Labels Column - STICKY LEFT */}
+                        <div className="w-10 sm:w-16 shrink-0 sticky left-0 z-5 bg-surface/90 backdrop-blur-sm border-r border-border shadow-sm">
                             {hours.map((hour) => (
                                 <div
                                     key={hour}
-                                    className="border-b border-border/40"
+                                    className="text-right pr-1.5 sm:pr-3 text-[8px] sm:text-[10px] font-bold text-text-secondary py-1"
                                     style={{ height: `${HOUR_HEIGHT}px` }}
-                                />
+                                >
+                                    {`${hour.toString().padStart(2, '0')}:00`}
+                                </div>
                             ))}
                         </div>
 
-                        {/* Current Time Indicator */}
-                        {isToday && currentTimeTop >= 0 && (
-                            <div
-                                className="absolute left-0 right-0 z-30 pointer-events-none"
-                                style={{ top: `${currentTimeTop}px` }}
-                            >
-                                <div className="flex items-center">
-                                    <div className="size-2 sm:size-3 bg-red-500 rounded-full -ml-1 sm:-ml-1.5" />
-                                    <div className="flex-1 border-t-2 border-red-500" />
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Resource Columns */}
-                        <div className="flex relative z-10" style={{ height: `${totalHeight}px` }}>
-                            {cameras.map((camera, index) => (
-                                <div key={camera.id} className="relative">
-                                    <ResourceColumn
-                                        camera={camera}
-                                        date={date}
-                                        bookings={getBookingsForCamera(camera.id)}
-                                        showLanes={showLanes}
-                                        startHour={START_HOUR}
-                                        hourHeight={HOUR_HEIGHT}
-                                        totalHeight={totalHeight}
-                                        onBookingClick={onBookingClick}
-                                        onCreateBooking={onCreateBooking}
-                                        onMouseDown={(e) => handleMouseDown(e, camera.id)}
+                        {/* Grid Content */}
+                        <div className="flex-1 relative">
+                            {/* Background Grid Lines */}
+                            <div className="absolute inset-0 pointer-events-none z-0">
+                                {hours.map((hour) => (
+                                    <div
+                                        key={hour}
+                                        className="border-b border-border/40"
+                                        style={{ height: `${HOUR_HEIGHT}px` }}
                                     />
+                                ))}
+                            </div>
 
-                                    {/* Selection Overlay */}
-                                    {isDragging && selectedCameraId === camera.id && selectionOverlay && (
-                                        <div
-                                            className="absolute left-0 right-0 bg-primary/20 border-2 border-primary rounded-lg pointer-events-none z-40"
-                                            style={{
-                                                top: `${selectionOverlay.top}px`,
-                                                height: `${selectionOverlay.height}px`,
-                                            }}
-                                        />
-                                    )}
+                            {/* Current Time Indicator */}
+                            {isToday && currentTimeTop >= 0 && (
+                                <div
+                                    className="absolute left-0 right-0 z-15 pointer-events-none"
+                                    style={{ top: `${currentTimeTop}px` }}
+                                >
+                                    <div className="flex items-center">
+                                        <div className="size-2 sm:size-3 bg-red-500 rounded-full -ml-1 sm:-ml-1.5" />
+                                        <div className="flex-1 border-t-2 border-red-500" />
+                                    </div>
                                 </div>
-                            ))}
+                            )}
+
+                            {/* Resource Columns */}
+                            <div className="flex relative z-1" style={{ height: `${totalHeight}px` }}>
+                                {cameras.map((camera, index) => (
+                                    <div key={camera.id} className="relative">
+                                        <ResourceColumn
+                                            camera={camera}
+                                            date={date}
+                                            bookings={getBookingsForCamera(camera.id)}
+                                            showLanes={showLanes}
+                                            startHour={START_HOUR}
+                                            hourHeight={HOUR_HEIGHT}
+                                            totalHeight={totalHeight}
+                                            onBookingClick={onBookingClick}
+                                            onCreateBooking={onCreateBooking}
+                                            onMouseDown={(e) => handleMouseDown(e, camera.id)}
+                                        />
+
+                                        {/* Selection Overlay */}
+                                        {isDragging && selectedCameraId === camera.id && selectionOverlay && (
+                                            <div
+                                                className="absolute left-0 right-0 bg-primary/20 border-2 border-primary rounded-lg pointer-events-none z-30"
+                                                style={{
+                                                    top: `${selectionOverlay.top}px`,
+                                                    height: `${selectionOverlay.height}px`,
+                                                }}
+                                            />
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>
