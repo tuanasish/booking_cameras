@@ -24,7 +24,7 @@ export function calculateRentalPrice(
   const getBaseDailyPrice = (numDays: number) => {
     if (numDays <= 0) return 0;
     const firstDayPrice = camera.price_24h ?? (camera.price_6h * 1.5);
-    const additionalDayPrice = firstDayPrice - 50000;
+    const additionalDayPrice = camera.price_additional_day ?? (firstDayPrice - 50000);
 
     if (numDays === 1) return firstDayPrice;
     return firstDayPrice + (additionalDayPrice * (numDays - 1));

@@ -17,6 +17,7 @@ interface Camera {
   name: string;
   model_line: string | null;
   price_6h: number;
+  price_12h: number | null;
   price_24h: number | null;
   price_additional_day: number | null;
   quantity: number;
@@ -359,10 +360,10 @@ export default function SettingsPage() {
                               Giá 6h
                             </th>
                             <th className="px-6 py-4 text-right text-xs font-semibold text-text-secondary uppercase">
-                              Giá 12h
+                              Giá 24h
                             </th>
                             <th className="px-6 py-4 text-right text-xs font-semibold text-text-secondary uppercase">
-                              Giá 24h
+                              Giá +Ngày
                             </th>
                             <th className="px-6 py-4 text-center text-xs font-semibold text-text-secondary uppercase">
                               SL

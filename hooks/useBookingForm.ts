@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Customer, Camera, Employee } from '@/lib/types/database';
 
 export interface BookingFormData {
@@ -69,13 +69,13 @@ export function useBookingForm() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [existingCustomer, setExistingCustomer] = useState<Customer | null>(null);
 
-  const updateFormData = (updates: Partial<BookingFormData>) => {
+  const updateFormData = useCallback((updates: Partial<BookingFormData>) => {
     setFormData((prev) => ({ ...prev, ...updates }));
     // Clear errors when updating
     setErrors({});
-  };
+  }, []);
 
-  const validateStep = (step: 'A' | 'B' | 'C' | 'D' | 'all'): boolean => {
+  const validateStep = useCallback((step: 'A' | 'B' | 'C' | 'D' | 'all'): boolean => {
     const newErrors: Record<string, string> = {};
 
     // Step A: Time
@@ -138,9 +138,9 @@ export function useBookingForm() {
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
+  }, [formData]);
 
-  const nextStep = () => {
+  const nextStep = useCallback(() => {
     if (validateStep(currentStep)) {
       const steps: Array<'A' | 'B' | 'C' | 'D'> = ['A', 'B', 'C', 'D'];
       const currentIndex = steps.indexOf(currentStep);
@@ -148,17 +148,17 @@ export function useBookingForm() {
         setCurrentStep(steps[currentIndex + 1]);
       }
     }
-  };
+  }, [currentStep, validateStep]);
 
-  const prevStep = () => {
+  const prevStep = useCallback(() => {
     const steps: Array<'A' | 'B' | 'C' | 'D'> = ['A', 'B', 'C', 'D'];
     const currentIndex = steps.indexOf(currentStep);
     if (currentIndex > 0) {
       setCurrentStep(steps[currentIndex - 1]);
     }
-  };
+  }, [currentStep]);
 
-  const searchCustomer = async (phone: string) => {
+  const searchCustomer = useCallback(async (phone: string) => {
     try {
       const response = await fetch(`/api/customers?phone=${phone}`);
       const data = await response.json();
@@ -178,7 +178,7 @@ export function useBookingForm() {
       console.error('Error searching customer:', error);
       return null;
     }
-  };
+  }, [updateFormData]);
 
   return {
     currentStep,
