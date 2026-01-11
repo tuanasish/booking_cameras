@@ -21,6 +21,7 @@ interface NavItem {
 const navItems: NavItem[] = [
   { href: '/dashboard', label: 'Tổng quan', icon: 'pie_chart', adminOnly: true },
   { href: '/calendar', label: 'Lịch thuê', icon: 'calendar_month' },
+  { href: '/availability', label: 'Máy trống', icon: 'inventory' },
   { href: '/bookings', label: 'Đơn thuê', icon: 'assignment' },
   { href: '/tasks/pickup', label: 'Nhận máy', icon: 'inventory_2' },
   { href: '/tasks/return', label: 'Trả máy', icon: 'inventory_2' },
@@ -30,9 +31,11 @@ const navItems: NavItem[] = [
 ];
 
 const adminNavItems: NavItem[] = [
+  { href: '/blocks', label: 'Block lịch', icon: 'block', adminOnly: true },
   { href: '/employees', label: 'Nhân viên', icon: 'badge', adminOnly: true },
   { href: '/settings', label: 'Cài đặt', icon: 'settings', adminOnly: true },
 ];
+
 
 export default function Sidebar() {
   const pathname = usePathname();

@@ -7,8 +7,8 @@ import clsx from 'clsx';
 const mobileNavItems = [
     { href: '/dashboard', label: 'Home', icon: 'home' },
     { href: '/calendar', label: 'Lịch', icon: 'calendar_month' },
+    { href: '/availability', label: 'Trống', icon: 'inventory' },
     { href: '/tasks/pickup', label: 'Nhận', icon: 'inventory_2' },
-    { href: '/tasks/return', label: 'Trả', icon: 'check_circle' },
     { href: '/bookings', label: 'Đơn', icon: 'assignment' },
 ];
 

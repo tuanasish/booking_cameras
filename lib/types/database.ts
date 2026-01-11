@@ -355,6 +355,41 @@ export interface Database {
           completed_at?: string | null
         }
       }
+      camera_blocks: {
+        Row: {
+          id: string
+          camera_id: string
+          quantity: number
+          start_time: string
+          end_time: string
+          reason: 'repair' | 'pending_delivery' | 'maintenance' | 'other'
+          note: string | null
+          created_by: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          camera_id: string
+          quantity?: number
+          start_time: string
+          end_time: string
+          reason: 'repair' | 'pending_delivery' | 'maintenance' | 'other'
+          note?: string | null
+          created_by?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          camera_id?: string
+          quantity?: number
+          start_time?: string
+          end_time?: string
+          reason?: 'repair' | 'pending_delivery' | 'maintenance' | 'other'
+          note?: string | null
+          created_by?: string | null
+          created_at?: string
+        }
+      }
     }
     Functions: {
       check_camera_availability: {
@@ -380,6 +415,18 @@ export interface Database {
           available_qty: number
         }[]
       }
+      get_realtime_camera_availability: {
+        Args: Record<string, never>
+        Returns: {
+          camera_id: string
+          camera_name: string
+          model_line: string | null
+          total_qty: number
+          booked_qty: number
+          blocked_qty: number
+          available_qty: number
+        }[]
+      }
     }
   }
 }
@@ -396,9 +443,11 @@ export type BookingItem = Database['public']['Tables']['booking_items']['Row']
 export type BookingAccessory = Database['public']['Tables']['booking_accessories']['Row']
 export type Task = Database['public']['Tables']['tasks']['Row']
 export type RecoveryTask = Database['public']['Tables']['recovery_tasks']['Row']
+export type CameraBlock = Database['public']['Tables']['camera_blocks']['Row']
 
 export type PaymentStatus = 'pending' | 'deposited' | 'paid' | 'cancelled'
 export type DepositType = 'none' | 'default' | 'custom' | 'cccd'
 export type TaskType = 'pickup' | 'return'
 export type AccessoryType = 'tripod' | 'reflector' | 'other'
+export type BlockReason = 'repair' | 'pending_delivery' | 'maintenance' | 'other'
 
