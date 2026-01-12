@@ -47,6 +47,11 @@ export default function PickupTasksPage() {
   const [employees, setEmployees] = useState<any[]>([]);
   const [processingTask, setProcessingTask] = useState<string | null>(null);
 
+  // Modal state for employee selection
+  const [showEmployeeModal, setShowEmployeeModal] = useState(false);
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState<string>('');
+
   useEffect(() => {
     fetchEmployees();
     fetchTasks();
@@ -56,7 +61,7 @@ export default function PickupTasksPage() {
     if (bookingId && tasks.length > 0) {
       const task = tasks.find((t) => t.booking_id === bookingId);
       if (task && !task.completed_at) {
-        handleConfirmPickup(task.id);
+        openEmployeeModal(task.id);
       }
     }
   }, [bookingId, tasks]);
@@ -89,40 +94,42 @@ export default function PickupTasksPage() {
     }
   };
 
-  const handleConfirmPickup = async (taskId: string) => {
-    if (processingTask) return;
+  const openEmployeeModal = (taskId: string) => {
+    setSelectedTaskId(taskId);
+    setSelectedEmployeeId('');
+    setShowEmployeeModal(true);
+  };
 
-    const staffId = prompt('Chọn nhân viên bàn giao (nhập ID hoặc tên):');
-    if (!staffId) return;
+  const closeEmployeeModal = () => {
+    setShowEmployeeModal(false);
+    setSelectedTaskId(null);
+    setSelectedEmployeeId('');
+  };
 
-    const employee = employees.find(
-      (e) => e.id === staffId || e.name.toLowerCase().includes(staffId.toLowerCase())
-    );
+  const handleConfirmPickup = async () => {
+    if (!selectedTaskId || !selectedEmployeeId) return;
 
-    if (!employee) {
-      alert('Không tìm thấy nhân viên');
-      return;
-    }
+    setProcessingTask(selectedTaskId);
+    closeEmployeeModal();
 
-    setProcessingTask(taskId);
     try {
-      const response = await fetch(`/api/tasks/${taskId}`, {
+      const response = await fetch(`/api/tasks/${selectedTaskId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           completed_at: new Date().toISOString(),
-          staff_id: employee.id,
+          staff_id: selectedEmployeeId,
         }),
       });
 
       if (response.ok) {
-        const task = tasks.find((t) => t.id === taskId);
+        const task = tasks.find((t) => t.id === selectedTaskId);
         if (task) {
           await fetch(`/api/bookings/${task.booking_id}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              payment_status: 'paid', // Mark as paid when picking up
+              payment_status: 'paid',
             }),
           });
         }
@@ -308,7 +315,7 @@ export default function PickupTasksPage() {
                         key={task.id}
                         task={task}
                         isOverdue
-                        onConfirm={() => handleConfirmPickup(task.id)}
+                        onConfirm={() => openEmployeeModal(task.id)}
                         processing={processingTask === task.id}
                       />
                     ))}
@@ -332,7 +339,7 @@ export default function PickupTasksPage() {
                         <TaskCard
                           key={task.id}
                           task={task}
-                          onConfirm={() => handleConfirmPickup(task.id)}
+                          onConfirm={() => openEmployeeModal(task.id)}
                           processing={processingTask === task.id}
                         />
                       ))}
@@ -366,6 +373,79 @@ export default function PickupTasksPage() {
           )}
         </div>
       </div>
+
+      {/* Employee Selection Modal */}
+      {showEmployeeModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={closeEmployeeModal} />
+          <div className="relative bg-surface border border-border rounded-2xl shadow-2xl w-full max-w-md mx-4 p-6 animate-in zoom-in-95 fade-in duration-200">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-bold text-text-main">Chọn nhân viên giao máy</h3>
+              <button
+                onClick={closeEmployeeModal}
+                className="size-8 rounded-lg bg-background border border-border flex items-center justify-center text-text-secondary hover:text-text-main transition-colors"
+              >
+                <span className="material-symbols-outlined text-[20px]">close</span>
+              </button>
+            </div>
+
+            {employees.length === 0 ? (
+              <div className="text-center py-8">
+                <span className="material-symbols-outlined text-[48px] text-text-secondary/30 mb-2">person_off</span>
+                <p className="text-text-secondary text-sm">Chưa có nhân viên nào</p>
+              </div>
+            ) : (
+              <div className="space-y-2 max-h-[300px] overflow-y-auto">
+                {employees.filter(e => e.is_active !== false).map((emp) => (
+                  <button
+                    key={emp.id}
+                    onClick={() => setSelectedEmployeeId(emp.id)}
+                    className={clsx(
+                      'w-full flex items-center gap-3 p-3 rounded-xl border transition-all',
+                      selectedEmployeeId === emp.id
+                        ? 'bg-primary/10 border-primary text-primary'
+                        : 'bg-background border-border text-text-main hover:border-primary/50'
+                    )}
+                  >
+                    <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20">
+                      <span className="text-primary font-bold">{emp.name?.charAt(0)?.toUpperCase() || '?'}</span>
+                    </div>
+                    <div className="flex-1 text-left">
+                      <p className="font-bold text-sm">{emp.name}</p>
+                      <p className="text-xs text-text-secondary">{emp.email}</p>
+                    </div>
+                    {selectedEmployeeId === emp.id && (
+                      <span className="material-symbols-outlined text-primary text-[24px]">check_circle</span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={closeEmployeeModal}
+                className="flex-1 py-3 rounded-xl border border-border bg-background text-text-secondary font-bold text-sm hover:bg-surface transition-all"
+              >
+                Hủy
+              </button>
+              <button
+                onClick={handleConfirmPickup}
+                disabled={!selectedEmployeeId}
+                className={clsx(
+                  'flex-1 py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2',
+                  selectedEmployeeId
+                    ? 'bg-primary text-white hover:bg-blue-600 shadow-lg'
+                    : 'bg-surface text-text-secondary cursor-not-allowed'
+                )}
+              >
+                <span className="material-symbols-outlined text-[18px]">check</span>
+                Xác nhận
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
