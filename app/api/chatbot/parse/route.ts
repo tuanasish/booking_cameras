@@ -3,6 +3,7 @@
 import OpenAI from 'openai';
 import { NextResponse } from 'next/server';
 import { calculateRentalPrice } from '@/lib/utils/booking';
+import { createClient } from '@/lib/supabase/server';
 
 const client = new OpenAI({
     baseURL: 'https://ai.megallm.io/v1',
@@ -87,6 +88,7 @@ interface ParsedResult {
 
 export async function POST(request: Request) {
     try {
+        const supabase = await createClient();
         const { message, action } = await request.json();
 
         if (!message || typeof message !== 'string') {
@@ -139,7 +141,7 @@ export async function POST(request: Request) {
         }
 
         // Step 2: Build pickup and return times
-        if (!parsed.pickupDate || !parsed.returnDate || parsed.pickupHour === null || parsed.returnHour === null) {
+        if (!parsed.pickupDate || !parsed.returnDate || parsed.pickupHour === null || parsed.pickupHour === undefined || parsed.returnHour === null || parsed.returnHour === undefined) {
             return NextResponse.json({
                 data: parsed,
                 error: 'Không thể xác định thời gian nhận/trả máy',
@@ -152,22 +154,22 @@ export async function POST(request: Request) {
         const returnTime = new Date(parsed.returnDate);
         returnTime.setHours(parsed.returnHour ?? 0, parsed.returnMinute ?? 0, 0, 0);
 
-        // Step 3: Check camera availability
-        const availabilityResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/cameras/available`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                pickupTime: pickupTime.toISOString(),
-                returnTime: returnTime.toISOString(),
-            }),
+        // Step 3: Check camera availability using direct DB call
+        const { data: availableCameras, error: availError } = await supabase.rpc('get_available_cameras', {
+            p_pickup_time: pickupTime.toISOString(),
+            p_return_time: returnTime.toISOString(),
         });
 
-        const availabilityData = await availabilityResponse.json();
-        const availableCameras = availabilityData.data || [];
+        if (availError) {
+            return NextResponse.json({
+                data: parsed,
+                error: `Lỗi kiểm tra máy trống: ${availError.message}`,
+            });
+        }
 
         // Find the camera by name (partial match)
         const cameraName = parsed.cameraName?.toLowerCase() || '';
-        const simpleMatched = availableCameras.find((c: any) =>
+        const simpleMatched = (availableCameras || []).find((c: any) =>
             c.name?.toLowerCase().includes(cameraName) ||
             cameraName.includes(c.name?.toLowerCase())
         );
@@ -181,9 +183,19 @@ export async function POST(request: Request) {
         }
 
         // Fetch full camera details to get all price rates
-        const cameraResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/cameras`);
-        const camerasData = await cameraResponse.json();
-        const fullCamera = camerasData.data?.find((c: any) => c.id === (simpleMatched.id || simpleMatched.camera_id));
+        const { data: cameras, error: cameraError } = await supabase
+            .from('cameras')
+            .select('*')
+            .eq('is_active', true);
+
+        if (cameraError) {
+            return NextResponse.json({
+                data: parsed,
+                error: `Lỗi lấy danh sách máy: ${cameraError.message}`,
+            });
+        }
+
+        const fullCamera = cameras?.find((c: any) => c.id === (simpleMatched.id || simpleMatched.camera_id));
 
         if (!fullCamera) {
             return NextResponse.json({
@@ -198,31 +210,37 @@ export async function POST(request: Request) {
         const calculatedFee = priceBreakdown.total;
 
         // Step 5: Find or create customer by phone
-        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
         let customerId: string | null = null;
 
         if (parsed.customerPhone) {
             // Search for existing customer
-            const customerSearchResponse = await fetch(`${baseUrl}/api/customers?phone=${parsed.customerPhone}`);
-            const customerSearchData = await customerSearchResponse.json();
+            const { data: existingCustomers } = await supabase
+                .from('customers')
+                .select('id')
+                .eq('phone', parsed.customerPhone);
 
-            if (customerSearchData.data && customerSearchData.data.length > 0) {
-                customerId = customerSearchData.data[0].id;
+            if (existingCustomers && existingCustomers.length > 0) {
+                customerId = existingCustomers[0].id;
             } else {
                 // Create new customer
-                const createCustomerResponse = await fetch(`${baseUrl}/api/customers`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
+                const { data: newCustomer, error: createError } = await supabase
+                    .from('customers')
+                    .insert({
                         name: parsed.customerName || 'Khách chatbot',
                         phone: parsed.customerPhone,
                         platforms: parsed.platforms || ['Khác'],
-                    }),
-                });
-                const createCustomerData = await createCustomerResponse.json();
-                if (createCustomerData.data?.id) {
-                    customerId = createCustomerData.data.id;
+                    })
+                    .select()
+                    .single();
+
+                if (createError) {
+                    return NextResponse.json({
+                        data: parsed,
+                        error: `Lỗi tạo khách hàng: ${createError.message}`,
+                    });
                 }
+
+                customerId = newCustomer?.id || null;
             }
         }
 
@@ -236,72 +254,94 @@ export async function POST(request: Request) {
         }
 
         // Step 6: Get an employee to assign as creator
-        const employeeResponse = await fetch(`${baseUrl}/api/employees`);
-        const employeeData = await employeeResponse.json();
-        const activeStaff = employeeData.data?.[0]?.id;
+        const { data: employees } = await supabase
+            .from('employees')
+            .select('id')
+            .eq('is_active', true)
+            .limit(1);
 
-        // Step 7: Create booking automatically
-        const bookingData = {
-            customer_id: customerId,
-            created_by: activeStaff || null,
-            pickup_time: pickupTime.toISOString(),
-            return_time: returnTime.toISOString(),
-            booking_items: [{
-                camera_id: fullCamera.id,
-                quantity: 1,
-                unit_price: calculatedFee,
-                subtotal: calculatedFee,
-            }],
-            tasks: [
-                {
-                    type: 'pickup',
-                    due_at: pickupTime.toISOString(),
-                },
-                {
-                    type: 'return',
-                    due_at: returnTime.toISOString(),
-                },
-            ],
-            payment_status: (parsed.depositAmount ?? 0) > 0 ? 'deposited' : 'pending',
-            deposit_type: (parsed.depositAmount ?? 0) > 0 ? 'custom' : 'none',
-            deposit_amount: parsed.depositAmount ?? 0,
-            total_rental_fee: calculatedFee,
-            final_fee: calculatedFee,
-            total_delivery_fee: 0,
-            notes: `Tạo tự động từ Chatbot. Tin nhắn gốc:\n${message}`,
-        };
+        const activeStaff = employees?.[0]?.id || null;
 
-        const createResponse = await fetch(`${baseUrl}/api/bookings`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(bookingData),
-        });
+        // Step 7: Create booking
+        const { data: booking, error: bookingError } = await supabase
+            .from('bookings')
+            .insert({
+                customer_id: customerId,
+                created_by: activeStaff,
+                pickup_time: pickupTime.toISOString(),
+                return_time: returnTime.toISOString(),
+                payment_status: (parsed.depositAmount ?? 0) > 0 ? 'deposited' : 'pending',
+                deposit_type: (parsed.depositAmount ?? 0) > 0 ? 'custom' : 'none',
+                deposit_amount: parsed.depositAmount ?? 0,
+                total_rental_fee: calculatedFee,
+                final_fee: calculatedFee,
+                total_delivery_fee: 0,
+            })
+            .select()
+            .single();
 
-        const createResult = await createResponse.json();
-
-        if (!createResponse.ok) {
+        if (bookingError) {
             return NextResponse.json({
                 data: parsed,
                 available: true,
                 camera: fullCamera,
-                error: createResult.error || 'Lỗi khi tạo booking',
-                debug: { customerId, activeStaff, bookingData }
+                error: `Lỗi tạo booking: ${bookingError.message}`,
             });
+        }
+
+        // Create booking items
+        const { error: itemsError } = await supabase
+            .from('booking_items')
+            .insert({
+                booking_id: booking.id,
+                camera_id: fullCamera.id,
+                quantity: 1,
+                unit_price: calculatedFee,
+                subtotal: calculatedFee,
+            });
+
+        if (itemsError) {
+            // Rollback booking
+            await supabase.from('bookings').delete().eq('id', booking.id);
+            return NextResponse.json({
+                data: parsed,
+                error: `Lỗi tạo booking items: ${itemsError.message}`,
+            });
+        }
+
+        // Create tasks
+        const { error: tasksError } = await supabase
+            .from('tasks')
+            .insert([
+                {
+                    booking_id: booking.id,
+                    type: 'pickup',
+                    due_at: pickupTime.toISOString(),
+                },
+                {
+                    booking_id: booking.id,
+                    type: 'return',
+                    due_at: returnTime.toISOString(),
+                },
+            ]);
+
+        if (tasksError) {
+            console.error('Tasks creation error (non-fatal):', tasksError.message);
         }
 
         return NextResponse.json({
             data: parsed,
             available: true,
             camera: fullCamera,
-            booking: createResult.data,
+            booking: booking,
             success: true,
             isFastPath,
         });
 
-    } catch (error) {
+    } catch (error: any) {
         console.error('Error in chatbot:', error);
         return NextResponse.json(
-            { error: 'Đã xảy ra lỗi khi xử lý' },
+            { error: `Đã xảy ra lỗi khi xử lý: ${error?.message || 'Unknown'}` },
             { status: 500 }
         );
     }
