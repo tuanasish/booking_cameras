@@ -107,15 +107,20 @@ export default function ChatbotWidget() {
         );
     };
 
-    const formatTime = (hour: number | null, minute: number | null) => {
-        if (hour === null) return '--:--';
-        return `${hour.toString().padStart(2, '0')}:${(minute || 0).toString().padStart(2, '0')}`;
+    const formatTime = (hour: number | null | undefined, minute: number | null | undefined) => {
+        if (hour === null || hour === undefined) return '--:--';
+        return `${String(hour).padStart(2, '0')}:${String(minute ?? 0).padStart(2, '0')}`;
     };
 
-    const formatDate = (dateStr: string | null) => {
+    const formatDate = (dateStr: string | null | undefined) => {
         if (!dateStr) return '--/--/----';
-        const d = new Date(dateStr);
-        return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
+        try {
+            const d = new Date(dateStr);
+            if (isNaN(d.getTime())) return '--/--/----';
+            return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+        } catch {
+            return '--/--/----';
+        }
     };
 
     return (
