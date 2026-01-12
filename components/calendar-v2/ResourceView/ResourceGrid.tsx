@@ -235,7 +235,7 @@ export default function ResourceGrid({
             >
                 <div className="flex flex-col min-w-max">
                     {/* STICKY HEADER ROW */}
-                    <div className="sticky top-0 z-10 flex border-b border-border bg-surface shadow-sm">
+                    <div className="sticky top-0 z-30 flex border-b border-border bg-surface shadow-sm">
                         {/* Corner spacer - STICKY TOP & LEFT */}
                         <div className="w-10 sm:w-16 shrink-0 border-r border-border bg-surface sticky left-0 z-20" />
 
