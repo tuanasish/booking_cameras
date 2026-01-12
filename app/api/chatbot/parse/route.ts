@@ -167,12 +167,42 @@ export async function POST(request: Request) {
             });
         }
 
-        // Find the camera by name (partial match)
-        const cameraName = parsed.cameraName?.toLowerCase() || '';
-        const simpleMatched = (availableCameras || []).find((c: any) =>
-            c.name?.toLowerCase().includes(cameraName) ||
-            cameraName.includes(c.name?.toLowerCase())
+        // Find the camera by name (smart matching with priority)
+        const cameraName = parsed.cameraName?.toLowerCase().trim() || '';
+
+        // Priority 1: Exact match
+        let simpleMatched = (availableCameras || []).find((c: any) =>
+            c.name?.toLowerCase().trim() === cameraName
         );
+
+        // Priority 2: Extract model number and match exactly (e.g., "M100" should not match "M10")
+        if (!simpleMatched) {
+            const modelMatch = cameraName.match(/([a-z]+\s*)(\d+)/i);
+            if (modelMatch) {
+                const modelPrefix = modelMatch[1].trim().toLowerCase();
+                const modelNumber = modelMatch[2];
+                simpleMatched = (availableCameras || []).find((c: any) => {
+                    const camName = c.name?.toLowerCase() || '';
+                    const camModelMatch = camName.match(/([a-z]+\s*)(\d+)/i);
+                    if (camModelMatch) {
+                        return camModelMatch[1].trim().toLowerCase() === modelPrefix &&
+                            camModelMatch[2] === modelNumber;
+                    }
+                    return false;
+                });
+            }
+        }
+
+        // Priority 3: Best partial match (prefer longer matches)
+        if (!simpleMatched) {
+            const candidates = (availableCameras || []).filter((c: any) =>
+                c.name?.toLowerCase().includes(cameraName) ||
+                cameraName.includes(c.name?.toLowerCase())
+            );
+            // Sort by name length descending to prefer more specific matches
+            candidates.sort((a: any, b: any) => (b.name?.length || 0) - (a.name?.length || 0));
+            simpleMatched = candidates[0];
+        }
 
         if (!simpleMatched) {
             return NextResponse.json({
