@@ -28,9 +28,11 @@ export async function GET(request: NextRequest) {
     }
 
     if (startDate && endDate) {
+      // Lấy tất cả booking có thời gian chồng lấn với range
+      // Booking chồng lấn khi: pickup_time < endDate VÀ return_time > startDate
       query = query
-        .gte('pickup_time', startDate)
-        .lte('return_time', endDate);
+        .lt('pickup_time', endDate)
+        .gt('return_time', startDate);
     }
 
     if (limit) {

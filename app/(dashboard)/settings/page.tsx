@@ -22,6 +22,7 @@ interface Camera {
   price_additional_day: number | null;
   quantity: number;
   is_active: boolean;
+  sort_order: number;
 }
 
 export default function SettingsPage() {
@@ -32,6 +33,8 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false);
   const [showCameraModal, setShowCameraModal] = useState(false);
   const [editingCamera, setEditingCamera] = useState<Camera | null>(null);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [hasOrderChanged, setHasOrderChanged] = useState(false);
   const [cameraForm, setCameraForm] = useState({
     name: '',
     model_line: '',
@@ -204,6 +207,57 @@ export default function SettingsPage() {
     }
   };
 
+  // Drag and drop handlers
+  const handleDragStart = (index: number) => {
+    setDraggedIndex(index);
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    if (draggedIndex === null || draggedIndex === index) return;
+
+    const newCameras = [...cameras];
+    const draggedItem = newCameras[draggedIndex];
+    newCameras.splice(draggedIndex, 1);
+    newCameras.splice(index, 0, draggedItem);
+
+    setCameras(newCameras);
+    setDraggedIndex(index);
+    setHasOrderChanged(true);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
+  };
+
+  const handleSaveOrder = async () => {
+    setSaving(true);
+    try {
+      const orders = cameras.map((camera, index) => ({
+        id: camera.id,
+        sort_order: index + 1,
+      }));
+
+      const response = await fetch('/api/cameras/reorder', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orders }),
+      });
+
+      if (response.ok) {
+        setHasOrderChanged(false);
+        alert('Đã lưu thứ tự thành công!');
+      } else {
+        alert('Lỗi khi lưu thứ tự');
+      }
+    } catch (error) {
+      console.error('Error saving order:', error);
+      alert('Lỗi khi lưu thứ tự');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div className="flex h-full flex-col overflow-hidden bg-background">
       {/* Header */}
@@ -336,13 +390,30 @@ export default function SettingsPage() {
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
                     <h2 className="text-lg font-bold text-text-main">Danh sách máy ảnh</h2>
-                    <button
-                      onClick={() => handleOpenCameraModal()}
-                      className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white font-bold hover:bg-blue-600 transition-colors shadow-lg shadow-primary/20"
-                    >
-                      <span className="material-symbols-outlined text-[20px]">add</span>
-                      Thêm máy mới
-                    </button>
+                    <div className="flex items-center gap-3">
+                      {hasOrderChanged && (
+                        <button
+                          onClick={handleSaveOrder}
+                          disabled={saving}
+                          className={clsx(
+                            'flex items-center gap-2 px-4 py-2 rounded-lg font-bold transition-colors',
+                            saving
+                              ? 'bg-slate-600 text-white cursor-not-allowed'
+                              : 'bg-emerald-500 text-white hover:bg-emerald-600 shadow-lg shadow-emerald-500/20'
+                          )}
+                        >
+                          <span className="material-symbols-outlined text-[20px]">save</span>
+                          {saving ? 'Đang lưu...' : 'Lưu thứ tự'}
+                        </button>
+                      )}
+                      <button
+                        onClick={() => handleOpenCameraModal()}
+                        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white font-bold hover:bg-blue-600 transition-colors shadow-lg shadow-primary/20"
+                      >
+                        <span className="material-symbols-outlined text-[20px]">add</span>
+                        Thêm máy mới
+                      </button>
+                    </div>
                   </div>
 
                   <div className="bg-surface rounded-xl border border-border overflow-hidden shadow-sm">
@@ -350,6 +421,7 @@ export default function SettingsPage() {
                       <table className="w-full">
                         <thead className="bg-background border-b border-border">
                           <tr>
+                            <th className="w-12 px-2 py-4"></th>
                             <th className="px-6 py-4 text-left text-xs font-semibold text-text-secondary uppercase">
                               Tên máy
                             </th>
@@ -377,14 +449,24 @@ export default function SettingsPage() {
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-border">
-                          {cameras.map((camera) => (
+                          {cameras.map((camera, index) => (
                             <tr
                               key={camera.id}
+                              draggable
+                              onDragStart={() => handleDragStart(index)}
+                              onDragOver={(e) => handleDragOver(e, index)}
+                              onDragEnd={handleDragEnd}
                               className={clsx(
-                                'hover:bg-background transition-colors',
-                                !camera.is_active && 'opacity-50'
+                                'hover:bg-background transition-colors cursor-move',
+                                !camera.is_active && 'opacity-50',
+                                draggedIndex === index && 'bg-primary/10'
                               )}
                             >
+                              <td className="w-12 px-2 py-4">
+                                <div className="flex items-center justify-center text-text-secondary hover:text-text-main cursor-grab active:cursor-grabbing">
+                                  <span className="material-symbols-outlined text-[20px]">drag_indicator</span>
+                                </div>
+                              </td>
                               <td className="px-6 py-4">
                                 <p className="text-sm font-medium text-text-main">{camera.name}</p>
                               </td>

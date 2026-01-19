@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const all = searchParams.get('all') === 'true';
 
-    let query = supabase.from('cameras').select('*').order('name', { ascending: true });
+    let query = supabase.from('cameras').select('*').order('sort_order', { ascending: true });
 
     if (!all) {
       query = query.eq('is_active', true);

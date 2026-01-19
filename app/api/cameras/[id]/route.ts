@@ -42,6 +42,28 @@ export async function DELETE(
   try {
     const supabase = await createClient();
 
+    // Kiểm tra xem máy ảnh có trong booking nào không
+    const { data: bookingItems } = await supabase
+      .from('booking_items')
+      .select('id')
+      .eq('camera_id', params.id)
+      .limit(1);
+
+    if (bookingItems && bookingItems.length > 0) {
+      // Nếu có booking, soft delete (đánh dấu is_active = false)
+      const { error } = await supabase
+        .from('cameras')
+        .update({ is_active: false })
+        .eq('id', params.id);
+
+      if (error) {
+        return NextResponse.json({ error: error.message }, { status: 400 });
+      }
+
+      return NextResponse.json({ success: true, soft_deleted: true });
+    }
+
+    // Nếu không có booking, xóa hẳn
     const { error } = await supabase.from('cameras').delete().eq('id', params.id);
 
     if (error) {

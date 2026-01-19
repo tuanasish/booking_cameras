@@ -79,6 +79,7 @@ export default function GoogleCalendarView({
                     setSelectedDate(date);
                     setCurrentDate(date);
                 }}
+                onMonthChange={(date) => setCurrentDate(date)}
                 cameras={cameras}
                 selectedCameraIds={selectedCameraIds}
                 onCameraToggle={handleCameraToggle}

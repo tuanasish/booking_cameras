@@ -1,7 +1,7 @@
 'use client';
 
 import { Camera, Booking } from '@/lib/types/database';
-import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameDay, isSameMonth, isToday } from 'date-fns';
+import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, addMonths, subMonths, isSameDay, isSameMonth, isToday } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import clsx from 'clsx';
 
@@ -9,6 +9,7 @@ interface CalendarSidebarProps {
     currentDate: Date;
     selectedDate: Date;
     onDateSelect: (date: Date) => void;
+    onMonthChange: (date: Date) => void;
     cameras: Camera[];
     selectedCameraIds: string[];
     onCameraToggle: (cameraId: string) => void;
@@ -21,6 +22,7 @@ export default function CalendarSidebar({
     currentDate,
     selectedDate,
     onDateSelect,
+    onMonthChange,
     cameras,
     selectedCameraIds,
     onCameraToggle,
@@ -71,10 +73,16 @@ export default function CalendarSidebar({
                 <div className="flex items-center justify-between mb-2 pl-2 pr-1">
                     <span className="font-medium text-sm text-text-main">{format(currentDate, 'MMMM yyyy', { locale: vi })}</span>
                     <div className="flex gap-1">
-                        <button className="size-7 flex items-center justify-center rounded-full hover:bg-background text-text-secondary hover:text-text-main transition-colors">
+                        <button
+                            onClick={() => onMonthChange(subMonths(currentDate, 1))}
+                            className="size-7 flex items-center justify-center rounded-full hover:bg-background text-text-secondary hover:text-text-main transition-colors"
+                        >
                             <span className="material-symbols-outlined text-sm">chevron_left</span>
                         </button>
-                        <button className="size-7 flex items-center justify-center rounded-full hover:bg-background text-text-secondary hover:text-text-main transition-colors">
+                        <button
+                            onClick={() => onMonthChange(addMonths(currentDate, 1))}
+                            className="size-7 flex items-center justify-center rounded-full hover:bg-background text-text-secondary hover:text-text-main transition-colors"
+                        >
                             <span className="material-symbols-outlined text-sm">chevron_right</span>
                         </button>
                     </div>

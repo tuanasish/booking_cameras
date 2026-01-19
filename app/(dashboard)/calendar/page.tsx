@@ -39,12 +39,12 @@ export default function CalendarPage() {
       const camerasData = await camerasRes.json();
       setCameras(camerasData.data || []);
 
-      // Fetch bookings for a wider range (current month ± 2 weeks)
+      // Fetch bookings for a wider range (3 months total)
       const now = new Date();
       const startDate = new Date(now);
-      startDate.setDate(startDate.getDate() - 14);
+      startDate.setDate(startDate.getDate() - 30);  // 30 ngày trước
       const endDate = new Date(now);
-      endDate.setDate(endDate.getDate() + 30);
+      endDate.setDate(endDate.getDate() + 60);      // 60 ngày sau
 
       const calendarFields = '*,customer:customers(*),booking_items(*,camera:cameras(*)),booking_accessories(*),tasks(*)';
       const bookingsRes = await fetch(

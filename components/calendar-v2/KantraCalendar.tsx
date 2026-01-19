@@ -229,6 +229,7 @@ export default function KantraCalendar({
                                 setCurrentDate(date);
                                 if (window.innerWidth < 768) setSidebarOpen(false);
                             }}
+                            onMonthChange={(date) => setCurrentDate(date)}
                             cameras={cameras}
                             selectedCameraIds={selectedCameraIds}
                             onCameraToggle={handleCameraToggle}
