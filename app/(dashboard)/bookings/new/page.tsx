@@ -223,7 +223,8 @@ export default function NewBookingPage() {
           discount_reason: formData.hasDiscount ? formData.discountReason : null,
           final_fee: formData.finalFee,
           late_fee: 0, // Will be calculated on return
-          total_delivery_fee: formData.deliveryFee, // Total delivery fee for pickup
+          total_delivery_fee: formData.pickupFee + formData.returnFee, // Total delivery fee
+          notes: formData.notes || null,
           booking_items: formData.selectedCameras.map((item) => ({
             camera_id: item.cameraId,
             quantity: item.quantity,
@@ -242,11 +243,11 @@ export default function NewBookingPage() {
               ).total * item.quantity,
           })),
           booking_accessories: [
-            ...(formData.hasTripod
-              ? [{ accessory_type: 'tripod', quantity: 1 }]
+            ...(formData.tripodQuantity > 0
+              ? [{ accessory_type: 'tripod', quantity: formData.tripodQuantity }]
               : []),
-            ...(formData.hasReflector
-              ? [{ accessory_type: 'reflector', quantity: 1 }]
+            ...(formData.reflectorQuantity > 0
+              ? [{ accessory_type: 'reflector', quantity: formData.reflectorQuantity }]
               : []),
             ...(formData.otherAccessories
               ? [
@@ -262,14 +263,14 @@ export default function NewBookingPage() {
             {
               type: 'pickup',
               due_at: formData.pickupTime,
-              location: formData.deliveryLocation,
-              delivery_fee: formData.deliveryFee,
+              location: formData.pickupLocation,
+              delivery_fee: formData.pickupFee,
             },
             {
               type: 'return',
               due_at: formData.returnTime,
-              location: formData.deliveryLocation,
-              delivery_fee: 0,
+              location: formData.returnLocation,
+              delivery_fee: formData.returnFee,
             },
           ],
         }),

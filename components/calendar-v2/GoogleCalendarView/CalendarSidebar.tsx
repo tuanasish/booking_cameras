@@ -147,6 +147,22 @@ export default function CalendarSidebar({
                         </span>
                     </summary>
                     <div className="pt-1 pb-3 pl-3 pr-2 flex flex-col gap-2">
+                        {/* Select All / Deselect All */}
+                        <div className="flex items-center gap-2 mb-1">
+                            <button
+                                onClick={() => cameras.forEach(c => !selectedCameraIds.includes(c.id) && onCameraToggle(c.id))}
+                                className="text-xs text-primary hover:text-primary/80 hover:underline transition-colors"
+                            >
+                                Chọn tất cả
+                            </button>
+                            <span className="text-text-secondary">|</span>
+                            <button
+                                onClick={() => cameras.forEach(c => selectedCameraIds.includes(c.id) && onCameraToggle(c.id))}
+                                className="text-xs text-text-secondary hover:text-text-main hover:underline transition-colors"
+                            >
+                                Bỏ chọn tất cả
+                            </button>
+                        </div>
                         {cameras.map((camera) => (
                             <label key={camera.id} className="flex items-center gap-3 cursor-pointer group/item">
                                 <input

@@ -188,6 +188,7 @@ export interface Database {
           discount_reason: string | null
           final_fee: number
           late_fee: number
+          notes: string | null
           created_at: string | null
           updated_at: string | null
         }
@@ -207,6 +208,7 @@ export interface Database {
           discount_reason?: string | null
           final_fee?: number
           late_fee?: number
+          notes?: string | null
           created_at?: string | null
           updated_at?: string | null
         }
@@ -226,6 +228,7 @@ export interface Database {
           discount_reason?: string | null
           final_fee?: number
           late_fee?: number
+          notes?: string | null
           created_at?: string | null
           updated_at?: string | null
         }

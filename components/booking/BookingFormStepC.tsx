@@ -12,8 +12,8 @@ interface BookingFormStepCProps {
     camera: Camera;
     quantity: number;
   }>;
-  hasTripod: boolean;
-  hasReflector: boolean;
+  tripodQuantity: number;
+  reflectorQuantity: number;
   otherAccessories: string;
   pickupTime: string;
   returnTime: string;
@@ -28,23 +28,24 @@ interface BookingFormStepCProps {
   }>;
   onUpdate: (updates: {
     selectedCameras?: Array<{ cameraId: string; camera: Camera; quantity: number }>;
-    hasTripod?: boolean;
-    hasReflector?: boolean;
+    tripodQuantity?: number;
+    reflectorQuantity?: number;
     otherAccessories?: string;
   }) => void;
 }
 
-export default function BookingFormStepC({
-  selectedCameras,
-  hasTripod,
-  hasReflector,
-  otherAccessories,
-  pickupTime,
-  returnTime,
-  errors,
-  availableCameras = [],
-  onUpdate,
-}: BookingFormStepCProps) {
+export default function BookingFormStepC(props: BookingFormStepCProps) {
+  const {
+    selectedCameras,
+    tripodQuantity,
+    reflectorQuantity,
+    otherAccessories,
+    pickupTime,
+    returnTime,
+    errors,
+    availableCameras,
+    onUpdate,
+  } = props;
   const [cameras, setCameras] = useState<Camera[]>([]);
   const [loading, setLoading] = useState(true);
   const [tripodAvailability, setTripodAvailability] = useState<{ available: number | null }>({
@@ -161,7 +162,7 @@ export default function BookingFormStepC({
     if (!camera) return;
 
     // Check available quantity
-    const available = availableCameras.find((ac) => ac.camera_id === cameraId);
+    const available = availableCameras?.find((ac) => ac.camera_id === cameraId);
     const maxQuantity = available ? available.available_qty : camera.quantity;
 
     if (quantity > maxQuantity) {
@@ -175,7 +176,7 @@ export default function BookingFormStepC({
   };
 
   const getAvailableQuantity = (cameraId: string): number => {
-    const available = availableCameras.find((ac) => ac.camera_id === cameraId);
+    const available = availableCameras?.find((ac) => ac.camera_id === cameraId);
     if (available) return available.available_qty;
 
     const camera = cameras.find((c) => c.id === cameraId);
@@ -354,53 +355,101 @@ export default function BookingFormStepC({
           <span className="text-sm font-medium text-text-secondary">Phụ kiện</span>
 
           <div className="flex flex-col gap-3">
-            <label className="flex items-center gap-3 p-3 rounded-lg border border-border bg-surface hover:bg-surface-hover cursor-pointer transition-all shadow-sm">
-              <input
-                type="checkbox"
-                checked={hasTripod}
-                onChange={(e) => onUpdate({ hasTripod: e.target.checked })}
-                className="rounded border-border bg-surface text-primary focus:ring-0 focus:ring-offset-0"
-                disabled={tripodAvailability.available === 0}
-              />
-              <span className="material-symbols-outlined text-[20px] text-text-secondary">tripod</span>
-              <span className="text-sm text-text-main flex-1">
-                Tripod
-                {tripodAvailability.available !== null && (
-                  <span className="ml-2 text-xs text-text-secondary">
-                    (Còn {tripodAvailability.available} cái)
-                  </span>
-                )}
-              </span>
-              {tripodAvailability.available === 0 && (
-                <span className="text-xs text-red-400">
-                  Tripod không còn khả dụng
-                </span>
-              )}
-            </label>
+            {/* Tripod Selector */}
+            <div className="flex flex-col gap-3 p-4 rounded-xl border border-border bg-surface shadow-sm transition-all hover:bg-surface-hover">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                  <span className="material-symbols-outlined text-[24px]">tripod</span>
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-text-main">Tripod</span>
+                    {tripodAvailability.available !== null && (
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-surface border border-border text-text-secondary">
+                        Còn {tripodAvailability.available} cái
+                      </span>
+                    )}
+                  </div>
+                  {tripodAvailability.available === 0 && (
+                    <span className="text-[10px] text-red-400 font-medium">Hết hàng</span>
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => onUpdate({ tripodQuantity: Math.max(0, tripodQuantity - 1) })}
+                    disabled={tripodQuantity <= 0}
+                    className="size-8 rounded-lg border border-border bg-background flex items-center justify-center hover:bg-surface-hover disabled:opacity-30 active:scale-90 transition-all"
+                  >
+                    <span className="material-symbols-outlined text-sm">remove</span>
+                  </button>
+                  <input
+                    type="number"
+                    value={tripodQuantity}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value) || 0;
+                      const max = tripodAvailability.available ?? 99;
+                      onUpdate({ tripodQuantity: Math.min(val, max) });
+                    }}
+                    className="w-12 text-center font-bold bg-transparent outline-none text-text-main"
+                  />
+                  <button
+                    onClick={() => onUpdate({ tripodQuantity: tripodQuantity + 1 })}
+                    disabled={tripodAvailability.available !== null && tripodQuantity >= tripodAvailability.available}
+                    className="size-8 rounded-lg border border-border bg-background flex items-center justify-center hover:bg-surface-hover disabled:opacity-30 active:scale-90 transition-all"
+                  >
+                    <span className="material-symbols-outlined text-sm">add</span>
+                  </button>
+                </div>
+              </div>
+            </div>
 
-            <label className="flex items-center gap-3 p-3 rounded-lg border border-border bg-surface hover:bg-surface-hover cursor-pointer transition-all shadow-sm">
-              <input
-                type="checkbox"
-                checked={hasReflector}
-                onChange={(e) => onUpdate({ hasReflector: e.target.checked })}
-                className="rounded border-border bg-surface text-primary focus:ring-0 focus:ring-offset-0"
-                disabled={reflectorAvailability.available === 0}
-              />
-              <span className="material-symbols-outlined text-[20px] text-text-secondary">light_mode</span>
-              <span className="text-sm text-text-main flex-1">
-                Hắt sáng
-                {reflectorAvailability.available !== null && (
-                  <span className="ml-2 text-xs text-text-secondary">
-                    (Còn {reflectorAvailability.available} cái)
-                  </span>
-                )}
-              </span>
-              {reflectorAvailability.available === 0 && (
-                <span className="text-xs text-red-400">
-                  Hắt sáng không còn khả dụng
-                </span>
-              )}
-            </label>
+            {/* Reflector Selector */}
+            <div className="flex flex-col gap-3 p-4 rounded-xl border border-border bg-surface shadow-sm transition-all hover:bg-surface-hover">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                  <span className="material-symbols-outlined text-[24px]">wb_sunny</span>
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-text-main">Hắt sáng</span>
+                    {reflectorAvailability.available !== null && (
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-surface border border-border text-text-secondary">
+                        Còn {reflectorAvailability.available} cái
+                      </span>
+                    )}
+                  </div>
+                  {reflectorAvailability.available === 0 && (
+                    <span className="text-[10px] text-red-400 font-medium">Hết hàng</span>
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => onUpdate({ reflectorQuantity: Math.max(0, reflectorQuantity - 1) })}
+                    disabled={reflectorQuantity <= 0}
+                    className="size-8 rounded-lg border border-border bg-background flex items-center justify-center hover:bg-surface-hover disabled:opacity-30 active:scale-90 transition-all"
+                  >
+                    <span className="material-symbols-outlined text-sm">remove</span>
+                  </button>
+                  <input
+                    type="number"
+                    value={reflectorQuantity}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value) || 0;
+                      const max = reflectorAvailability.available ?? 99;
+                      onUpdate({ reflectorQuantity: Math.min(val, max) });
+                    }}
+                    className="w-12 text-center font-bold bg-transparent outline-none text-text-main"
+                  />
+                  <button
+                    onClick={() => onUpdate({ reflectorQuantity: reflectorQuantity + 1 })}
+                    disabled={reflectorAvailability.available !== null && reflectorQuantity >= reflectorAvailability.available}
+                    className="size-8 rounded-lg border border-border bg-background flex items-center justify-center hover:bg-surface-hover disabled:opacity-30 active:scale-90 transition-all"
+                  >
+                    <span className="material-symbols-outlined text-sm">add</span>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div className="flex flex-col gap-2">

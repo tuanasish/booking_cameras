@@ -1,7 +1,7 @@
 'use client';
 
 import clsx from 'clsx';
-
+import { Camera } from '@/lib/types/database';
 import BookingFormStepA from '@/components/booking/BookingFormStepA';
 import BookingFormStepB from '@/components/booking/BookingFormStepB';
 import BookingFormStepC from '@/components/booking/BookingFormStepC';
@@ -16,12 +16,12 @@ interface BookingFormStepperProps {
   onNext: () => void;
   onBack: () => void;
   onSubmit: () => void;
-  submitting: boolean;
-  isEdit?: boolean;
+  submitting?: boolean;
   availableCameras?: any[];
   onSearchCustomer?: (phone: string) => Promise<any>;
-  onAvailabilityCheck?: (pickup: string, returnTime: string) => Promise<void>;
+  onAvailabilityCheck?: (pickupTime: string, returnTime: string) => Promise<void>;
   existingCustomer?: any;
+  isEdit?: boolean;
 }
 
 const steps = [
@@ -140,8 +140,8 @@ export default function BookingFormStepper({
         {(currentStep === 'B' || isEdit) && (
           <BookingFormStepC
             selectedCameras={formData.selectedCameras}
-            hasTripod={formData.hasTripod}
-            hasReflector={formData.hasReflector}
+            tripodQuantity={formData.tripodQuantity}
+            reflectorQuantity={formData.reflectorQuantity}
             otherAccessories={formData.otherAccessories}
             pickupTime={formData.pickupTime}
             returnTime={formData.returnTime}
@@ -172,8 +172,10 @@ export default function BookingFormStepper({
             hasVNeID={formData.hasVNeID}
             pickupTime={formData.pickupTime}
             returnTime={formData.returnTime}
-            deliveryLocation={formData.deliveryLocation}
-            deliveryFee={formData.deliveryFee}
+            pickupLocation={formData.pickupLocation}
+            pickupFee={formData.pickupFee}
+            returnLocation={formData.returnLocation}
+            returnFee={formData.returnFee}
             totalRentalFee={formData.totalRentalFee}
             extraPriceTotal={formData.extraPriceTotal}
             hasDiscount={formData.hasDiscount}
@@ -181,6 +183,7 @@ export default function BookingFormStepper({
             discountReason={formData.discountReason}
             finalFee={formData.finalFee}
             createdBy={formData.createdBy}
+            notes={formData.notes}
             errors={errors}
             onUpdate={updateFormData}
           />

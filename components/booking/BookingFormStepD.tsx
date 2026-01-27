@@ -14,8 +14,10 @@ interface BookingFormStepDProps {
   hasVNeID: boolean;
   pickupTime: string;
   returnTime: string;
-  deliveryLocation: string;
-  deliveryFee: number;
+  pickupLocation: string;
+  pickupFee: number;
+  returnLocation: string;
+  returnFee: number;
   totalRentalFee: number; // S
   hasDiscount: boolean;
   discountPercent: number;
@@ -23,20 +25,24 @@ interface BookingFormStepDProps {
   finalFee: number; // P
   extraPriceTotal: number;
   createdBy: string;
+  notes: string;
   errors: Record<string, string>;
   onUpdate: (updates: {
     depositType?: 'none' | 'default' | 'custom' | 'cccd';
     depositAmount?: number;
     cccdName?: string;
     hasVNeID?: boolean;
-    deliveryLocation?: string;
-    deliveryFee?: number;
+    pickupLocation?: string;
+    pickupFee?: number;
+    returnLocation?: string;
+    returnFee?: number;
     hasDiscount?: boolean;
     discountPercent?: number;
     discountReason?: string;
     finalFee?: number;
     extraPriceTotal?: number;
     createdBy?: string;
+    notes?: string;
   }) => void;
 }
 
@@ -53,8 +59,10 @@ export default function BookingFormStepD({
   depositAmount,
   cccdName,
   hasVNeID,
-  deliveryLocation,
-  deliveryFee,
+  pickupLocation,
+  pickupFee,
+  returnLocation,
+  returnFee,
   totalRentalFee,
   hasDiscount,
   discountPercent,
@@ -64,6 +72,7 @@ export default function BookingFormStepD({
   pickupTime,
   returnTime,
   createdBy,
+  notes,
   errors,
   onUpdate,
 }: BookingFormStepDProps) {
@@ -255,24 +264,45 @@ export default function BookingFormStepD({
           )}
         </div>
 
-        {/* Delivery Location & Fee */}
+        {/* Pickup Location & Fee */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Input
             label="Địa điểm giao máy"
             icon="location_on"
-            value={deliveryLocation}
-            onChange={(e) => onUpdate({ deliveryLocation: e.target.value })}
-            error={errors.deliveryLocation}
+            value={pickupLocation}
+            onChange={(e) => onUpdate({ pickupLocation: e.target.value })}
+            error={errors.pickupLocation}
             placeholder="Nhập địa điểm giao máy"
           />
 
           <Input
-            label="Phí giao máy"
+            label="Phí giao"
             icon="local_shipping"
             type="number"
-            value={deliveryFee.toString()}
-            onChange={(e) => onUpdate({ deliveryFee: parseInt(e.target.value) || 0 })}
-            placeholder={`Tính: ${settings.deliveryFeePerKm.toLocaleString('vi-VN')}đ/km - Nhân viên tự tính`}
+            value={pickupFee.toString()}
+            onChange={(e) => onUpdate({ pickupFee: parseInt(e.target.value) || 0 })}
+            placeholder={`Tính: ${settings.deliveryFeePerKm.toLocaleString('vi-VN')}đ/km`}
+          />
+        </div>
+
+        {/* Return Location & Fee */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Input
+            label="Địa điểm thu hồi"
+            icon="location_on"
+            value={returnLocation}
+            onChange={(e) => onUpdate({ returnLocation: e.target.value })}
+            error={errors.returnLocation}
+            placeholder="Nhập địa điểm thu hồi"
+          />
+
+          <Input
+            label="Phí thu"
+            icon="local_shipping"
+            type="number"
+            value={returnFee.toString()}
+            onChange={(e) => onUpdate({ returnFee: parseInt(e.target.value) || 0 })}
+            placeholder={`Tính: ${settings.deliveryFeePerKm.toLocaleString('vi-VN')}đ/km`}
           />
         </div>
 
@@ -374,6 +404,20 @@ export default function BookingFormStepD({
           )}
         </div>
 
+        {/* Notes Section */}
+        <div className="flex flex-col gap-2 pt-4 border-t border-border">
+          <label className="text-sm font-medium text-text-secondary">
+            Ghi chú
+          </label>
+          <textarea
+            value={notes}
+            onChange={(e) => onUpdate({ notes: e.target.value })}
+            placeholder="Nhập ghi chú cho đơn thuê..."
+            rows={3}
+            className="w-full bg-surface border border-border rounded-lg py-2 px-3 text-text-main focus:ring-1 focus:ring-primary focus:border-primary resize-none placeholder-text-secondary"
+          />
+        </div>
+
         {/* Summary */}
         <div className="p-4 rounded-lg bg-surface border border-border space-y-3 shadow-inner">
           <div className="flex flex-col gap-1 pb-2 border-b border-border">
@@ -411,11 +455,11 @@ export default function BookingFormStepD({
             </>
           )}
 
-          {deliveryFee > 0 && (
+          {(pickupFee > 0 || returnFee > 0) && (
             <div className="flex items-center justify-between text-sm">
-              <span className="text-text-secondary">Phí giao máy:</span>
+              <span className="text-text-secondary">Phí giao nhận:</span>
               <span className="text-text-main font-medium">
-                +{deliveryFee.toLocaleString('vi-VN')}đ
+                +{(pickupFee + returnFee).toLocaleString('vi-VN')}đ
               </span>
             </div>
           )}
@@ -432,7 +476,7 @@ export default function BookingFormStepD({
           <div className="flex items-center justify-between text-base pt-2 border-t border-border">
             <span className="text-text-main font-bold">Tổng thanh toán:</span>
             <span className="text-primary font-bold text-lg">
-              {roundUpToThousand(Math.max(0, finalFee + deliveryFee - depositAmount)).toLocaleString('vi-VN')}đ
+              {roundUpToThousand(Math.max(0, finalFee + pickupFee + returnFee - depositAmount)).toLocaleString('vi-VN')}đ
             </span>
           </div>
         </div>

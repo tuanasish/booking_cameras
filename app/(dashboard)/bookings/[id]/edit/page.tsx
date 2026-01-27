@@ -89,8 +89,8 @@ export default function EditBookingPage({ params }: { params: { id: string } }) 
                         camera: item.camera,
                         quantity: item.quantity,
                     })),
-                    hasTripod: b.booking_accessories.some((a: any) => a.accessory_type === 'tripod'),
-                    hasReflector: b.booking_accessories.some((a: any) => a.accessory_type === 'reflector'),
+                    tripodQuantity: b.booking_accessories.find((a: any) => a.accessory_type === 'tripod')?.quantity || 0,
+                    reflectorQuantity: b.booking_accessories.find((a: any) => a.accessory_type === 'reflector')?.quantity || 0,
                     otherAccessories: b.booking_accessories
                         .filter((a: any) => !['tripod', 'reflector'].includes(a.accessory_type))
                         .map((a: any) => a.name)
@@ -99,14 +99,17 @@ export default function EditBookingPage({ params }: { params: { id: string } }) 
                     depositAmount: b.deposit_amount,
                     cccdName: b.cccd_name || '',
                     hasVNeID: b.deposit_type === 'cccd' && !b.cccd_name, // Simple heuristic
-                    deliveryLocation: b.tasks?.find((t: any) => t.type === 'pickup')?.location || '',
-                    deliveryFee: b.tasks?.find((t: any) => t.type === 'pickup')?.delivery_fee || 0,
+                    pickupLocation: b.tasks?.find((t: any) => t.type === 'pickup')?.location || '',
+                    pickupFee: b.tasks?.find((t: any) => t.type === 'pickup')?.delivery_fee || 0,
+                    returnLocation: b.tasks?.find((t: any) => t.type === 'return')?.location || '',
+                    returnFee: b.tasks?.find((t: any) => t.type === 'return')?.delivery_fee || 0,
                     totalRentalFee: b.total_rental_fee,
                     hasDiscount: b.discount_percent > 0,
                     discountPercent: b.discount_percent,
                     discountReason: b.discount_reason || '',
                     finalFee: b.final_fee,
                     createdBy: b.created_by,
+                    notes: b.notes || '',
                 });
             } else {
                 alert('Không tìm thấy booking');

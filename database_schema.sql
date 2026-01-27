@@ -94,6 +94,7 @@ CREATE TABLE bookings (
   final_fee INTEGER DEFAULT 0,
   late_fee INTEGER DEFAULT 0,
   total_delivery_fee INTEGER DEFAULT 0,
+  notes TEXT,
   
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()

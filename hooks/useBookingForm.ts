@@ -18,8 +18,8 @@ export interface BookingFormData {
     camera: Camera;
     quantity: number;
   }>;
-  hasTripod: boolean;
-  hasReflector: boolean;
+  tripodQuantity: number;
+  reflectorQuantity: number;
   otherAccessories: string;
 
   // Step D: Payment
@@ -27,8 +27,10 @@ export interface BookingFormData {
   depositAmount: number;
   cccdName: string;
   hasVNeID: boolean;
-  deliveryLocation: string;
-  deliveryFee: number;
+  pickupLocation: string;
+  pickupFee: number;
+  returnLocation: string;
+  returnFee: number;
   totalRentalFee: number; // S
   extraPriceTotal: number; // Phần không chiết khấu
   hasDiscount: boolean;
@@ -36,6 +38,7 @@ export interface BookingFormData {
   discountReason: string;
   finalFee: number; // P
   createdBy: string; // Employee ID
+  notes: string; // Ghi chú
 }
 
 export function useBookingForm() {
@@ -48,15 +51,17 @@ export function useBookingForm() {
     pickupTime: '',
     returnTime: '',
     selectedCameras: [],
-    hasTripod: false,
-    hasReflector: false,
+    tripodQuantity: 0,
+    reflectorQuantity: 0,
     otherAccessories: '',
-    depositType: 'none',
+    depositType: 'default',
     depositAmount: 0,
     cccdName: '',
     hasVNeID: false,
-    deliveryLocation: '',
-    deliveryFee: 0,
+    pickupLocation: '',
+    pickupFee: 0,
+    returnLocation: '',
+    returnFee: 0,
     totalRentalFee: 0,
     extraPriceTotal: 0,
     hasDiscount: false,
@@ -64,6 +69,7 @@ export function useBookingForm() {
     discountReason: '',
     finalFee: 0,
     createdBy: '',
+    notes: '',
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});

@@ -29,6 +29,7 @@ export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<'settings' | 'cameras'>('settings');
   const [settings, setSettings] = useState<Settings | null>(null);
   const [cameras, setCameras] = useState<Camera[]>([]);
+  const [accessories, setAccessories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [showCameraModal, setShowCameraModal] = useState(false);
@@ -51,18 +52,21 @@ export default function SettingsPage() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [settingsRes, camerasRes] = await Promise.all([
+      const [settingsRes, camerasRes, accessoriesRes] = await Promise.all([
         fetch('/api/settings'),
         fetch('/api/cameras?all=true'),
+        fetch('/api/accessories'),
       ]);
 
       const settingsData = await settingsRes.json();
       const camerasData = await camerasRes.json();
+      const accessoriesData = await accessoriesRes.json();
 
       if (settingsData.data && settingsData.data.length > 0) {
         setSettings(settingsData.data[0]);
       }
       setCameras(camerasData.data || []);
+      setAccessories(accessoriesData.data || []);
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
@@ -75,18 +79,25 @@ export default function SettingsPage() {
 
     setSaving(true);
     try {
-      const response = await fetch('/api/settings', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          id: settings.id,
-          delivery_fee_per_km: settings.delivery_fee_per_km,
-          default_deposit: settings.default_deposit,
-          late_fee_divisor: settings.late_fee_divisor,
+      const [settingsRes, accessoriesRes] = await Promise.all([
+        fetch('/api/settings', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: settings.id,
+            delivery_fee_per_km: settings.delivery_fee_per_km,
+            default_deposit: settings.default_deposit,
+            late_fee_divisor: settings.late_fee_divisor,
+          }),
         }),
-      });
+        fetch('/api/accessories', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(accessories.map(a => ({ id: a.id, quantity: a.quantity, price: a.price }))),
+        })
+      ]);
 
-      if (response.ok) {
+      if (settingsRes.ok && accessoriesRes.ok) {
         alert('Đã lưu cấu hình thành công');
       } else {
         alert('Lỗi khi lưu cấu hình');
@@ -368,6 +379,79 @@ export default function SettingsPage() {
                         </span>
                       </div>
                     </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 mb-6 pb-4 border-b border-border">
+                    <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
+                      <span className="material-symbols-outlined text-[20px]">inventory_2</span>
+                    </div>
+                    <h2 className="text-lg font-bold text-text-main">Kho phụ kiện</h2>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    {accessories.map((acc, idx) => (
+                      <div key={acc.id} className="p-4 rounded-xl border border-border bg-background/50">
+                        <label className="text-sm font-medium text-text-secondary mb-3 block">
+                          {acc.type === 'tripod' ? 'Tripod' : 'Hắt sáng'} ({acc.name})
+                        </label>
+
+                        <div className="space-y-4">
+                          <div className="flex flex-col gap-1.5">
+                            <span className="text-[12px] text-text-secondary font-medium uppercase ml-1">Số lượng kho</span>
+                            <div className="flex items-center gap-3">
+                              <button
+                                onClick={() => {
+                                  const newAccs = [...accessories];
+                                  newAccs[idx].quantity = Math.max(0, newAccs[idx].quantity - 1);
+                                  setAccessories(newAccs);
+                                }}
+                                className="size-10 rounded-lg border border-border bg-background flex items-center justify-center hover:bg-surface-hover active:scale-95 transition-all text-text-secondary"
+                              >
+                                <span className="material-symbols-outlined text-sm">remove</span>
+                              </button>
+                              <input
+                                type="number"
+                                value={acc.quantity}
+                                onChange={(e) => {
+                                  const newAccs = [...accessories];
+                                  newAccs[idx].quantity = parseInt(e.target.value) || 0;
+                                  setAccessories(newAccs);
+                                }}
+                                className="flex-1 bg-background border border-border rounded-lg px-4 py-2 text-center text-text-main font-bold focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all"
+                              />
+                              <button
+                                onClick={() => {
+                                  const newAccs = [...accessories];
+                                  newAccs[idx].quantity += 1;
+                                  setAccessories(newAccs);
+                                }}
+                                className="size-10 rounded-lg border border-border bg-background flex items-center justify-center hover:bg-surface-hover active:scale-95 transition-all text-text-secondary"
+                              >
+                                <span className="material-symbols-outlined text-sm">add</span>
+                              </button>
+                            </div>
+                          </div>
+
+                          <div className="flex flex-col gap-1.5">
+                            <span className="text-[12px] text-text-secondary font-medium uppercase ml-1">Giá thuê (VNĐ)</span>
+                            <div className="relative">
+                              <input
+                                type="number"
+                                value={acc.price}
+                                onChange={(e) => {
+                                  const newAccs = [...accessories];
+                                  newAccs[idx].price = parseInt(e.target.value) || 0;
+                                  setAccessories(newAccs);
+                                }}
+                                className="w-full bg-background border border-border rounded-lg px-4 py-2 text-text-main focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all pl-10"
+                              />
+                              <span className="material-symbols-outlined absolute left-3 top-2.5 text-[18px] text-text-secondary">payments</span>
+                              <span className="absolute right-4 top-2.5 text-text-secondary text-sm">đ</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
 
                   <button
