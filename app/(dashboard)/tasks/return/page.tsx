@@ -330,32 +330,16 @@ function ReturnTaskCard({
       style={{ cursor: isCompleted ? 'default' : 'pointer' }}
     >
       <div className="flex-1 space-y-4 w-full">
-        {/* Top: Customer & Platform */}
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-4">
-            <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20">
-              <span className="material-symbols-outlined text-primary text-[20px]">person</span>
-            </div>
-            <div>
-              <h3 className="text-sm font-bold text-text-main group-hover:text-primary transition-colors">
-                {task.booking.customer.name}
-              </h3>
-              <p className="text-[11px] text-text-secondary mt-0.5">{task.booking.customer.phone}</p>
-            </div>
+        {/* Top: Customer info */}
+        <div className="flex items-center gap-4">
+          <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20">
+            <span className="material-symbols-outlined text-primary text-[20px]">person</span>
           </div>
-
-          <div className="flex gap-1.5">
-            {task.booking.customer.platforms?.map((p) => (
-              <span
-                key={p}
-                title={p}
-                className="size-7 rounded bg-background border border-border flex items-center justify-center text-text-secondary"
-              >
-                <span className="material-symbols-outlined text-[16px]">
-                  {platformIcons[p] || 'link'}
-                </span>
-              </span>
-            ))}
+          <div>
+            <h3 className="text-sm font-bold text-text-main group-hover:text-primary transition-colors">
+              {task.booking.customer.name}
+            </h3>
+            <p className="text-[11px] text-text-secondary mt-0.5">{task.booking.customer.phone}</p>
           </div>
         </div>
 

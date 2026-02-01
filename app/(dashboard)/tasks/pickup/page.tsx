@@ -507,88 +507,98 @@ function TaskCard({
               </div>
             </div>
 
-            <div className="flex gap-1.5">
-              {task.booking.customer.platforms?.map((p) => (
-                <span
-                  key={p}
-                  title={p}
-                  className="size-7 rounded bg-background border border-border flex items-center justify-center text-text-secondary"
-                >
-                  <span className="material-symbols-outlined text-[16px]">
-                    {platformIcons[p] || 'link'}
-                  </span>
-                </span>
-              ))}
-            </div>
-          </div>
-
-          {/* Mid: Equipment */}
-          <div className="flex flex-wrap gap-2">
-            {task.booking.booking_items?.map((item, idx) => (
-              <div
-                key={idx}
-                className="px-2 py-1 rounded bg-background border border-border text-[10px] text-text-main/80 flex items-center gap-1.5"
-              >
-                <span className="font-bold text-text-main tracking-widest">{item.quantity}x</span>
-                {item.camera.name}
-              </div>
-            ))}
-            {task.booking.booking_accessories && task.booking.booking_accessories.length > 0 && (
-              task.booking.booking_accessories.map((acc, idx) => (
-                <div key={idx} className="px-2 py-1 rounded bg-amber-500/10 border border-amber-500/20 text-[10px] text-amber-500">
-                  {acc.name || acc.accessory_type}
-                </div>
-              ))
-            )}
-          </div>
-
-          {/* Bottom: Info Bar */}
-          <div className="flex flex-wrap items-center gap-y-3 gap-x-6 pt-1">
-            <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary text-[18px]">schedule</span>
-              <span className="text-xs font-bold text-text-main">{formatTime(task.due_at)}</span>
-            </div>
-
-            {task.location && (
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-text-main/60 text-[18px]">location_on</span>
-                <span className="text-xs text-text-main/80">{task.location}</span>
-              </div>
-            )}
-
-            {task.delivery_fee > 0 && (
-              <div className="flex items-center gap-2 text-primary font-bold">
-                <span className="material-symbols-outlined text-[18px]">local_shipping</span>
-                <span className="text-[11px]">{formatCurrency(task.delivery_fee)}</span>
-              </div>
-            )}
-
-            {task.booking.payment_status === 'pending' && (
-              <div className="flex items-center gap-2 px-2 py-1 rounded bg-rose-500/10 border border-rose-500/20">
-                <span className="text-[10px] font-bold text-rose-500 uppercase tracking-wider">Chưa cọc</span>
-              </div>
-            )}
-
-            {task.booking.deposit_type === 'cccd' && task.booking.cccd_name && (
-              <div className="flex items-center gap-2 px-2 py-1 rounded bg-amber-500/10 border border-amber-500/20">
-                <span className="material-symbols-outlined text-amber-500 text-[16px]">id_card</span>
-                <span className="text-[10px] font-bold text-amber-500">{task.booking.cccd_name}</span>
-              </div>
-            )}
           </div>
         </div>
 
-        {/* Right Column: CTA */}
-        <div className="flex flex-col items-stretch sm:items-end gap-3 w-full sm:w-auto shrink-0">
-          {!isCompleted ? (
+        {/* Mid: Equipment */}
+        <div className="flex flex-wrap gap-2">
+          {task.booking.booking_items?.map((item, idx) => (
+            <div
+              key={idx}
+              className="px-2 py-1 rounded bg-background border border-border text-[10px] text-text-main/80 flex items-center gap-1.5"
+            >
+              <span className="font-bold text-text-main tracking-widest">{item.quantity}x</span>
+              {item.camera.name}
+            </div>
+          ))}
+          {task.booking.booking_accessories && task.booking.booking_accessories.length > 0 && (
+            task.booking.booking_accessories.map((acc, idx) => (
+              <div key={idx} className="px-2 py-1 rounded bg-amber-500/10 border border-amber-500/20 text-[10px] text-amber-500">
+                {acc.name || acc.accessory_type}
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Bottom: Info Bar */}
+        <div className="flex flex-wrap items-center gap-y-3 gap-x-6 pt-1">
+          <div className="flex items-center gap-2">
+            <span className="material-symbols-outlined text-primary text-[18px]">schedule</span>
+            <span className="text-xs font-bold text-text-main">{formatTime(task.due_at)}</span>
+          </div>
+
+          {task.location && (
+            <div className="flex items-center gap-2">
+              <span className="material-symbols-outlined text-text-main/60 text-[18px]">location_on</span>
+              <span className="text-xs text-text-main/80">{task.location}</span>
+            </div>
+          )}
+
+          {task.delivery_fee > 0 && (
+            <div className="flex items-center gap-2 text-primary font-bold">
+              <span className="material-symbols-outlined text-[18px]">local_shipping</span>
+              <span className="text-[11px]">{formatCurrency(task.delivery_fee)}</span>
+            </div>
+          )}
+
+          {task.booking.payment_status === 'pending' && (
+            <div className="flex items-center gap-2 px-2 py-1 rounded bg-rose-500/10 border border-rose-500/20">
+              <span className="text-[10px] font-bold text-rose-500 uppercase tracking-wider">Chưa cọc</span>
+            </div>
+          )}
+
+          {task.booking.deposit_type === 'cccd' && task.booking.cccd_name && (
+            <div className="flex items-center gap-2 px-2 py-1 rounded bg-amber-500/10 border border-amber-500/20">
+              <span className="material-symbols-outlined text-amber-500 text-[16px]">id_card</span>
+              <span className="text-[10px] font-bold text-amber-500">{task.booking.cccd_name}</span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Right Column: CTA */}
+      <div className="flex flex-col items-stretch sm:items-end gap-3 w-full sm:w-auto shrink-0">
+        {!isCompleted ? (
+          <button
+            onClick={onConfirm}
+            disabled={processing}
+            className={clsx(
+              'px-6 py-2.5 rounded-lg text-xs font-bold transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2',
+              isOverdue
+                ? 'bg-rose-500 text-white hover:bg-rose-600 shadow-rose-500/10'
+                : 'bg-primary text-white hover:bg-blue-600 shadow-blue-500/10',
+              processing && 'opacity-50 cursor-wait'
+            )}
+          >
+            {processing ? (
+              <>
+                <div className="animate-spin rounded-full h-3.5 w-3.5 border-b-2 border-white"></div>
+                <span>ĐANG XỬ LÝ...</span>
+              </>
+            ) : (
+              <>
+                <span className="material-symbols-outlined text-[18px]">check_circle</span>
+                XÁC NHẬN NHẬN MÁY
+              </>
+            )}
+          </button>
+        ) : (
+          <>
             <button
-              onClick={onConfirm}
+              onClick={onUndo}
               disabled={processing}
               className={clsx(
-                'px-6 py-2.5 rounded-lg text-xs font-bold transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2',
-                isOverdue
-                  ? 'bg-rose-500 text-white hover:bg-rose-600 shadow-rose-500/10'
-                  : 'bg-primary text-white hover:bg-blue-600 shadow-blue-500/10',
+                'px-6 py-2.5 rounded-lg text-xs font-bold transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2 bg-amber-500 text-white hover:bg-amber-600',
                 processing && 'opacity-50 cursor-wait'
               )}
             >
@@ -599,43 +609,20 @@ function TaskCard({
                 </>
               ) : (
                 <>
-                  <span className="material-symbols-outlined text-[18px]">check_circle</span>
-                  XÁC NHẬN NHẬN MÁY
+                  <span className="material-symbols-outlined text-[18px]">undo</span>
+                  HOÀN TÁC
                 </>
               )}
             </button>
-          ) : (
-            <>
-              <button
-                onClick={onUndo}
-                disabled={processing}
-                className={clsx(
-                  'px-6 py-2.5 rounded-lg text-xs font-bold transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2 bg-amber-500 text-white hover:bg-amber-600',
-                  processing && 'opacity-50 cursor-wait'
-                )}
-              >
-                {processing ? (
-                  <>
-                    <div className="animate-spin rounded-full h-3.5 w-3.5 border-b-2 border-white"></div>
-                    <span>ĐANG XỬ LÝ...</span>
-                  </>
-                ) : (
-                  <>
-                    <span className="material-symbols-outlined text-[18px]">undo</span>
-                    HOÀN TÁC
-                  </>
-                )}
-              </button>
-            </>
-          )}
+          </>
+        )}
 
-          <button
-            onClick={() => router.push(`/bookings/${task.booking_id}`)}
-            className="px-6 py-2 rounded-lg border border-border bg-background text-text-secondary text-[11px] font-bold uppercase hover:bg-surface hover:text-text-main transition-all tracking-wider"
-          >
-            Chi tiết đơn
-          </button>
-        </div>
+        <button
+          onClick={() => router.push(`/bookings/${task.booking_id}`)}
+          className="px-6 py-2 rounded-lg border border-border bg-background text-text-secondary text-[11px] font-bold uppercase hover:bg-surface hover:text-text-main transition-all tracking-wider"
+        >
+          Chi tiết đơn
+        </button>
       </div>
     </div>
   );

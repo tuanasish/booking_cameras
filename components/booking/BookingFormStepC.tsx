@@ -359,7 +359,7 @@ export default function BookingFormStepC(props: BookingFormStepCProps) {
             <div className="flex flex-col gap-3 p-4 rounded-xl border border-border bg-surface shadow-sm transition-all hover:bg-surface-hover">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                  <span className="material-symbols-outlined text-[24px]">tripod</span>
+                  <span className="material-symbols-outlined text-[24px]">camera_alt</span>
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2">

@@ -12,7 +12,7 @@ const client = new OpenAI({
 
 const SYSTEM_PROMPT = `Bạn là assistant chuyên trích xuất thông tin đặt lịch thuê máy ảnh từ tin nhắn xác nhận.
 Hãy phân tích tin nhắn và trả về JSON với các trường sau:
-- cameraName: Tên máy ảnh (ví dụ: "Canon M10", "Sony A6400")
+- cameraName: Tên máy ảnh / Thiết bị (ví dụ: "Canon M10", "Sony A6400")
 - customerPhone: Số điện thoại khách hàng (chỉ số, ví dụ: "0333867762")
 - pickupDate: Ngày nhận máy (format: "YYYY-MM-DD", năm mặc định là 2026 nếu không có)
 - pickupHour: Giờ nhận máy (0-23)
@@ -21,10 +21,11 @@ Hãy phân tích tin nhắn và trả về JSON với các trường sau:
 - returnHour: Giờ trả máy (0-23)
 - returnMinute: Phút trả máy (0-59)
 - totalFee: Tổng phí thuê (số nguyên, đơn vị nghìn đồng -> nhân 1000. Ví dụ: "120" -> 120000)
-- depositAmount: Tiền đã cọc (số nguyên, đơn vị nghìn đồng -> nhân 1000. Ví dụ: "50" -> 50000)
+- depositAmount: Tiền đã đặt cọc (số nguyên, đơn vị nghìn đồng -> nhân 1000. Ví dụ: "50" -> 50000)
 - customerName: Tên khách hàng (mặc định "Khách chatbot" nếu không rõ)
 - platforms: Mảng các nền tảng liên hệ (ví dụ: ["TikTok"], ["Facebook", "Zalo"]. Mặc định ["Khác"])
 
+Lưu ý các nhãn mới: "Tên khách hàng", "Số điện thoại", "Thiết bị", "Thời gian nhận máy", "Thời gian trả máy", "Đã đặt cọc".
 Chỉ trả về JSON, không giải thích thêm. Nếu không tìm thấy thông tin nào, để giá trị là null.`;
 
 /**
@@ -32,14 +33,14 @@ Chỉ trả về JSON, không giải thích thêm. Nếu không tìm thấy thô
  */
 function tryFastParse(message: string) {
     try {
-        const pickupMatch = message.match(/Thời gian nhận:?\s*(\d{1,2}:\d{2}),\s*(\d{1,2}\/\d{1,2})/i);
-        const returnMatch = message.match(/Thời gian trả:?\s*(\d{1,2}:\d{2}),\s*(\d{1,2}\/\d{1,2})/i);
-        const cameraMatch = message.match(/Máy:?\s*([^\n\r]+)/i);
-        const phoneMatch = message.match(/(?:SĐT|SDT):?\s*(\d+)/i);
-        const depositMatch = message.match(/Đã cọc:?\s*([\d.]+)/i);
-        const feeMatch = message.match(/Tổng phí thuê:?\s*([\d.]+)/i);
-        const nameMatch = message.match(/Tên Khách:?\s*([^\n\r]+)/i);
-        const platformMatch = message.match(/Nền tảng:?\s*([^\n\r]+)/i);
+        const pickupMatch = message.match(/(?:^|\n)[- \t]*Thời gian nhận(?: máy)?:?\s*(\d{1,2}:\d{2}),\s*(\d{1,2}\/\d{1,2})/i);
+        const returnMatch = message.match(/(?:^|\n)[- \t]*Thời gian trả(?: máy)?:?\s*(\d{1,2}:\d{2}),\s*(\d{1,2}\/\d{1,2})/i);
+        const cameraMatch = message.match(/(?:^|\n)[- \t]*(?:Máy|Thiết bị):?\s*([^\n\r]+)/i);
+        const phoneMatch = message.match(/(?:^|\n)[- \t]*(?:SĐT|SDT|Số điện thoại):?\s*(\d+)/i);
+        const depositMatch = message.match(/(?:^|\n)[- \t]*(?:Đã cọc|Đã đặt cọc):?\s*([\d.]+)/i);
+        const feeMatch = message.match(/(?:^|\n)[- \t]*Tổng phí thuê:?\s*([\d.]+)/i);
+        const nameMatch = message.match(/(?:^|\n)[- \t]*(?:Tên Khách|Tên khách hàng):?\s*([^\n\r]+)/i);
+        const platformMatch = message.match(/(?:^|\n)[- \t]*Nền tảng:?\s*([^\n\r]+)/i);
 
         if (!pickupMatch || !returnMatch || !cameraMatch || !phoneMatch) return null;
 

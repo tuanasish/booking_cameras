@@ -362,7 +362,7 @@ export default function BookingFormStepC({
                 className="rounded border-border bg-surface text-primary focus:ring-0 focus:ring-offset-0"
                 disabled={tripodAvailability.available === 0}
               />
-              <span className="material-symbols-outlined text-[20px] text-text-secondary">tripod</span>
+              <span className="material-symbols-outlined text-[20px] text-text-secondary">camera_alt</span>
               <span className="text-sm text-text-main flex-1">
                 Tripod
                 {tripodAvailability.available !== null && (

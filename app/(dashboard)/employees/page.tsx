@@ -18,6 +18,7 @@ export default function EmployeesPage() {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
   const [formData, setFormData] = useState({ email: '', name: '' });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -81,6 +82,43 @@ export default function EmployeesPage() {
     }
   };
 
+  const handleUpdateEmployee = async () => {
+    if (!editingEmployee) return;
+
+    if (!editingEmployee.email || !editingEmployee.name) {
+      setError('Vui lòng điền đầy đủ thông tin');
+      return;
+    }
+
+    setSubmitting(true);
+    setError('');
+
+    try {
+      const response = await fetch(`/api/employees/${editingEmployee.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: editingEmployee.email,
+          name: editingEmployee.name,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setEditingEmployee(null);
+        fetchEmployees();
+      } else {
+        setError(result.error || 'Lỗi khi cập nhật nhân viên');
+      }
+    } catch (error) {
+      console.error('Error updating employee:', error);
+      setError('Lỗi khi cập nhật nhân viên');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const handleToggleActive = async (employeeId: string, currentStatus: boolean) => {
     try {
       const response = await fetch(`/api/employees/${employeeId}`, {
@@ -130,7 +168,11 @@ export default function EmployeesPage() {
           <p className="text-sm text-text-secondary mt-1">Thêm, sửa và quản lý quyền truy cập nhân viên</p>
         </div>
         <button
-          onClick={() => setShowAddModal(true)}
+          onClick={() => {
+            setError('');
+            setFormData({ email: '', name: '' });
+            setShowAddModal(true);
+          }}
           className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white font-bold hover:bg-blue-600 transition-colors"
         >
           <span className="material-symbols-outlined text-[20px]">add</span>
@@ -148,7 +190,11 @@ export default function EmployeesPage() {
             <div className="text-center py-12">
               <p className="text-text-secondary mb-4">Chưa có nhân viên nào</p>
               <button
-                onClick={() => setShowAddModal(true)}
+                onClick={() => {
+                  setError('');
+                  setFormData({ email: '', name: '' });
+                  setShowAddModal(true);
+                }}
                 className="px-4 py-2 rounded-lg bg-primary text-white font-medium hover:bg-blue-600 transition-colors shadow-lg shadow-primary/20"
               >
                 Thêm nhân viên đầu tiên
@@ -215,6 +261,16 @@ export default function EmployeesPage() {
                         <td className="px-6 py-4">
                           <div className="flex items-center justify-end gap-2">
                             <button
+                              onClick={() => {
+                                setError('');
+                                setEditingEmployee({ ...employee });
+                              }}
+                              className="p-2 rounded-lg text-primary hover:bg-primary/10 transition-colors"
+                              title="Sửa nhân viên"
+                            >
+                              <span className="material-symbols-outlined text-[20px]">edit</span>
+                            </button>
+                            <button
                               onClick={() => handleDelete(employee.id, employee.name)}
                               className="p-2 rounded-lg text-red-400 hover:bg-red-500/10 transition-colors"
                               title="Xóa nhân viên"
@@ -241,7 +297,7 @@ export default function EmployeesPage() {
             onClick={() => setShowAddModal(false)}
           />
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div className="bg-surface rounded-xl border border-border shadow-2xl w-full max-w-md overflow-hidden">
+            <div className="bg-surface rounded-xl border border-border shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
               <div className="flex items-center justify-between p-6 border-b border-border bg-background">
                 <h2 className="text-xl font-bold text-text-main">Thêm nhân viên mới</h2>
                 <button
@@ -309,6 +365,87 @@ export default function EmployeesPage() {
                     </div>
                   ) : (
                     'Thêm nhân viên'
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Edit Employee Modal */}
+      {editingEmployee && (
+        <>
+          <div
+            className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-300"
+            onClick={() => setEditingEmployee(null)}
+          />
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="bg-surface rounded-xl border border-border shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
+              <div className="flex items-center justify-between p-6 border-b border-border bg-background">
+                <h2 className="text-xl font-bold text-text-main flex items-center gap-2">
+                  <span className="material-symbols-outlined text-primary">edit</span>
+                  Sửa thông tin nhân viên
+                </h2>
+                <button
+                  onClick={() => setEditingEmployee(null)}
+                  className="p-2 hover:bg-surface rounded text-text-secondary hover:text-text-main transition-colors"
+                >
+                  <span className="material-symbols-outlined">close</span>
+                </button>
+              </div>
+
+              <div className="p-6 space-y-4">
+                {error && (
+                  <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+                    {error}
+                  </div>
+                )}
+
+                <Input
+                  label="Email nhân viên *"
+                  icon="email"
+                  type="email"
+                  value={editingEmployee.email}
+                  onChange={(e) => setEditingEmployee({ ...editingEmployee, email: e.target.value })}
+                  placeholder="nhanvien@example.com"
+                  error={error && !editingEmployee.email ? 'Email là bắt buộc' : undefined}
+                />
+
+                <Input
+                  label="Tên nhân viên *"
+                  icon="person"
+                  value={editingEmployee.name}
+                  onChange={(e) => setEditingEmployee({ ...editingEmployee, name: e.target.value })}
+                  placeholder="Nhập tên nhân viên"
+                  error={error && !editingEmployee.name ? 'Tên là bắt buộc' : undefined}
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-3 p-6 border-t border-border bg-background">
+                <button
+                  onClick={() => setEditingEmployee(null)}
+                  className="px-4 py-2 rounded-lg border border-border bg-surface text-text-main hover:bg-border/50 transition-colors"
+                >
+                  Hủy
+                </button>
+                <button
+                  onClick={handleUpdateEmployee}
+                  disabled={submitting}
+                  className={clsx(
+                    'px-6 py-2 rounded-lg font-bold text-white transition-colors',
+                    submitting
+                      ? 'bg-slate-600 cursor-not-allowed'
+                      : 'bg-primary hover:bg-blue-600'
+                  )}
+                >
+                  {submitting ? (
+                    <div className="flex items-center gap-2">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      <span>Đang lưu...</span>
+                    </div>
+                  ) : (
+                    'Lưu thay đổi'
                   )}
                 </button>
               </div>

@@ -96,14 +96,14 @@ export default function ChatbotWidget() {
 
     const handleUseTemplate = () => {
         setMessage(
-            `Thời gian nhận: 20:30, 04/01\n` +
-            `Thời gian trả: 20:30, 05/01\n` +
-            `Máy: Canon M10\n` +
-            `SDT: 0987654321\n` +
-            `Đã cọc: 50.000\n` +
-            `Tổng phí thuê: 250.000\n` +
-            `Tên Khách: Thành\n` +
-            `Nền tảng: TikTok`
+            `- Tên khách hàng: \n` +
+            `- Số điện thoại: \n` +
+            `- Nền tảng: \n\n` +
+            `- Thiết bị: \n` +
+            `- Thời gian nhận máy: \n` +
+            `- Thời gian trả máy: \n\n` +
+            `- Tổng phí thuê: \n` +
+            `- Đã đặt cọc: `
         );
     };
 
@@ -145,7 +145,7 @@ export default function ChatbotWidget() {
             {isOpen && (
                 <div
                     ref={panelRef}
-                    className="fixed bottom-24 right-6 z-50 w-[400px] max-h-[75vh] bg-surface border border-border rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom-4 fade-in duration-300"
+                    className="fixed bottom-24 right-6 z-50 w-[500px] max-h-[92vh] bg-surface border border-border rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom-4 fade-in duration-300"
                 >
                     {/* Header */}
                     <div className="p-4 border-b border-border bg-gradient-to-r from-primary/10 to-blue-500/10">
@@ -177,7 +177,7 @@ export default function ChatbotWidget() {
                                     value={message}
                                     onChange={(e) => setMessage(e.target.value)}
                                     placeholder="Dán nội dung tin nhắn..."
-                                    rows={8}
+                                    rows={15}
                                     className="w-full bg-background border border-border rounded-lg p-3 text-sm text-text-main placeholder:text-text-secondary/30 focus:ring-1 focus:ring-primary focus:border-primary resize-none"
                                 />
                                 <button

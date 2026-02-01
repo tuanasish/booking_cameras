@@ -33,6 +33,8 @@ export default function CustomersPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
+  const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
+  const [updating, setUpdating] = useState(false);
 
   useEffect(() => {
     fetchCustomers();
@@ -63,6 +65,38 @@ export default function CustomersPage() {
       console.error('Error fetching customers:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleUpdateCustomer = async () => {
+    if (!editingCustomer) return;
+
+    try {
+      setUpdating(true);
+      const res = await fetch(`/api/customers?id=${editingCustomer.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: editingCustomer.name,
+          phone: editingCustomer.phone,
+        }),
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || 'Lỗi khi cập nhật khách hàng');
+      }
+
+      await fetchCustomers();
+      setEditingCustomer(null);
+      alert('Cập nhật khách hàng thành công');
+    } catch (error: any) {
+      console.error('Error updating customer:', error);
+      alert(error.message);
+    } finally {
+      setUpdating(false);
     }
   };
 
@@ -261,6 +295,13 @@ export default function CustomersPage() {
                         Tạo booking mới
                       </button>
                       <button
+                        onClick={() => setEditingCustomer({ ...customer })}
+                        className="px-4 py-2 rounded-lg border border-blue-500/50 bg-blue-500/5 text-blue-500 text-sm font-medium hover:bg-blue-500/10 transition-colors flex items-center justify-center gap-2"
+                      >
+                        <span className="material-symbols-outlined text-[18px]">edit</span>
+                        Sửa thông tin
+                      </button>
+                      <button
                         onClick={() => router.push(`/calendar?customerId=${customer.id}`)}
                         className="px-4 py-2 rounded-lg border border-border bg-background text-text-main text-sm hover:bg-surface transition-colors"
                       >
@@ -274,6 +315,69 @@ export default function CustomersPage() {
           )}
         </div>
       </div>
+
+      {/* Edit Customer Modal */}
+      {editingCustomer && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
+          <div className="bg-surface w-full max-w-md rounded-2xl border border-border shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="p-6 border-b border-border flex items-center justify-between">
+              <h2 className="text-lg font-bold text-text-main flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary">edit</span>
+                Sửa thông tin khách hàng
+              </h2>
+              <button
+                onClick={() => setEditingCustomer(null)}
+                className="size-8 rounded-full hover:bg-background flex items-center justify-center text-text-secondary transition-colors"
+              >
+                <span className="material-symbols-outlined text-[20px]">close</span>
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-text-secondary ml-1">Tên khách hàng</label>
+                <Input
+                  icon="person"
+                  placeholder="Nhập tên khách hàng"
+                  value={editingCustomer.name}
+                  onChange={(e) => setEditingCustomer({ ...editingCustomer, name: e.target.value })}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-text-secondary ml-1">Số điện thoại</label>
+                <Input
+                  icon="call"
+                  placeholder="Nhập số điện thoại"
+                  value={editingCustomer.phone}
+                  onChange={(e) => setEditingCustomer({ ...editingCustomer, phone: e.target.value })}
+                />
+              </div>
+
+              <div className="pt-2 flex gap-3">
+                <button
+                  onClick={() => setEditingCustomer(null)}
+                  className="flex-1 py-2.5 rounded-xl border border-border font-medium text-text-main hover:bg-background transition-colors"
+                >
+                  Hủy
+                </button>
+                <button
+                  onClick={handleUpdateCustomer}
+                  disabled={updating}
+                  className="flex-[2] py-2.5 rounded-xl bg-primary text-white font-bold hover:brightness-110 shadow-lg shadow-primary/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {updating ? (
+                    <div className="size-4 border-2 border-white/30 border-t-white animate-spin rounded-full" />
+                  ) : (
+                    <span className="material-symbols-outlined text-[18px]">save</span>
+                  )}
+                  Lưu thay đổi
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
