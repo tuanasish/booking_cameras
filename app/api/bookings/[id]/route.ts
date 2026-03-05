@@ -151,6 +151,22 @@ export async function PATCH(
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
+    // Sync tasks due_at when booking times change
+    if (bookingUpdates.pickup_time) {
+      await supabase
+        .from('tasks')
+        .update({ due_at: bookingUpdates.pickup_time })
+        .eq('booking_id', bookingId)
+        .eq('type', 'pickup');
+    }
+    if (bookingUpdates.return_time) {
+      await supabase
+        .from('tasks')
+        .update({ due_at: bookingUpdates.return_time })
+        .eq('booking_id', bookingId)
+        .eq('type', 'return');
+    }
+
     return NextResponse.json({ data });
   } catch (error: any) {
     return NextResponse.json(
