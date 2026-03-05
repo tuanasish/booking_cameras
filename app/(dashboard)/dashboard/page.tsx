@@ -303,8 +303,8 @@ export default function DashboardPage() {
 
               {/* Revenue by Model Line */}
               {data.by_model_line && data.by_model_line.length > 0 && (
-                <div className="bg-white dark:bg-[#1a1f29] rounded-xl border border-slate-200 dark:border-border-dark p-6">
-                  <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Doanh thu theo dòng máy</h3>
+                <div className="bg-surface rounded-xl border border-border p-6 shadow-sm">
+                  <h3 className="text-lg font-bold text-text-main mb-4">Doanh thu theo dòng máy</h3>
                   <div className="overflow-x-auto">
                     <table className="w-full">
                       <thead className="bg-background border-b border-border">
@@ -325,18 +325,18 @@ export default function DashboardPage() {
                       </thead>
                       <tbody className="divide-y divide-border-dark">
                         {data.by_model_line.map((item, idx) => (
-                          <tr key={idx} className="hover:bg-slate-50 dark:hover:bg-[#111318] transition-colors">
+                          <tr key={idx} className="hover:bg-background transition-colors">
                             <td className="px-4 py-3">
-                              <p className="text-sm font-medium text-slate-900 dark:text-white">{item.model_line}</p>
+                              <p className="text-sm font-medium text-text-main">{item.model_line}</p>
                             </td>
                             <td className="px-4 py-3 text-right">
-                              <p className="text-sm font-bold text-slate-900 dark:text-white">{formatMoney(item.revenue)}đ</p>
+                              <p className="text-sm font-bold text-text-main">{formatMoney(item.revenue)}đ</p>
                             </td>
                             <td className="px-4 py-3 text-right">
-                              <p className="text-sm text-slate-900 dark:text-white">{item.bookings}</p>
+                              <p className="text-sm text-text-main">{item.bookings}</p>
                             </td>
                             <td className="px-4 py-3 text-right">
-                              <p className="text-sm text-slate-900 dark:text-white">{item.quantity}</p>
+                              <p className="text-sm text-text-main">{item.quantity}</p>
                             </td>
                           </tr>
                         ))}

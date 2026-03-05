@@ -97,6 +97,12 @@ export default function BookingDetailDrawer({
 
   const getStatusBadge = () => {
     switch (booking.payment_status) {
+      case 'cancelled':
+        return (
+          <span className="flex items-center justify-center rounded-full bg-slate-500/10 border border-slate-500/20 px-2.5 py-0.5">
+            <p className="text-slate-400 text-[10px] sm:text-xs font-semibold uppercase tracking-wide">Đã hủy</p>
+          </span>
+        );
       case 'pending':
         return (
           <span className="flex items-center justify-center rounded-full bg-red-500/10 border border-red-500/20 px-2.5 py-0.5">
@@ -193,45 +199,47 @@ export default function BookingDetailDrawer({
         </div>
 
         {/* Action Buttons Bar */}
-        <div className="grid grid-cols-2 gap-3 px-4 sm:px-6 py-4 bg-background/50 border-b border-border">
-          <button
-            onClick={() => onPickup?.(booking.id)}
-            disabled={isPickupCompleted}
-            className={clsx(
-              'flex flex-col items-center justify-center gap-1.5 py-3 rounded-xl border transition-all active:scale-95 shadow-sm',
-              isPickupCompleted
-                ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500'
-                : 'bg-surface border-border text-text-main hover:border-primary hover:text-primary'
-            )}
-          >
-            <span className="material-symbols-outlined text-[20px]">
-              {isPickupCompleted ? 'check_circle' : 'inventory_2'}
-            </span>
-            <span className="text-[10px] font-bold uppercase tracking-widest leading-none">
-              {isPickupCompleted ? 'Đã nhận' : 'Bàn giao'}
-            </span>
-          </button>
-
-          <button
-            onClick={() => onReturn?.(booking.id)}
-            disabled={isReturnCompleted || !isPickupCompleted}
-            className={clsx(
-              'flex flex-col items-center justify-center gap-1.5 py-3 rounded-xl border transition-all active:scale-95 shadow-sm',
-              isReturnCompleted
-                ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500'
-                : !isPickupCompleted
-                  ? 'bg-surface border-border text-text-secondary opacity-50 cursor-not-allowed'
+        {booking.payment_status !== 'cancelled' && (
+          <div className="grid grid-cols-2 gap-3 px-4 sm:px-6 py-4 bg-background/50 border-b border-border">
+            <button
+              onClick={() => onPickup?.(booking.id)}
+              disabled={isPickupCompleted}
+              className={clsx(
+                'flex flex-col items-center justify-center gap-1.5 py-3 rounded-xl border transition-all active:scale-95 shadow-sm',
+                isPickupCompleted
+                  ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500'
                   : 'bg-surface border-border text-text-main hover:border-primary hover:text-primary'
-            )}
-          >
-            <span className="material-symbols-outlined text-[20px]">
-              {isReturnCompleted ? 'task_alt' : 'assignment_return'}
-            </span>
-            <span className="text-[10px] font-bold uppercase tracking-widest leading-none">
-              {isReturnCompleted ? 'Đã trả' : 'Thu hồi'}
-            </span>
-          </button>
-        </div>
+              )}
+            >
+              <span className="material-symbols-outlined text-[20px]">
+                {isPickupCompleted ? 'check_circle' : 'inventory_2'}
+              </span>
+              <span className="text-[10px] font-bold uppercase tracking-widest leading-none">
+                {isPickupCompleted ? 'Đã nhận' : 'Bàn giao'}
+              </span>
+            </button>
+
+            <button
+              onClick={() => onReturn?.(booking.id)}
+              disabled={isReturnCompleted || !isPickupCompleted}
+              className={clsx(
+                'flex flex-col items-center justify-center gap-1.5 py-3 rounded-xl border transition-all active:scale-95 shadow-sm',
+                isReturnCompleted
+                  ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500'
+                  : !isPickupCompleted
+                    ? 'bg-surface border-border text-text-secondary opacity-50 cursor-not-allowed'
+                    : 'bg-surface border-border text-text-main hover:border-primary hover:text-primary'
+              )}
+            >
+              <span className="material-symbols-outlined text-[20px]">
+                {isReturnCompleted ? 'task_alt' : 'assignment_return'}
+              </span>
+              <span className="text-[10px] font-bold uppercase tracking-widest leading-none">
+                {isReturnCompleted ? 'Đã trả' : 'Thu hồi'}
+              </span>
+            </button>
+          </div>
+        )}
 
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 space-y-6 custom-scrollbar bg-background">
@@ -383,7 +391,7 @@ export default function BookingDetailDrawer({
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs font-bold uppercase tracking-widest text-text-secondary">Tổng thanh toán</p>
-                  <p className="text-2xl sm:text-3xl font-bold text-primary tracking-tighter mt-1">{formatCurrency((booking.final_fee || 0) + (totalDeliveryFee || 0))}</p>
+                  <p className="text-2xl sm:text-3xl font-bold text-primary tracking-tighter mt-1">{formatCurrency((booking.final_fee || 0) + (totalDeliveryFee || 0) + (booking.late_fee || 0))}</p>
                 </div>
                 <div className="text-right">
                   <p className="text-[10px] font-bold uppercase tracking-widest text-text-secondary mb-1">Cọc {booking.deposit_type === 'cccd' ? 'CCCD' : ''}</p>

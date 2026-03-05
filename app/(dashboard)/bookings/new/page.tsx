@@ -185,11 +185,13 @@ export default function NewBookingPage() {
         const customerData = await customerRes.json();
         customerId = customerData.data.id;
       } else {
-        // Update existing customer platforms if changed
+        // Update existing customer info if changed
         await fetch(`/api/customers?id=${customerId}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
+            name: formData.customerName,
+            phone_2: formData.customerPhone2 || null,
             platforms: formData.platforms,
           }),
         });
