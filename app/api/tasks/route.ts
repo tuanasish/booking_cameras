@@ -42,7 +42,12 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ data });
+    // Filter out tasks whose booking has been cancelled
+    const filteredData = (data || []).filter(
+      (task: any) => task.booking?.payment_status !== 'cancelled'
+    );
+
+    return NextResponse.json({ data: filteredData });
   } catch (error) {
     return NextResponse.json(
       { error: 'Internal server error' },
