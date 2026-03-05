@@ -145,6 +145,7 @@ export default function EditBookingPage({ params }: { params: { id: string } }) 
                     payment_status: formData.depositType === 'none' ? 'pending' : 'deposited',
                     // Customer fields
                     customer_name: formData.customerName,
+                    customer_phone: formData.customerPhone,
                     customer_phone_2: formData.customerPhone2,
                     platforms: formData.platforms,
                 }),

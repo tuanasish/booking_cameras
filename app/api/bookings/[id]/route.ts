@@ -100,13 +100,14 @@ export async function PATCH(
     // Separate customer fields from booking fields
     const {
       customer_name,
+      customer_phone,
       customer_phone_2,
       platforms,
       ...bookingUpdates
     } = body;
 
     // Handle customer updates if provided
-    if (customer_name || customer_phone_2 || platforms) {
+    if (customer_name || customer_phone || customer_phone_2 !== undefined || platforms) {
       const { data: booking } = await supabase
         .from('bookings')
         .select('customer_id')
@@ -116,6 +117,7 @@ export async function PATCH(
       if (booking?.customer_id) {
         const customerUpdates: any = {};
         if (customer_name) customerUpdates.name = customer_name;
+        if (customer_phone) customerUpdates.phone = customer_phone;
         if (customer_phone_2 !== undefined) customerUpdates.phone_2 = customer_phone_2;
         if (platforms) customerUpdates.platforms = platforms;
 
