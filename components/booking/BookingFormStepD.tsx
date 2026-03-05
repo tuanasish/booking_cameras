@@ -19,6 +19,8 @@ interface BookingFormStepDProps {
   returnLocation: string;
   returnFee: number;
   totalRentalFee: number; // S
+  isManualFee: boolean;
+  manualTotalRentalFee: number;
   hasDiscount: boolean;
   discountPercent: number;
   discountReason: string;
@@ -36,6 +38,8 @@ interface BookingFormStepDProps {
     pickupFee?: number;
     returnLocation?: string;
     returnFee?: number;
+    isManualFee?: boolean;
+    manualTotalRentalFee?: number;
     hasDiscount?: boolean;
     discountPercent?: number;
     discountReason?: string;
@@ -64,6 +68,8 @@ export default function BookingFormStepD({
   returnLocation,
   returnFee,
   totalRentalFee,
+  isManualFee,
+  manualTotalRentalFee,
   hasDiscount,
   discountPercent,
   discountReason,
@@ -88,14 +94,15 @@ export default function BookingFormStepD({
   }, []);
 
   useEffect(() => {
-    // Auto-calculate final fee when discount changes
+    // Auto-calculate final fee when discount or fee changes
+    const effectiveTotal = isManualFee ? manualTotalRentalFee : totalRentalFee;
     if (hasDiscount && discountPercent > 0) {
-      const newFinalFee = calculateFinalFee(totalRentalFee, discountPercent, extraPriceTotal);
+      const newFinalFee = calculateFinalFee(effectiveTotal, discountPercent, extraPriceTotal);
       onUpdate({ finalFee: newFinalFee });
     } else {
-      onUpdate({ finalFee: totalRentalFee });
+      onUpdate({ finalFee: effectiveTotal });
     }
-  }, [hasDiscount, discountPercent, totalRentalFee, extraPriceTotal]);
+  }, [hasDiscount, discountPercent, totalRentalFee, isManualFee, manualTotalRentalFee, extraPriceTotal]);
 
   useEffect(() => {
     // Set default deposit amount
@@ -431,19 +438,62 @@ export default function BookingFormStepD({
             </div>
           </div>
 
-          <div className="flex items-center justify-between text-sm">
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium text-text-secondary">Ghi đè phí thuê</span>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={isManualFee}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    onUpdate({
+                      isManualFee: checked,
+                      manualTotalRentalFee: checked ? (manualTotalRentalFee || totalRentalFee) : 0
+                    });
+                  }}
+                  className="rounded border-border bg-surface text-primary focus:ring-1 focus:ring-primary focus:ring-offset-0"
+                />
+                <span className="text-sm text-text-main">Nhập phí thủ công</span>
+              </label>
+            </div>
+
+            {isManualFee && (
+              <div className="animate-in fade-in slide-in-from-top-1 duration-200">
+                <Input
+                  label="Tổng phí thuê mong muốn"
+                  icon="payments"
+                  type="number"
+                  value={manualTotalRentalFee.toString()}
+                  onChange={(e) => onUpdate({ manualTotalRentalFee: parseInt(e.target.value) || 0 })}
+                  placeholder="Nhập tổng phí thuê"
+                />
+              </div>
+            )}
+          </div>
+
+          <div className="flex items-center justify-between text-sm pt-2 border-t border-border">
             <span className="text-text-secondary">Phí thuê gốc (S):</span>
-            <span className="text-text-main font-medium">
+            <span className={clsx("font-medium", isManualFee ? "line-through text-text-secondary/50" : "text-text-main")}>
               {totalRentalFee.toLocaleString('vi-VN')}đ
             </span>
           </div>
 
+          {isManualFee && (
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-text-secondary">Phí thuê đã ghi đè:</span>
+              <span className="text-text-main font-medium">
+                {manualTotalRentalFee.toLocaleString('vi-VN')}đ
+              </span>
+            </div>
+          )}
+
           {hasDiscount && discountPercent > 0 && (
             <>
               <div className="flex items-center justify-between text-sm">
-                <span className="text-text-secondary">Chiết khấu ({discountPercent}% trên {(totalRentalFee - (extraPriceTotal || 0)).toLocaleString('vi-VN')}đ):</span>
+                <span className="text-text-secondary">Chiết khấu ({discountPercent}% trên {((isManualFee ? manualTotalRentalFee : totalRentalFee) - (extraPriceTotal || 0)).toLocaleString('vi-VN')}đ):</span>
                 <span className="text-red-400 font-medium">
-                  -{(totalRentalFee - finalFee).toLocaleString('vi-VN')}đ
+                  -{((isManualFee ? manualTotalRentalFee : totalRentalFee) - finalFee).toLocaleString('vi-VN')}đ
                 </span>
               </div>
               <div className="flex items-center justify-between text-sm pt-2 border-t border-border">

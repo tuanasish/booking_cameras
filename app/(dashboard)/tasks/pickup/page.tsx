@@ -14,6 +14,7 @@ interface PickupTask {
   completed_at: string | null;
   location: string | null;
   delivery_fee: number;
+  staff_id: string | null;
   booking: {
     id: string;
     customer: {
@@ -109,40 +110,55 @@ export default function PickupTasksPage() {
   const handleConfirmPickup = async () => {
     if (!selectedTaskId || !selectedEmployeeId) return;
 
-    setProcessingTask(selectedTaskId);
+    const taskId = selectedTaskId;
+    const empId = selectedEmployeeId;
     closeEmployeeModal();
 
+    // Optimistic update
+    setTasks(tasks.map(t =>
+      t.id === taskId
+        ? { ...t, completed_at: new Date().toISOString(), staff_id: empId }
+        : t
+    ));
+
     try {
-      const response = await fetch(`/api/tasks/${selectedTaskId}`, {
+      const response = await fetch(`/api/tasks/${taskId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           completed_at: new Date().toISOString(),
-          staff_id: selectedEmployeeId,
+          staff_id: empId,
         }),
       });
 
       if (response.ok) {
+        // Silently refetch to ensure consistency
         fetchTasks();
       } else {
-        alert('Lỗi khi xác nhận nhận máy');
+        throw new Error('Failed to update');
       }
     } catch (error) {
       console.error('Error confirming pickup:', error);
       alert('Lỗi khi xác nhận nhận máy');
-    } finally {
-      setProcessingTask(null);
+      // Revert optimism by refetching
+      fetchTasks();
     }
   };
 
   const handleUndoPickup = async (taskId: string) => {
-    if (processingTask) return;
-
     if (!confirm('Bạn có chắc muốn hoàn tác? Task sẽ chuyển về trạng thái chưa hoàn thành.')) {
       return;
     }
 
-    setProcessingTask(taskId);
+    // Capture previous state
+    const previousTask = tasks.find(t => t.id === taskId);
+    if (!previousTask) return;
+
+    // Optimistic update
+    setTasks(tasks.map(t =>
+      t.id === taskId ? { ...t, completed_at: null, staff_id: null } : t
+    ));
+
     try {
       const response = await fetch(`/api/tasks/${taskId}`, {
         method: 'PATCH',
@@ -154,16 +170,18 @@ export default function PickupTasksPage() {
       });
 
       if (response.ok) {
-        alert('Đã hoàn tác thành công');
+        // Silently refetch
         fetchTasks();
       } else {
-        alert('Lỗi khi hoàn tác');
+        throw new Error('undo failed');
       }
     } catch (error) {
       console.error('Error undoing pickup:', error);
       alert('Lỗi khi hoàn tác');
-    } finally {
-      setProcessingTask(null);
+      // Revert optimistic update
+      setTasks(tasks.map(t =>
+        t.id === taskId ? { ...t, completed_at: previousTask.completed_at, staff_id: previousTask.staff_id } : t
+      ));
     }
   };
 

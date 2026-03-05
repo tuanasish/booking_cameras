@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useBookingForm } from '@/hooks/useBookingForm';
 import { Camera, Employee } from '@/lib/types/database';
@@ -25,6 +25,10 @@ export default function EditBookingPage({ params }: { params: { id: string } }) 
     const [submitting, setSubmitting] = useState(false);
     const [settings, setSettings] = useState<any>(null);
 
+    const isFirstCalculation = useRef(true);
+    const loadedTotalRentalFee = useRef<number | null>(null);
+    const isManualFeeDetected = useRef(false);
+
     useEffect(() => {
         fetchBookingAndPopulateForm();
         fetchSettings();
@@ -44,7 +48,7 @@ export default function EditBookingPage({ params }: { params: { id: string } }) 
 
     useEffect(() => {
         // Calculate total rental fee when cameras or time changes
-        if (formData.selectedCameras.length > 0 && formData.pickupTime && formData.returnTime) {
+        if (formData.selectedCameras.length > 0 && formData.pickupTime && formData.returnTime && settings) {
             let total = 0;
             let extraTotal = 0;
 
@@ -59,11 +63,30 @@ export default function EditBookingPage({ params }: { params: { id: string } }) 
                 extraTotal += priceBreakdown.extraPrice * item.quantity;
             });
 
+            const updates: any = {};
+
+            // Always update the formula-calculated fee
             if (total !== formData.totalRentalFee || extraTotal !== formData.extraPriceTotal) {
-                updateFormData({
-                    totalRentalFee: total,
-                    extraPriceTotal: extraTotal
-                });
+                updates.totalRentalFee = total;
+                updates.extraPriceTotal = extraTotal;
+            }
+
+            // First-time heuristic: detect manual fee override
+            if (isFirstCalculation.current && loadedTotalRentalFee.current !== null) {
+                if (!isManualFeeDetected.current && loadedTotalRentalFee.current !== total) {
+                    isManualFeeDetected.current = true;
+                }
+                isFirstCalculation.current = false;
+            }
+
+            // ALWAYS ensure manual fee flag is preserved when detected
+            if (isManualFeeDetected.current && loadedTotalRentalFee.current !== null) {
+                updates.isManualFee = true;
+                updates.manualTotalRentalFee = loadedTotalRentalFee.current;
+            }
+
+            if (Object.keys(updates).length > 0) {
+                updateFormData(updates);
             }
         }
     }, [formData.selectedCameras, formData.pickupTime, formData.returnTime, settings]);
@@ -76,6 +99,46 @@ export default function EditBookingPage({ params }: { params: { id: string } }) 
 
             if (data.data) {
                 const b = data.data;
+                loadedTotalRentalFee.current = b.total_rental_fee;
+                isFirstCalculation.current = true; // Reset for potential re-fetches
+
+                // Pre-calculate expected fee to detect manual override
+                let detectedManualFee = false;
+                let savedFee = b.total_rental_fee;
+
+                // Fetch settings if not already loaded so we can calculate
+                let currentSettings = settings;
+                if (!currentSettings) {
+                    try {
+                        const settingsRes = await fetch('/api/settings');
+                        const settingsData = await settingsRes.json();
+                        if (settingsData.data && settingsData.data.length > 0) {
+                            currentSettings = settingsData.data[0];
+                            setSettings(currentSettings);
+                        }
+                    } catch (e) { /* ignore */ }
+                }
+
+                if (currentSettings && b.booking_items?.length > 0) {
+                    const pickupStr = new Date(b.pickup_time).toISOString().slice(0, 16);
+                    const returnStr = new Date(b.return_time).toISOString().slice(0, 16);
+                    let calculatedTotal = 0;
+                    b.booking_items.forEach((item: any) => {
+                        const priceBreakdown = calculateRentalPrice(
+                            item.camera,
+                            pickupStr,
+                            returnStr,
+                            currentSettings?.late_fee_divisor || 5
+                        );
+                        calculatedTotal += priceBreakdown.total * item.quantity;
+                    });
+
+                    if (calculatedTotal !== savedFee) {
+                        detectedManualFee = true;
+                        isManualFeeDetected.current = true;
+                    }
+                }
+
                 // Seed the useBookingForm state
                 updateFormData({
                     customerName: b.customer.name,
@@ -110,6 +173,8 @@ export default function EditBookingPage({ params }: { params: { id: string } }) 
                     finalFee: b.final_fee,
                     createdBy: b.created_by,
                     notes: b.notes || '',
+                    isManualFee: detectedManualFee,
+                    manualTotalRentalFee: detectedManualFee ? savedFee : 0,
                 });
             } else {
                 alert('Không tìm thấy booking');
@@ -138,7 +203,7 @@ export default function EditBookingPage({ params }: { params: { id: string } }) 
                     deposit_type: formData.depositType,
                     deposit_amount: formData.depositAmount,
                     cccd_name: formData.cccdName,
-                    total_rental_fee: formData.totalRentalFee,
+                    total_rental_fee: formData.isManualFee ? formData.manualTotalRentalFee : formData.totalRentalFee,
                     discount_percent: formData.discountPercent,
                     discount_reason: formData.discountReason,
                     final_fee: formData.finalFee,
@@ -149,6 +214,22 @@ export default function EditBookingPage({ params }: { params: { id: string } }) 
                     customer_phone: formData.customerPhone,
                     customer_phone_2: formData.customerPhone2,
                     platforms: formData.platforms,
+                    // Tasks
+                    tasks: [
+                        {
+                            type: 'pickup',
+                            location: formData.pickupLocation,
+                            delivery_fee: formData.pickupFee,
+                            due_at: formData.pickupTime,
+                        },
+                        {
+                            type: 'return',
+                            location: formData.returnLocation,
+                            delivery_fee: formData.returnFee,
+                            due_at: formData.returnTime,
+                        }
+                    ],
+                    total_delivery_fee: Number(formData.pickupFee || 0) + Number(formData.returnFee || 0),
                     // Booking items (cameras)
                     booking_items: formData.selectedCameras.map((item: any) => ({
                         camera_id: item.cameraId || item.camera_id,

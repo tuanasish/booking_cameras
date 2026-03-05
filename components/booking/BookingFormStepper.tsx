@@ -178,6 +178,8 @@ export default function BookingFormStepper({
             returnFee={formData.returnFee}
             totalRentalFee={formData.totalRentalFee}
             extraPriceTotal={formData.extraPriceTotal}
+            isManualFee={formData.isManualFee}
+            manualTotalRentalFee={formData.manualTotalRentalFee}
             hasDiscount={formData.hasDiscount}
             discountPercent={formData.discountPercent}
             discountReason={formData.discountReason}

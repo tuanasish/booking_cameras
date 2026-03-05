@@ -41,9 +41,10 @@ interface ReturnTaskModalProps {
   };
   isOpen: boolean;
   onClose: () => void;
+  onSuccess?: () => void;
 }
 
-export default function ReturnTaskModal({ task, isOpen, onClose }: ReturnTaskModalProps) {
+export default function ReturnTaskModal({ task, isOpen, onClose, onSuccess }: ReturnTaskModalProps) {
   const [employees, setEmployees] = useState<any[]>([]);
   const [formData, setFormData] = useState({
     staffId: '',
@@ -84,45 +85,30 @@ export default function ReturnTaskModal({ task, isOpen, onClose }: ReturnTaskMod
       const now = new Date();
       const lateFee = formData.lateFee;
 
-      // Update task
-      await fetch(`/api/tasks/${task.id}`, {
-        method: 'PATCH',
+      // Single combined request to our new endpoint
+      const response = await fetch(`/api/tasks/${task.id}/complete`, {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           completed_at: now.toISOString(),
           staff_id: formData.staffId,
           location: formData.returnLocation || task.location,
           delivery_fee: formData.returnDeliveryFee,
-        }),
-      });
-
-      // Update booking
-      const totalDeliveryFee = task.booking.total_delivery_fee + formData.returnDeliveryFee;
-      await fetch(`/api/bookings/${task.booking_id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+          booking_id: task.booking_id,
           payment_status: 'paid',
           late_fee: lateFee,
-          total_delivery_fee: totalDeliveryFee,
+          total_delivery_fee: task.booking.total_delivery_fee + formData.returnDeliveryFee,
+          need_recovery: formData.needRecovery,
+          need_upload: formData.needUpload,
+          memory_card_code: formData.memoryCardCode || null,
         }),
       });
 
-      // Create recovery task if needed
-      if (formData.needRecovery || formData.needUpload) {
-        await fetch('/api/recovery-tasks', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            booking_id: task.booking_id,
-            memory_card_code: formData.memoryCardCode || null,
-            need_recovery: formData.needRecovery,
-            need_upload: formData.needUpload,
-          }),
-        });
+      if (!response.ok) {
+        throw new Error('Return process failed');
       }
 
-      onClose();
+      onSuccess?.();
     } catch (error) {
       console.error('Error processing return:', error);
       alert('Lỗi khi xử lý trả máy');

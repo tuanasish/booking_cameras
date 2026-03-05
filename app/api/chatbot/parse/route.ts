@@ -39,7 +39,7 @@ function tryFastParse(message: string) {
         const phoneMatch = message.match(/(?:^|\n)[- \t]*(?:SĐT|SDT|Số điện thoại):?\s*(\d+)/i);
         const depositMatch = message.match(/(?:^|\n)[- \t]*(?:Đã cọc|Đã đặt cọc):?\s*([\d.]+)/i);
         const feeMatch = message.match(/(?:^|\n)[- \t]*Tổng phí thuê:?\s*([\d.]+)/i);
-        const nameMatch = message.match(/(?:^|\n)[- \t]*(?:Tên Khách|Tên khách hàng):?\s*([^\n\r]+)/i);
+        const nameMatch = message.match(/(?:^|\n)[- \t]*(?:Tên khách hàng|Tên Khách|Tên KH):?\s*([^\n\r]+)/i);
         const platformMatch = message.match(/(?:^|\n)[- \t]*Nền tảng:?\s*([^\n\r]+)/i);
 
         if (!pickupMatch || !returnMatch || !cameraMatch || !phoneMatch) return null;
@@ -90,7 +90,7 @@ interface ParsedResult {
 export async function POST(request: Request) {
     try {
         const supabase = await createClient();
-        const { message, action } = await request.json();
+        const { message, action, userRole, userId } = await request.json();
 
         if (!message || typeof message !== 'string') {
             return NextResponse.json(
@@ -284,16 +284,32 @@ export async function POST(request: Request) {
             });
         }
 
-        // Step 6: Get an employee to assign as creator
-        const { data: employees } = await supabase
-            .from('employees')
-            .select('id')
-            .eq('is_active', true)
-            .limit(1);
-
-        const activeStaff = employees?.[0]?.id || null;
+        // Step 6: Get the logged-in user as creator
+        let activeStaff: string | null = null;
+        if (userRole === 'employee' && userId) {
+            // Employee login: userId IS the employee ID from localStorage
+            const { data: empCheck } = await supabase
+                .from('employees')
+                .select('id')
+                .eq('id', userId)
+                .eq('is_active', true)
+                .single();
+            activeStaff = empCheck?.id || null;
+        }
+        // Fallback: use first active employee (for admin or if employee not found)
+        if (!activeStaff) {
+            const { data: employees } = await supabase
+                .from('employees')
+                .select('id')
+                .eq('is_active', true)
+                .order('name')
+                .limit(1);
+            activeStaff = employees?.[0]?.id || null;
+        }
 
         // Step 7: Create booking
+        const appliedFee = (parsed.totalFee && parsed.totalFee > 0) ? parsed.totalFee : calculatedFee;
+
         const { data: booking, error: bookingError } = await supabase
             .from('bookings')
             .insert({
@@ -304,8 +320,8 @@ export async function POST(request: Request) {
                 payment_status: (parsed.depositAmount ?? 0) > 0 ? 'deposited' : 'pending',
                 deposit_type: (parsed.depositAmount ?? 0) > 0 ? 'custom' : 'none',
                 deposit_amount: parsed.depositAmount ?? 0,
-                total_rental_fee: calculatedFee,
-                final_fee: calculatedFee,
+                total_rental_fee: appliedFee,
+                final_fee: appliedFee,
                 total_delivery_fee: 0,
             })
             .select()
@@ -327,8 +343,8 @@ export async function POST(request: Request) {
                 booking_id: booking.id,
                 camera_id: fullCamera.id,
                 quantity: 1,
-                unit_price: calculatedFee,
-                subtotal: calculatedFee,
+                unit_price: appliedFee,
+                subtotal: appliedFee,
             });
 
         if (itemsError) {

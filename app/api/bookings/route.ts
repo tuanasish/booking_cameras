@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
     let query = supabase
       .from('bookings')
       .select(fields)
-      .order('pickup_time', { ascending: false });
+      .order('created_at', { ascending: false });
 
     if (customerId) {
       query = query.eq('customer_id', customerId);
@@ -132,10 +132,11 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Check conflicts for accessories (tripod, reflector)
+    // Check conflicts for accessories
     if (body.booking_accessories && body.booking_accessories.length > 0) {
       for (const acc of body.booking_accessories) {
-        if (acc.accessory_type === 'tripod' || acc.accessory_type === 'reflector') {
+        // Validate all tracked accessories (skip 'other' free-text accessories)
+        if (acc.accessory_type !== 'other') {
           // Get accessory quantity from database
           const { data: accessory } = await supabase
             .from('accessories')

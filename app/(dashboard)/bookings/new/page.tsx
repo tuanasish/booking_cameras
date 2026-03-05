@@ -220,7 +220,7 @@ export default function NewBookingPage() {
               ? formData.cccdName
               : null,
           has_vneid: formData.hasVNeID,
-          total_rental_fee: formData.totalRentalFee,
+          total_rental_fee: formData.isManualFee ? formData.manualTotalRentalFee : formData.totalRentalFee,
           discount_percent: formData.hasDiscount ? formData.discountPercent : 0,
           discount_reason: formData.hasDiscount ? formData.discountReason : null,
           final_fee: formData.finalFee,

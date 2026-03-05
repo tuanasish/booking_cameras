@@ -71,38 +71,58 @@ export default function ResourceColumn({
     };
 
     // Assign bookings to lanes (simple algorithm: first-fit)
-    const laneAssignments = useMemo(() => {
-        if (laneCount === 1) {
-            return bookings.map((b) => ({ booking: b, lane: 0 }));
-        }
+    const { assignments, effectiveLaneCount } = useMemo(() => {
+        const slots: Array<Array<{ start: number; end: number }>> = [];
+        const assignments: Array<{ booking: any; lane: number }> = [];
 
-        const lanes: Array<Array<{ start: number; end: number }>> = Array.from(
-            { length: laneCount },
-            () => []
+        // Sort bookings by start time
+        const sortedBookings = [...bookings].sort((a, b) =>
+            new Date(a.pickup_time).getTime() - new Date(b.pickup_time).getTime()
         );
 
-        return bookings.map((booking) => {
-            const pickup = new Date(booking.pickup_time);
-            const returnTime = new Date(booking.return_time);
-            const start = pickup.getTime();
-            const end = returnTime.getTime();
+        sortedBookings.forEach((booking) => {
+            const start = new Date(booking.pickup_time).getTime();
+            const end = new Date(booking.return_time).getTime();
 
             // Find first lane that doesn't overlap
-            for (let lane = 0; lane < laneCount; lane++) {
-                const hasConflict = lanes[lane].some(
+            let assignedLane = -1;
+            for (let lane = 0; lane < slots.length; lane++) {
+                const hasConflict = slots[lane].some(
                     (slot) => !(end <= slot.start || start >= slot.end)
                 );
                 if (!hasConflict) {
-                    lanes[lane].push({ start, end });
-                    return { booking, lane };
+                    slots[lane].push({ start, end });
+                    assignedLane = lane;
+                    break;
                 }
             }
 
-            // Default to first lane if all full
-            lanes[0].push({ start, end });
-            return { booking, lane: 0 };
+            // If no lane available
+            if (assignedLane === -1) {
+                if (showLanes && isMultiUnit && slots.length >= camera.quantity) {
+                    // If operating in strict lane mode and full, cram onto lane 0
+                    slots[0].push({ start, end });
+                    assignedLane = 0;
+                } else {
+                    // Otherwise open a new lane for this overlap
+                    slots.push([{ start, end }]);
+                    assignedLane = slots.length - 1;
+                }
+            }
+
+            assignments.push({ booking, lane: assignedLane });
         });
-    }, [bookings, laneCount]);
+
+        // Determine effective lane count visually
+        let effectiveCount = 1;
+        if (showLanes && isMultiUnit) {
+            effectiveCount = camera.quantity;
+        } else {
+            effectiveCount = Math.max(1, slots.length);
+        }
+
+        return { assignments, effectiveLaneCount: effectiveCount };
+    }, [bookings, showLanes, isMultiUnit, camera.quantity]);
 
     // Handle empty area click
     const handleEmptyClick = (e: React.MouseEvent) => {
@@ -122,11 +142,12 @@ export default function ResourceColumn({
             )}
             style={{ width: `${columnWidth}px`, minWidth: `${columnWidth}px` }}
             onMouseDown={onMouseDown}
+            onClick={handleEmptyClick}
         >
             {/* Lane Dividers */}
-            {laneCount > 1 && (
+            {effectiveLaneCount > 1 && (
                 <div className="absolute inset-0 flex divide-x divide-dashed divide-border/30 pointer-events-none">
-                    {Array.from({ length: laneCount }, (_, i) => (
+                    {Array.from({ length: effectiveLaneCount }, (_, i) => (
                         <div key={i} className="flex-1" />
                     ))}
                 </div>
@@ -136,9 +157,9 @@ export default function ResourceColumn({
             <div className="absolute inset-0 opacity-0 group-hover/column:opacity-100 pointer-events-none bg-primary/[0.02] transition-opacity" />
 
             {/* Booking Blocks */}
-            {laneAssignments.map(({ booking, lane }) => {
+            {assignments.map(({ booking, lane }) => {
                 const { top, height } = getBookingPosition(booking);
-                const laneWidth = 100 / laneCount;
+                const laneWidth = 100 / effectiveLaneCount;
                 const left = `calc(${lane * laneWidth}% + 2px)`;
                 const width = `calc(${laneWidth}% - 4px)`;
 

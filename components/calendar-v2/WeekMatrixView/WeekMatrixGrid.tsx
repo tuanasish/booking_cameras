@@ -149,81 +149,91 @@ export default function WeekMatrixGrid({
             {/* Scrollable Body - Camera Rows */}
             <div className="flex-1 overflow-auto custom-scrollbar">
                 <div className="min-w-[800px] sm:min-w-full">
-                    {cameras.map((camera) => (
-                        <div key={camera.id} className="flex border-b border-border hover:bg-surface/50 transition-colors group">
-                            {/* Camera Name Column - STICKY */}
-                            <div className="w-24 sm:w-48 shrink-0 p-2 sm:p-4 border-r border-border bg-surface/90 backdrop-blur-md sticky left-0 z-20 shadow-sm">
-                                <div className="font-semibold text-[10px] sm:text-sm text-text-main truncate group-hover:text-primary transition-colors leading-tight">
-                                    {camera.name}
+                    {cameras.map((camera) => {
+                        // Calculate max bookings across the week to adjust row height dynamically
+                        const maxBookings = Math.max(
+                            0,
+                            ...weekDays.map(day => getBookingsForCameraDay(camera.id, day).length)
+                        );
+                        // Minimum row height is 70px, but expands if there are many bookings
+                        const rowMinHeight = `max(70px, ${maxBookings * 28 + 12}px)`;
+
+                        return (
+                            <div key={camera.id} className="flex border-b border-border hover:bg-surface/50 transition-colors group" style={{ minHeight: rowMinHeight }}>
+                                {/* Camera Name Column - STICKY */}
+                                <div className="w-24 sm:w-48 shrink-0 p-2 sm:p-4 border-r border-border bg-surface/90 backdrop-blur-md sticky left-0 z-20 shadow-sm justify-center flex flex-col">
+                                    <div className="font-semibold text-[10px] sm:text-sm text-text-main truncate group-hover:text-primary transition-colors leading-tight">
+                                        {camera.name}
+                                    </div>
+                                    <div className="text-[8px] sm:text-[10px] text-text-secondary mt-0.5 sm:mt-1">SL: {camera.quantity}</div>
                                 </div>
-                                <div className="text-[8px] sm:text-[10px] text-text-secondary mt-0.5 sm:mt-1">SL: {camera.quantity}</div>
-                            </div>
 
-                            {/* Day Cells */}
-                            <div className="flex-1 grid grid-cols-7 divide-x divide-border">
-                                {weekDays.map((day) => {
-                                    const dayBookings = getBookingsForCameraDay(camera.id, day);
-                                    const isTodayDate = isToday(day);
+                                {/* Day Cells */}
+                                <div className="flex-1 grid grid-cols-7 divide-x divide-border">
+                                    {weekDays.map((day) => {
+                                        const dayBookings = getBookingsForCameraDay(camera.id, day);
+                                        const isTodayDate = isToday(day);
 
-                                    return (
-                                        <div
-                                            key={day.toISOString()}
-                                            className={clsx(
-                                                'relative min-h-[60px] sm:min-h-[70px] p-1 sm:p-1.5 cursor-pointer hover:bg-primary/[0.02] transition-colors',
-                                                isTodayDate && 'bg-primary/[0.03]'
-                                            )}
-                                            onClick={() => {
-                                                if (dayBookings.length === 0) {
-                                                    onCreateBooking?.(camera.id, day);
-                                                }
-                                            }}
-                                        >
-                                            {/* Booking bars */}
-                                            <div className="relative h-full">
-                                                {dayBookings.map((booking: any, idx: number) => {
-                                                    const pos = getBarPosition(booking, day);
-                                                    const customer = (booking as any).customer;
+                                        return (
+                                            <div
+                                                key={day.toISOString()}
+                                                className={clsx(
+                                                    'relative p-1 sm:p-1.5 cursor-pointer hover:bg-primary/[0.02] transition-colors w-full',
+                                                    isTodayDate && 'bg-primary/[0.03]'
+                                                )}
+                                                onClick={() => {
+                                                    if (dayBookings.length === 0) {
+                                                        onCreateBooking?.(camera.id, day);
+                                                    }
+                                                }}
+                                            >
+                                                {/* Booking bars */}
+                                                <div className="relative h-full w-full">
+                                                    {dayBookings.map((booking: any, idx: number) => {
+                                                        const pos = getBarPosition(booking, day);
+                                                        const customer = (booking as any).customer;
 
-                                                    return (
-                                                        <div
-                                                            key={booking.id}
-                                                            className={clsx(
-                                                                'absolute h-5 sm:h-6 rounded cursor-pointer hover:brightness-110 transition-all flex items-center px-1.5 overflow-hidden shadow-sm',
-                                                                getStatusColor(booking.payment_status)
-                                                            )}
-                                                            style={{
-                                                                left: pos.left,
-                                                                width: pos.width,
-                                                                top: `${idx * (isTodayDate ? 26 : 24) + 2}px`,
-                                                            }}
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                onBookingClick?.(booking);
-                                                            }}
-                                                            title={`${customer?.name || 'Khách'} - ${format(new Date(booking.pickup_time), 'HH:mm')} → ${format(new Date(booking.return_time), 'HH:mm')}`}
-                                                        >
-                                                            <span className="text-[9px] sm:text-[10px] font-bold text-black truncate leading-none">
-                                                                {customer?.name || 'Khách'}
-                                                            </span>
-                                                        </div>
-                                                    );
-                                                })}
-                                            </div>
-
-                                            {/* Empty state indicator */}
-                                            {dayBookings.length === 0 && (
-                                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <div className="size-6 sm:size-8 rounded-full bg-primary/10 flex items-center justify-center">
-                                                        <span className="material-symbols-outlined text-primary text-base sm:text-lg text-primary/40">add</span>
-                                                    </div>
+                                                        return (
+                                                            <div
+                                                                key={booking.id}
+                                                                className={clsx(
+                                                                    'absolute h-5 sm:h-6 rounded cursor-pointer hover:brightness-110 transition-all flex items-center px-1.5 overflow-hidden shadow-sm',
+                                                                    getStatusColor(booking.payment_status)
+                                                                )}
+                                                                style={{
+                                                                    left: pos.left,
+                                                                    width: pos.width,
+                                                                    top: `${idx * 28 + 4}px`,
+                                                                }}
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    onBookingClick?.(booking);
+                                                                }}
+                                                                title={`${customer?.name || 'Khách'} - ${format(new Date(booking.pickup_time), 'HH:mm')} → ${format(new Date(booking.return_time), 'HH:mm')}`}
+                                                            >
+                                                                <span className="text-[9px] sm:text-[10px] font-bold text-black truncate leading-none">
+                                                                    {customer?.name || 'Khách'}
+                                                                </span>
+                                                            </div>
+                                                        );
+                                                    })}
                                                 </div>
-                                            )}
-                                        </div>
-                                    );
-                                })}
+
+                                                {/* Empty state indicator */}
+                                                {dayBookings.length === 0 && (
+                                                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                        <div className="size-6 sm:size-8 rounded-full bg-primary/10 flex items-center justify-center">
+                                                            <span className="material-symbols-outlined text-primary text-base sm:text-lg opacity-40">add</span>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        )
+                    })}
 
                     {/* Empty state if no cameras */}
                     {cameras.length === 0 && (

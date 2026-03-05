@@ -1,0 +1,29 @@
+[
+  {
+    "id": "98f4661b-5443-460d-a02a-4a89623123fc",
+    "total_rental_fee": 120000,
+    "final_fee": 120000,
+    "customers": {
+      "name": "hàng: Nguyễn Văn A",
+      "phone": "0912345678"
+    }
+  },
+  {
+    "id": "93c8cc7c-b443-4fe7-9474-524c6c3bc5d5",
+    "total_rental_fee": 600000,
+    "final_fee": 600000,
+    "customers": {
+      "name": "Oanh",
+      "phone": "0342428952"
+    }
+  },
+  {
+    "id": "991bd984-b381-4799-b479-0a6f85a18f10",
+    "total_rental_fee": 600000,
+    "final_fee": 600000,
+    "customers": {
+      "name": "Oanh",
+      "phone": "0342428952"
+    }
+  }
+]

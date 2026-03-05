@@ -44,12 +44,12 @@ export async function PATCH(
     const body = await request.json();
     const bookingId = params.id;
 
-    // If updating times or items, check availability
-    if (body.pickup_time || body.return_time || body.booking_items) {
+    // If updating times, items, or accessories, check availability
+    if (body.pickup_time || body.return_time || body.booking_items || body.booking_accessories) {
       // Fetch current booking data to handle partial updates
       const { data: currentBooking } = await supabase
         .from('bookings')
-        .select('pickup_time, return_time, booking_items(camera_id, quantity)')
+        .select('pickup_time, return_time, booking_items(camera_id, quantity), booking_accessories(accessory_type, quantity)')
         .eq('id', bookingId)
         .single();
 
@@ -57,40 +57,94 @@ export async function PATCH(
         const checkPickup = body.pickup_time || currentBooking.pickup_time;
         const checkReturn = body.return_time || currentBooking.return_time;
         const checkItems = body.booking_items || currentBooking.booking_items;
+        const checkAccessories = body.booking_accessories || currentBooking.booking_accessories;
 
-        for (const item of checkItems) {
-          const { data: availability } = await supabase.rpc(
-            'check_camera_availability',
-            {
-              p_camera_id: item.camera_id,
-              p_pickup_time: checkPickup,
-              p_return_time: checkReturn,
-            }
-          );
-
-          const { data: camera } = await supabase
-            .from('cameras')
-            .select('quantity, name')
-            .eq('id', item.camera_id)
-            .single();
-
-          if (camera) {
-            // Calculate how many of THIS camera this booking ALREADY uses
-            const currentItem = currentBooking.booking_items?.find(
-              (i: any) => i.camera_id === item.camera_id
+        // 1. Check Camera Items
+        if (checkItems) {
+          for (const item of checkItems) {
+            const { data: availability } = await supabase.rpc(
+              'check_camera_availability',
+              {
+                p_camera_id: item.camera_id,
+                p_pickup_time: checkPickup,
+                p_return_time: checkReturn,
+              }
             );
-            const currentQtyInThisBooking = currentItem?.quantity || 0;
 
-            // Effective availability for THIS booking = what's free + what it already holds
-            const effectiveAvailable = (availability ?? camera.quantity) + currentQtyInThisBooking;
+            const { data: camera } = await supabase
+              .from('cameras')
+              .select('quantity, name')
+              .eq('id', item.camera_id)
+              .single();
 
-            if (effectiveAvailable < item.quantity) {
-              return NextResponse.json(
-                {
-                  error: `Máy ${camera.name} không đủ số lượng. Khả dụng: ${effectiveAvailable}, Yêu cầu: ${item.quantity}.`,
-                },
-                { status: 400 }
+            if (camera) {
+              const currentItem = currentBooking.booking_items?.find(
+                (i: any) => i.camera_id === item.camera_id
               );
+              const currentQtyInThisBooking = currentItem?.quantity || 0;
+              const effectiveAvailable = (availability ?? camera.quantity) + currentQtyInThisBooking;
+
+              if (effectiveAvailable < item.quantity) {
+                return NextResponse.json(
+                  {
+                    error: `Máy ${camera.name} không đủ số lượng. Khả dụng: ${effectiveAvailable}, Yêu cầu: ${item.quantity}.`,
+                  },
+                  { status: 400 }
+                );
+              }
+            }
+          }
+        }
+
+        // 2. Check Accessories
+        if (checkAccessories && checkAccessories.length > 0) {
+          for (const acc of checkAccessories) {
+            if (acc.accessory_type !== 'other') {
+              const { data: accessory } = await supabase
+                .from('accessories')
+                .select('quantity, name')
+                .eq('type', acc.accessory_type)
+                .eq('is_active', true)
+                .single();
+
+              if (!accessory) {
+                return NextResponse.json(
+                  { error: `Phụ kiện ${acc.accessory_type} không tồn tại hoặc bị vô hiệu hóa` },
+                  { status: 400 }
+                );
+              }
+
+              const { data: conflictingBookings } = await supabase
+                .from('bookings')
+                .select('id')
+                .neq('payment_status', 'cancelled')
+                .neq('id', bookingId) // Exclude current booking
+                .lt('pickup_time', checkReturn)
+                .gt('return_time', checkPickup);
+
+              const conflictingBookingIds = conflictingBookings?.map((b) => b.id) || [];
+
+              let bookedQty = 0;
+              if (conflictingBookingIds.length > 0) {
+                const { data: bookedAccessories } = await supabase
+                  .from('booking_accessories')
+                  .select('quantity')
+                  .eq('accessory_type', acc.accessory_type)
+                  .in('booking_id', conflictingBookingIds);
+
+                bookedQty = bookedAccessories?.reduce((sum, item) => sum + (item.quantity || 1), 0) || 0;
+              }
+
+              const availableQty = accessory.quantity - bookedQty;
+
+              if (availableQty < (acc.quantity || 1)) {
+                return NextResponse.json(
+                  {
+                    error: `${accessory.name || acc.accessory_type} chỉ còn ${availableQty} cái trong khoảng thời gian này. Yêu cầu: ${acc.quantity || 1}.`,
+                  },
+                  { status: 400 }
+                );
+              }
             }
           }
         }
@@ -151,20 +205,35 @@ export async function PATCH(
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
-    // Sync tasks due_at when booking times change
-    if (bookingUpdates.pickup_time) {
-      await supabase
-        .from('tasks')
-        .update({ due_at: bookingUpdates.pickup_time })
-        .eq('booking_id', bookingId)
-        .eq('type', 'pickup');
-    }
-    if (bookingUpdates.return_time) {
-      await supabase
-        .from('tasks')
-        .update({ due_at: bookingUpdates.return_time })
-        .eq('booking_id', bookingId)
-        .eq('type', 'return');
+    // Sync tasks due_at, location, delivery_fee from taskUpdates
+    if (taskUpdates && Array.isArray(taskUpdates)) {
+      for (const task of taskUpdates) {
+        await supabase
+          .from('tasks')
+          .update({
+            location: task.location || null,
+            delivery_fee: task.delivery_fee || 0,
+            due_at: task.due_at,
+          })
+          .eq('booking_id', bookingId)
+          .eq('type', task.type);
+      }
+    } else {
+      // Fallback: Sync tasks due_at when booking times change
+      if (bookingUpdates.pickup_time) {
+        await supabase
+          .from('tasks')
+          .update({ due_at: bookingUpdates.pickup_time })
+          .eq('booking_id', bookingId)
+          .eq('type', 'pickup');
+      }
+      if (bookingUpdates.return_time) {
+        await supabase
+          .from('tasks')
+          .update({ due_at: bookingUpdates.return_time })
+          .eq('booking_id', bookingId)
+          .eq('type', 'return');
+      }
     }
 
     // Bug #5: Clean up incomplete tasks when booking is cancelled

@@ -1,0 +1,68 @@
+{
+  "booking": {
+    "id": "2fec9e1d-82f5-4f53-8a49-17fd998f6d40",
+    "customer_id": "11f5a40c-b263-4356-88b6-f868ff004157",
+    "created_by": "bcb0abfb-81a1-422b-9eb5-58ecd84a57a9",
+    "pickup_time": "2026-03-05T11:00:00+00:00",
+    "return_time": "2026-03-06T00:00:00+00:00",
+    "payment_status": "pending",
+    "deposit_type": "none",
+    "deposit_amount": 0,
+    "cccd_name": null,
+    "total_rental_fee": 120000,
+    "discount_percent": 0,
+    "discount_reason": null,
+    "final_fee": 120000,
+    "late_fee": 0,
+    "created_at": "2026-03-05T05:09:35.414569+00:00",
+    "updated_at": "2026-03-05T05:09:35.414569+00:00",
+    "total_delivery_fee": 0,
+    "has_vneid": false,
+    "notes": null,
+    "customers": {
+      "id": "11f5a40c-b263-4356-88b6-f868ff004157",
+      "name": "Nguyễn Hoàng Hà",
+      "phone": "0912348678",
+      "phone_2": null,
+      "platforms": [
+        "Zalo"
+      ],
+      "created_at": "2026-03-05T05:09:34.963833+00:00"
+    },
+    "booking_items": [
+      {
+        "id": "e89f6359-7922-4365-82ed-1b9021b7c875",
+        "cameras": {
+          "id": "1d8e2e97-7e0b-4b68-aa2f-3f6cc5d9b0c3",
+          "name": "Canon R50",
+          "price_6h": 210000,
+          "quantity": 36,
+          "is_active": true,
+          "price_12h": null,
+          "price_24h": 350000,
+          "created_at": "2026-01-26T12:42:12.851075+00:00",
+          "model_line": "Canon",
+          "sort_order": 3,
+          "price_additional_day": 300000
+        },
+        "quantity": 1,
+        "subtotal": 120000,
+        "camera_id": "1d8e2e97-7e0b-4b68-aa2f-3f6cc5d9b0c3",
+        "booking_id": "2fec9e1d-82f5-4f53-8a49-17fd998f6d40",
+        "unit_price": 120000
+      }
+    ]
+  },
+  "customer_records": [
+    {
+      "id": "11f5a40c-b263-4356-88b6-f868ff004157",
+      "name": "Nguyễn Hoàng Hà",
+      "phone": "0912348678",
+      "platforms": [
+        "Zalo"
+      ],
+      "created_at": "2026-03-05T05:09:34.963833+00:00",
+      "phone_2": null
+    }
+  ]
+}

@@ -32,6 +32,8 @@ export interface BookingFormData {
   returnLocation: string;
   returnFee: number;
   totalRentalFee: number; // S
+  isManualFee: boolean;
+  manualTotalRentalFee: number;
   extraPriceTotal: number; // Phần không chiết khấu
   hasDiscount: boolean;
   discountPercent: number;
@@ -63,6 +65,8 @@ export function useBookingForm() {
     returnLocation: '',
     returnFee: 0,
     totalRentalFee: 0,
+    isManualFee: false,
+    manualTotalRentalFee: 0,
     extraPriceTotal: 0,
     hasDiscount: false,
     discountPercent: 0,

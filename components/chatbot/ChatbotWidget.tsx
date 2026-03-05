@@ -59,10 +59,22 @@ export default function ChatbotWidget() {
         setResult(null);
 
         try {
+            // Get current user info from localStorage
+            let userRole: string | null = null;
+            let userId: string | null = null;
+            try {
+                const storedUser = localStorage.getItem('user');
+                if (storedUser) {
+                    const parsed = JSON.parse(storedUser);
+                    userRole = parsed.role || null;
+                    userId = parsed.id || null;
+                }
+            } catch { }
+
             const response = await fetch('/api/chatbot/parse', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message, action: 'auto_create' }),
+                body: JSON.stringify({ message, action: 'auto_create', userRole, userId }),
             });
 
             const data = await response.json();

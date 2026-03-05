@@ -235,9 +235,9 @@ export default function ResourceGrid({
             >
                 <div className="flex flex-col min-w-max">
                     {/* STICKY HEADER ROW */}
-                    <div className="sticky top-0 z-30 flex border-b border-border bg-surface shadow-sm">
+                    <div className="sticky top-0 z-40 flex border-b border-border bg-surface shadow-sm">
                         {/* Corner spacer - STICKY TOP & LEFT */}
-                        <div className="w-10 sm:w-16 shrink-0 border-r border-border bg-surface sticky left-0 z-20" />
+                        <div className="w-10 sm:w-16 shrink-0 border-r border-border bg-surface sticky left-0 z-50" />
 
                         {/* Camera Headers */}
                         <div className="flex">
@@ -258,7 +258,7 @@ export default function ResourceGrid({
                     {/* GRID BODY */}
                     <div className="flex relative" style={{ minHeight: `${totalHeight}px` }}>
                         {/* Time Labels Column - STICKY LEFT */}
-                        <div className="w-10 sm:w-16 shrink-0 sticky left-0 z-5 bg-surface/90 backdrop-blur-sm border-r border-border shadow-sm">
+                        <div className="w-10 sm:w-16 shrink-0 sticky left-0 z-30 bg-surface/90 backdrop-blur-sm border-r border-border shadow-sm">
                             {hours.map((hour) => (
                                 <div
                                     key={hour}

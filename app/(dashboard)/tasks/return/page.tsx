@@ -102,7 +102,35 @@ export default function ReturnTasksPage() {
   const handleModalClose = () => {
     setShowModal(false);
     setSelectedTask(null);
+    // Don't fetch here if just closing without saving
+  };
+
+  const handleModalSuccess = (taskId: string) => {
+    // Optimistic update
+    setTasks(tasks.map(t => t.id === taskId ? { ...t, completed_at: new Date().toISOString() } : t));
+    setShowModal(false);
+    setSelectedTask(null);
+    // Silently refetch in background
     fetchTasks();
+  };
+
+  const handleUndo = async (task: ReturnTask) => {
+    if (!window.confirm(`Bạn có chắc muốn hoàn tác trả máy cho booking của ${task.booking.customer.name}?`)) return;
+
+    // Optimistic update
+    setTasks(tasks.map(t => t.id === task.id ? { ...t, completed_at: null } : t));
+
+    try {
+      const res = await fetch(`/api/tasks/${task.id}/undo`, { method: 'POST' });
+      if (!res.ok) throw new Error('Undo failed');
+      // Silently refetch
+      fetchTasks();
+    } catch (error) {
+      console.error('Error undoing task:', error);
+      alert('Không thể hoàn tác');
+      // Revert
+      setTasks(tasks.map(t => t.id === task.id ? { ...t, completed_at: task.completed_at } : t));
+    }
   };
 
   const completedTasks = tasks.filter((t) => t.completed_at);
@@ -272,7 +300,12 @@ export default function ReturnTasksPage() {
                   </div>
                   <div className="space-y-4">
                     {completedTasks.map((task) => (
-                      <ReturnTaskCard key={task.id} task={task} isCompleted />
+                      <ReturnTaskCard
+                        key={task.id}
+                        task={task}
+                        isCompleted
+                        onUndo={() => handleUndo(task)}
+                      />
                     ))}
                   </div>
                 </div>
@@ -288,6 +321,7 @@ export default function ReturnTasksPage() {
           task={selectedTask}
           isOpen={showModal}
           onClose={handleModalClose}
+          onSuccess={() => handleModalSuccess(selectedTask.id)}
         />
       )}
     </div>
@@ -299,11 +333,13 @@ function ReturnTaskCard({
   isOverdue = false,
   isCompleted = false,
   onClick,
+  onUndo,
 }: {
   task: ReturnTask;
   isOverdue?: boolean;
   isCompleted?: boolean;
   onClick?: () => void;
+  onUndo?: () => void;
 }) {
   const platformIcons: Record<string, string> = {
     IG: 'photo_camera',
@@ -414,9 +450,23 @@ function ReturnTaskCard({
             </button>
           </>
         ) : (
-          <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 font-bold text-xs uppercase tracking-widest">
-            <span className="material-symbols-outlined text-[18px]">verified</span>
-            Đã hoàn thành
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 font-bold text-xs uppercase tracking-widest">
+              <span className="material-symbols-outlined text-[18px]">verified</span>
+              Đã hoàn thành
+            </div>
+            {onUndo && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onUndo();
+                }}
+                className="p-2 rounded-lg bg-surface border border-border text-text-secondary hover:text-rose-500 hover:border-rose-500/50 hover:bg-rose-500/10 transition-colors"
+                title="Hoàn tác (Đưa về chờ xử lý)"
+              >
+                <span className="material-symbols-outlined text-[18px]">undo</span>
+              </button>
+            )}
           </div>
         )}
       </div>

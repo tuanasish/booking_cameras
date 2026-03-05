@@ -183,7 +183,7 @@ export default function KantraCalendar({
                     </div>
 
                     {/* Search - Hidden on very small screens, shown in search bar if needed */}
-                    <div className="hidden lg:flex items-center relative">
+                    <div className="hidden xl:flex items-center relative">
                         <div className="absolute left-3 inset-y-0 flex items-center text-text-secondary pointer-events-none">
                             <span className="material-symbols-outlined text-[20px] translate-y-[0.5px]">search</span>
                         </div>
@@ -193,6 +193,27 @@ export default function KantraCalendar({
                             className="pl-10 pr-4 py-2 bg-background rounded-lg text-sm border border-border focus:ring-1 focus:ring-primary outline-none placeholder-text-secondary text-text-main w-48 transition-all"
                         />
                     </div>
+
+                    {/* Show/Hide Lanes Toggle (Only visible in Day View) */}
+                    {viewMode === 'day' && (
+                        <button
+                            onClick={() => setShowLanes((prev) => !prev)}
+                            className={clsx(
+                                "flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-sm font-medium transition-colors shrink-0",
+                                showLanes
+                                    ? "bg-primary/10 border-primary/30 text-primary"
+                                    : "bg-surface border-border text-text-secondary hover:text-text-main"
+                            )}
+                            title={showLanes ? "Đang tách luồng thiết bị" : "Đang gộp chung luồng"}
+                        >
+                            <span className="material-symbols-outlined text-[18px]">
+                                {showLanes ? 'splitscreen' : 'view_stream'}
+                            </span>
+                            <span className="hidden sm:inline">
+                                {showLanes ? 'Tách luồng' : 'Gộp chung'}
+                            </span>
+                        </button>
+                    )}
 
                     {/* Settings/Refresh */}
                     <button className="flex size-9 items-center justify-center rounded-lg bg-background border border-border text-text-secondary hover:text-text-main transition-colors shrink-0">
