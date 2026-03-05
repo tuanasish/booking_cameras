@@ -405,6 +405,9 @@ function ReturnTaskCard({
                   task.booking.total_delivery_fee
                 )}
               </p>
+              {task.booking.late_fee === 0 && (
+                <p className="text-[10px] text-text-secondary italic">(chưa gồm phí trễ)</p>
+              )}
             </div>
             <button className="px-6 py-2.5 rounded-lg bg-primary text-white text-xs font-bold hover:bg-blue-600 transition-all shadow-lg shadow-blue-500/10 active:scale-95">
               XỬ LÝ TRẢ MÁY

@@ -102,6 +102,34 @@ export async function POST(
 
         if (updateError) throw updateError;
 
+        // 5. Recreate missing tasks
+        const { data: existingTasks } = await supabase
+            .from('tasks')
+            .select('type')
+            .eq('booking_id', id);
+
+        const existingTypes = existingTasks?.map(t => t.type) || [];
+        const tasksToCreate = [];
+
+        if (!existingTypes.includes('pickup')) {
+            tasksToCreate.push({
+                booking_id: id,
+                type: 'pickup',
+                due_at: booking.pickup_time,
+            });
+        }
+        if (!existingTypes.includes('return')) {
+            tasksToCreate.push({
+                booking_id: id,
+                type: 'return',
+                due_at: booking.return_time,
+            });
+        }
+
+        if (tasksToCreate.length > 0) {
+            await supabase.from('tasks').insert(tasksToCreate);
+        }
+
         return NextResponse.json({ message: 'Khôi phục đơn thành công', status: targetStatus });
     } catch (error: any) {
         console.error('Restore booking error:', error);

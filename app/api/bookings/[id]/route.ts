@@ -167,6 +167,15 @@ export async function PATCH(
         .eq('type', 'return');
     }
 
+    // Bug #5: Clean up incomplete tasks when booking is cancelled
+    if (bookingUpdates.payment_status === 'cancelled') {
+      await supabase
+        .from('tasks')
+        .delete()
+        .eq('booking_id', bookingId)
+        .is('completed_at', null);
+    }
+
     // Update booking items if provided (delete old + insert new)
     if (booking_items && Array.isArray(booking_items)) {
       await supabase.from('booking_items').delete().eq('booking_id', bookingId);
