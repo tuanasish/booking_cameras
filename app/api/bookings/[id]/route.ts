@@ -97,12 +97,15 @@ export async function PATCH(
       }
     }
 
-    // Separate customer fields from booking fields
+    // Separate customer fields and relation fields from booking fields
     const {
       customer_name,
       customer_phone,
       customer_phone_2,
       platforms,
+      booking_items,
+      booking_accessories,
+      tasks: taskUpdates,
       ...bookingUpdates
     } = body;
 
@@ -127,12 +130,8 @@ export async function PATCH(
           .eq('id', booking.customer_id);
 
         if (customerError) {
-          // If phone_2 is missing from DB, we log it and continue with other updates if possible
-          // or return a helpful error message.
           if (customerError.message.includes('phone_2')) {
             console.error('Database is missing phone_2 column in customers table.');
-            // Optionally proceed without phone_2 or tell the user.
-            // For now, we return the specific error to the user so they know they need to run SQL.
             return NextResponse.json({ error: `Hệ thống thiếu cột phone_2 trong bảng customers. Vui lòng liên hệ kỹ thuật hoặc chạy SQL migration.` }, { status: 400 });
           }
           return NextResponse.json({ error: `Lỗi cập nhật khách hàng: ${customerError.message}` }, { status: 400 });
@@ -140,6 +139,7 @@ export async function PATCH(
       }
     }
 
+    // Update booking core fields
     const { data, error } = await supabase
       .from('bookings')
       .update(bookingUpdates)
@@ -165,6 +165,52 @@ export async function PATCH(
         .update({ due_at: bookingUpdates.return_time })
         .eq('booking_id', bookingId)
         .eq('type', 'return');
+    }
+
+    // Update booking items if provided (delete old + insert new)
+    if (booking_items && Array.isArray(booking_items)) {
+      await supabase.from('booking_items').delete().eq('booking_id', bookingId);
+
+      if (booking_items.length > 0) {
+        const items = booking_items.map((item: any) => ({
+          booking_id: bookingId,
+          camera_id: item.camera_id,
+          quantity: item.quantity,
+          unit_price: item.unit_price,
+          subtotal: item.subtotal,
+        }));
+
+        const { error: itemsError } = await supabase
+          .from('booking_items')
+          .insert(items);
+
+        if (itemsError) {
+          return NextResponse.json({ error: `Lỗi cập nhật thiết bị: ${itemsError.message}` }, { status: 400 });
+        }
+      }
+    }
+
+    // Update booking accessories if provided (delete old + insert new)
+    if (booking_accessories && Array.isArray(booking_accessories)) {
+      await supabase.from('booking_accessories').delete().eq('booking_id', bookingId);
+
+      if (booking_accessories.length > 0) {
+        const accessories = booking_accessories.map((acc: any) => ({
+          booking_id: bookingId,
+          accessory_type: acc.accessory_type,
+          name: acc.name || null,
+          quantity: acc.quantity || 1,
+          note: acc.note || null,
+        }));
+
+        const { error: accError } = await supabase
+          .from('booking_accessories')
+          .insert(accessories);
+
+        if (accError) {
+          return NextResponse.json({ error: `Lỗi cập nhật phụ kiện: ${accError.message}` }, { status: 400 });
+        }
+      }
     }
 
     return NextResponse.json({ data });

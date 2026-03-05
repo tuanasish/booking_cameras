@@ -22,7 +22,13 @@ export async function GET(request: NextRequest) {
           payment_status,
           deposit_type,
           deposit_amount,
-          cccd_name
+          cccd_name,
+          pickup_time,
+          return_time,
+          final_fee,
+          late_fee,
+          total_delivery_fee,
+          has_vneid
         )
       `
       )

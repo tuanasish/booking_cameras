@@ -143,11 +143,35 @@ export default function EditBookingPage({ params }: { params: { id: string } }) 
                     discount_reason: formData.discountReason,
                     final_fee: formData.finalFee,
                     payment_status: formData.depositType === 'none' ? 'pending' : 'deposited',
+                    notes: formData.notes || null,
                     // Customer fields
                     customer_name: formData.customerName,
                     customer_phone: formData.customerPhone,
                     customer_phone_2: formData.customerPhone2,
                     platforms: formData.platforms,
+                    // Booking items (cameras)
+                    booking_items: formData.selectedCameras.map((item: any) => ({
+                        camera_id: item.cameraId || item.camera_id,
+                        quantity: item.quantity,
+                        unit_price: item.camera?.price_6h || item.unit_price || 0,
+                        subtotal: (item.camera?.price_6h || item.unit_price || 0) * item.quantity,
+                    })),
+                    // Booking accessories
+                    booking_accessories: [
+                        ...(formData.tripodQuantity > 0
+                            ? [{ accessory_type: 'tripod', name: 'Tripod', quantity: formData.tripodQuantity }]
+                            : []),
+                        ...(formData.reflectorQuantity > 0
+                            ? [{ accessory_type: 'reflector', name: 'Hắt sáng', quantity: formData.reflectorQuantity }]
+                            : []),
+                        ...(formData.otherAccessories
+                            ? formData.otherAccessories.split(',').filter((s: string) => s.trim()).map((name: string) => ({
+                                accessory_type: 'other',
+                                name: name.trim(),
+                                quantity: 1,
+                            }))
+                            : []),
+                    ],
                 }),
             });
 

@@ -9,9 +9,22 @@ export async function PATCH(
     const supabase = await createClient();
     const body = await request.json();
 
+    // Whitelist allowed fields to prevent accidental overwrites
+    const allowedFields = ['completed_at', 'staff_id', 'location', 'delivery_fee', 'due_at'];
+    const sanitizedBody: Record<string, any> = {};
+    for (const key of allowedFields) {
+      if (key in body) {
+        sanitizedBody[key] = body[key];
+      }
+    }
+
+    if (Object.keys(sanitizedBody).length === 0) {
+      return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 });
+    }
+
     const { data, error } = await supabase
       .from('tasks')
-      .update(body)
+      .update(sanitizedBody)
       .eq('id', params.id)
       .select()
       .single();

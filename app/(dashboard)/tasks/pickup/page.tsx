@@ -123,16 +123,6 @@ export default function PickupTasksPage() {
       });
 
       if (response.ok) {
-        const task = tasks.find((t) => t.id === selectedTaskId);
-        if (task) {
-          await fetch(`/api/bookings/${task.booking_id}`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              payment_status: 'paid',
-            }),
-          });
-        }
         fetchTasks();
       } else {
         alert('Lỗi khi xác nhận nhận máy');
