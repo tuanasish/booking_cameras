@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import { formatCurrency } from '@/lib/utils/format';
-import { calculateLateFee } from '@/lib/utils/booking';
 import Input from '@/components/ui/Input';
 import clsx from 'clsx';
 
@@ -50,18 +49,16 @@ export default function ReturnTaskModal({ task, isOpen, onClose }: ReturnTaskMod
     staffId: '',
     returnLocation: task.location || '',
     returnDeliveryFee: 0,
+    lateFee: 0,
     needRecovery: false,
     needUpload: false,
     memoryCardCode: '',
     cccdReturned: false,
   });
   const [submitting, setSubmitting] = useState(false);
-  const [settings, setSettings] = useState({ lateFeeDivisor: 5 });
 
   useEffect(() => {
     fetchEmployees();
-    fetchSettings();
-    calculateLateFeeAmount();
   }, []);
 
   const fetchEmployees = async () => {
@@ -74,32 +71,7 @@ export default function ReturnTaskModal({ task, isOpen, onClose }: ReturnTaskMod
     }
   };
 
-  const fetchSettings = async () => {
-    try {
-      const response = await fetch('/api/settings');
-      const data = await response.json();
-      if (data.data && data.data.length > 0) {
-        setSettings({ lateFeeDivisor: data.data[0].late_fee_divisor || 5 });
-      }
-    } catch (error) {
-      console.error('Error fetching settings:', error);
-    }
-  };
 
-  const calculateLateFeeAmount = () => {
-    const now = new Date();
-    const dueDate = new Date(task.due_at);
-
-    if (now > dueDate) {
-      // Calculate late fee based on first camera's price_6h
-      const firstCamera = task.booking.booking_items?.[0]?.camera;
-      if (firstCamera) {
-        const lateFee = calculateLateFee(firstCamera.price_6h, settings.lateFeeDivisor);
-        // Update booking late_fee
-        setFormData((prev) => ({ ...prev }));
-      }
-    }
-  };
 
   const handleSubmit = async () => {
     if (!formData.staffId) {
@@ -110,15 +82,7 @@ export default function ReturnTaskModal({ task, isOpen, onClose }: ReturnTaskMod
     setSubmitting(true);
     try {
       const now = new Date();
-      const dueDate = new Date(task.due_at);
-      const isLate = now > dueDate;
-
-      // Calculate late fee if late
-      let lateFee = 0;
-      if (isLate && task.booking.booking_items?.[0]?.camera) {
-        const firstCamera = task.booking.booking_items[0].camera;
-        lateFee = calculateLateFee(firstCamera.price_6h, settings.lateFeeDivisor);
-      }
+      const lateFee = formData.lateFee;
 
       // Update task
       await fetch(`/api/tasks/${task.id}`, {
@@ -174,16 +138,9 @@ export default function ReturnTaskModal({ task, isOpen, onClose }: ReturnTaskMod
   const isLate = now > dueDate;
   const hoursLate = isLate ? Math.floor((now.getTime() - dueDate.getTime()) / (1000 * 60 * 60)) : 0;
 
-  // Calculate late fee
-  let calculatedLateFee = 0;
-  if (isLate && task.booking.booking_items?.[0]?.camera) {
-    const firstCamera = task.booking.booking_items[0].camera;
-    calculatedLateFee = calculateLateFee(firstCamera.price_6h, settings.lateFeeDivisor);
-  }
-
   const totalFee =
     task.booking.final_fee +
-    calculatedLateFee +
+    formData.lateFee +
     task.booking.total_delivery_fee +
     formData.returnDeliveryFee;
 
@@ -288,18 +245,27 @@ export default function ReturnTaskModal({ task, isOpen, onClose }: ReturnTaskMod
               </div>
             )}
 
-            {/* Late Fee Warning */}
+            {/* Late Fee Section */}
             {isLate && (
               <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <span className="material-symbols-outlined text-red-400">schedule</span>
-                  <h3 className="text-sm font-bold text-red-400">Trả trễ</h3>
+                  <h3 className="text-sm font-bold text-red-400">Trả trễ {hoursLate} giờ</h3>
                 </div>
-                <p className="text-sm text-red-300">
-                  Trễ {hoursLate} giờ. Phí trả trễ: {formatCurrency(calculatedLateFee)} (không áp dụng chiết khấu)
-                </p>
               </div>
             )}
+
+            {/* Late Fee Input */}
+            <Input
+              label="Phí trả trễ"
+              icon="timer_off"
+              type="number"
+              value={formData.lateFee.toString()}
+              onChange={(e) =>
+                setFormData({ ...formData, lateFee: parseInt(e.target.value) || 0 })
+              }
+              placeholder="Nhập phí trả trễ (nếu có)"
+            />
 
             {/* Form Fields */}
             <div className="space-y-4">
@@ -383,10 +349,10 @@ export default function ReturnTaskModal({ task, isOpen, onClose }: ReturnTaskMod
                 <span className="text-[#9da6b9]">Phí thuê (P):</span>
                 <span className="text-white">{formatCurrency(task.booking.final_fee)}</span>
               </div>
-              {calculatedLateFee > 0 && (
+              {formData.lateFee > 0 && (
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-[#9da6b9]">Phí trả trễ:</span>
-                  <span className="text-red-400">{formatCurrency(calculatedLateFee)}</span>
+                  <span className="text-red-400">{formatCurrency(formData.lateFee)}</span>
                 </div>
               )}
               <div className="flex items-center justify-between text-sm">
