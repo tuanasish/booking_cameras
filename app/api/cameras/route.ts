@@ -33,10 +33,27 @@ export async function POST(request: NextRequest) {
     const supabase = await createClient();
     const body = await request.json();
 
+    const allowedFields = {
+      name: body.name,
+      model_line: body.model_line,
+      price_6h: body.price_6h,
+      price_12h: body.price_12h,
+      price_24h: body.price_24h,
+      price_additional_day: body.price_additional_day !== undefined ? body.price_additional_day : null,
+      quantity: body.quantity,
+      is_active: body.is_active,
+      sort_order: body.sort_order
+    };
+
+    // Remove undefined fields
+    Object.keys(allowedFields).forEach(key => {
+      if ((allowedFields as any)[key] === undefined) {
+        delete (allowedFields as any)[key];
+      }
+    });
+
     const payload = {
-      ...body,
-      price_additional_day:
-        body.price_additional_day !== undefined ? body.price_additional_day : null,
+      ...allowedFields
     };
 
     const { data, error } = await supabase

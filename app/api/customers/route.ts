@@ -32,10 +32,26 @@ export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
     const body = await request.json();
+    const allowedFields = {
+      name: body.name,
+      phone: body.phone,
+      phone_2: body.phone_2,
+      email: body.email,
+      cccd_number: body.cccd_number,
+      address: body.address,
+      platforms: body.platforms
+    };
+
+    // Remove undefined fields
+    Object.keys(allowedFields).forEach(key => {
+      if ((allowedFields as any)[key] === undefined) {
+        delete (allowedFields as any)[key];
+      }
+    });
 
     const { data, error } = await supabase
       .from('customers')
-      .insert(body)
+      .insert(allowedFields)
       .select()
       .single();
 
@@ -58,14 +74,26 @@ export async function PATCH(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
     const body = await request.json();
+    const allowedUpdateFields = {
+      name: body.name,
+      phone: body.phone,
+      phone_2: body.phone_2,
+      email: body.email,
+      cccd_number: body.cccd_number,
+      address: body.address,
+      platforms: body.platforms
+    };
 
-    if (!id) {
-      return NextResponse.json({ error: 'Missing id parameter' }, { status: 400 });
-    }
+    const updatedData: any = {};
+    Object.keys(allowedUpdateFields).forEach(key => {
+      if ((allowedUpdateFields as any)[key] !== undefined) {
+        updatedData[key] = (allowedUpdateFields as any)[key];
+      }
+    });
 
     const { data, error } = await supabase
       .from('customers')
-      .update(body)
+      .update(updatedData)
       .eq('id', id)
       .select()
       .single();

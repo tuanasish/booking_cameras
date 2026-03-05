@@ -6,9 +6,28 @@ export async function POST(request: NextRequest) {
     const supabase = await createClient();
     const body = await request.json();
 
+    const allowedFields = {
+      booking_id: body.booking_id,
+      memory_card_code: body.memory_card_code,
+      need_recovery: body.need_recovery,
+      need_upload: body.need_upload,
+      is_recovered: body.is_recovered,
+      is_uploaded: body.is_uploaded,
+      is_link_sent: body.is_link_sent,
+      no_error_24h: body.no_error_24h,
+      completed_at: body.completed_at
+    };
+
+    // Remove undefined fields
+    Object.keys(allowedFields).forEach(key => {
+      if ((allowedFields as any)[key] === undefined) {
+        delete (allowedFields as any)[key];
+      }
+    });
+
     const { data, error } = await supabase
       .from('recovery_tasks')
-      .insert(body)
+      .insert(allowedFields)
       .select()
       .single();
 

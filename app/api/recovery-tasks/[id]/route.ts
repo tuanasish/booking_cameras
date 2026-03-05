@@ -20,7 +20,23 @@ export async function PATCH(
       return NextResponse.json({ error: 'Task not found' }, { status: 404 });
     }
 
-    const updatedData: any = { ...body };
+    const allowedUpdateFields = {
+      memory_card_code: body.memory_card_code,
+      need_recovery: body.need_recovery,
+      need_upload: body.need_upload,
+      is_recovered: body.is_recovered,
+      is_uploaded: body.is_uploaded,
+      is_link_sent: body.is_link_sent,
+      no_error_24h: body.no_error_24h,
+      completed_at: body.completed_at
+    };
+
+    const updatedData: any = {};
+    Object.keys(allowedUpdateFields).forEach(key => {
+      if ((allowedUpdateFields as any)[key] !== undefined) {
+        updatedData[key] = (allowedUpdateFields as any)[key];
+      }
+    });
 
     // Check if all conditions are met
     const allCompleted =
